@@ -9,18 +9,20 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   formData = { email: '', password: '' };
-
+  errorMessage: string = '';
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
     this.authService.login(this.formData).subscribe({
       next : (response: any)=> { 
         localStorage.setItem('token', response.token)
+        this.errorMessage='';
         this.router.navigate(['/'])
         // console.log('Login successful')
       },
       error: (error) => {
-        console.error('Login failed:', error);
+        this.errorMessage = error.error.message;
+        console.error('Login failed:', error.error.message);
       }
   });
   }

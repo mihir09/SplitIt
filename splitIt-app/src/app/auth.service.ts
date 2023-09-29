@@ -8,7 +8,11 @@ import { Router } from '@angular/router';
 export class AuthService {
   private baseUrl = 'http://localhost:3000/api';
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) {
+    window.addEventListener('beforeunload', () => {
+      localStorage.removeItem('token');
+    });
+  }
 
   register(user: any) {
     return this.http.post(`${this.baseUrl}/register`, user);
@@ -18,17 +22,18 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/login`, credentials);
   }
 
-  isloggedIn(){
+  isloggedIn() {
     return !!localStorage.getItem('token')
   }
 
-  logoutUser(){
+  logout() {
     localStorage.removeItem('token')
     this.router.navigate(['/login'])
   }
 
-  getToken(){
+  getToken() {
     return localStorage.getItem('token');
   }
+
 }
 

@@ -9,17 +9,19 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent {
   formData = { username: '', email: '', password: '' };
-
+  errorMessage: string =''
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
     this.authService.register(this.formData).subscribe({
       next : (response: any) => {
         localStorage.setItem('token', response.token)
+        this.errorMessage='';
         this.router.navigate(['/'])
         // console.log('Registration successful', response);
       },
       error :(error) => {
+        this.errorMessage = error.error.message;
         console.error('Registration failed:', error.error.message);
       }
     });
