@@ -26,5 +26,9 @@ export class GroupService {
       userEmail
     });
   }
+
+  getGroupDetails(groupId: string): Observable<Group>{
+    return this.http.get<Group>(`${this.baseUrl}/${groupId}`)
+  }
   
 }

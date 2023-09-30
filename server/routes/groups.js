@@ -44,6 +44,9 @@ router.post('/:groupId/addUserByEmail', async (req, res) => {
         user.groups.push({groupId:group._id, groupName: group.name});
         await user.save();
       }
+      else{
+        return res.status(404).json({ message: 'User already present in group.'})
+      }
     } else {
       return res.status(404).json({ message: 'User not found. Please re-check the email' })
     }
@@ -51,6 +54,25 @@ router.post('/:groupId/addUserByEmail', async (req, res) => {
     await group.save();
 
     return res.status(200).json({ message: 'Users added to the group successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+// Fetch group details
+router.get('/:groupId', async (req, res) => {
+  try {
+    const { groupId } = req.params;
+
+    const group = await Group.findById(groupId);
+
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    return res.status(201).json(group);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal server error' });

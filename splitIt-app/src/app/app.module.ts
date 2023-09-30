@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { AuthService } from './auth.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CreateGroupComponent } from './create-group/create-group.component';
+import { GroupComponent } from './group/group.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { CreateGroupComponent } from './create-group/create-group.component';
     LoginComponent,
     HomeComponent,
     CreateGroupComponent,
+    GroupComponent,
   ],
   imports: [
     BrowserModule,

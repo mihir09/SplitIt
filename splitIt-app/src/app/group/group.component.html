@@ -1,0 +1,28 @@
+<div class="bg-white p-6 mt-4 rounded-lg text-center">
+    <h2 class="text-2xl font-bold mb-4">Group</h2>
+    <form [formGroup]="createForm" (ngSubmit)="onAddUser()">
+        <div class="mb-4">
+            <label for="userEmail" class="block text-gray-700">User Email:</label>
+            <input type="text" id="userEmail" formControlName="email" required
+                class="px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500">
+        </div>
+        <div class="text-red-600" *ngIf="errorMessage">
+            {{ errorMessage }}
+        </div>
+        <button type="submit"
+            class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+            Add User
+        </button>
+    </form>
+</div>
+
+<div class="bg-white p-4 m-10 rounded text-center">
+    <h2 class="text-2xl font-semibold mb-4">Your Groups</h2>
+    <ul>
+        <li *ngFor="let member of members" class="text-lg text-gray-700 mb-2 hover:text-blue-500">
+            {{ member.name }}, {{ member.email}}
+        </li>
+    </ul>
+</div>
+
+<a [routerLink]="['/']">Home</a>

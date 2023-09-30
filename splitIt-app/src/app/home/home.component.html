@@ -1,13 +1,13 @@
-<div class="bg-gray-100 min-h-screen">
-    <h1 class="text-4xl font-bold mb-4 flex justify-center">Split It</h1>
+<div class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+    <h1 class="text-4xl font-bold mb-4">Split It</h1>
     <app-create-group></app-create-group>
-    <div class="bg-white p-4 rounded shadow-md">
-        <h2 class="text-2xl font-semibold mb-4">Your Groups</h2>
-        <ul>
-            <li *ngFor="let group of groups" class="text-gray-700 mb-2">
-                {{ group.groupName }}
-            </li>
-        </ul>
+    <div class="bg-white p-4 m-10 rounded shadow-md text-center">
+      <h2 class="text-2xl font-semibold mb-4">Your Groups</h2>
+      <ul>
+        <li *ngFor="let group of groups" class="text-lg text-gray-700 mb-2 hover:text-blue-500">
+          <a [routerLink]="['/group', group.groupId]">{{ group.groupName }}</a>
+        </li>
+      </ul>
     </div>
-
-</div>
+  </div>
+  

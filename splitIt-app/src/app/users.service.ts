@@ -14,4 +14,8 @@ export class UsersService {
   getUserGroups(userId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/${userId}/groups`);
   }
+
+  getUserDetails(userId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${userId}`);
+  }
 }

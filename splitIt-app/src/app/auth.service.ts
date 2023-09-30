@@ -9,7 +9,7 @@ export class AuthService {
   private baseUrl = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient, private router: Router) {
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener('onload', () => {
       localStorage.removeItem('token');
     });
   }

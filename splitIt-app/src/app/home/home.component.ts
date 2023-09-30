@@ -10,20 +10,21 @@ import { AuthService } from '../auth.service';
 export class HomeComponent {
   groups: any[] = [];
 
-  constructor(private usersService: UsersService, private authService: AuthService) { }
-
-  ngOnInit(): void {
+  constructor(private usersService: UsersService, private authService: AuthService) {
     this.loadUserGroups();
   }
 
+  ngOnInit(): void {
+  }
+
   loadUserGroups() {
-    this.usersService.getUserGroups(this.authService.getCurrentUser()!).subscribe(
-      (groups) => {
+    this.usersService.getUserGroups(this.authService.getCurrentUser()!).subscribe({
+      next : (groups) => {
         this.groups = groups;
       },
-      (error) => {
-        console.error('Error loading user groups:', error);
+      error: (error) => {
+        console.error('Error loading user groups:', error.error.message);
       }
-    );
+    });
   }
 }
