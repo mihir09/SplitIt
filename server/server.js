@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const cors = require('cors');
+const User = require('./models/user');
 
 // Creating express app
 const app = express();
@@ -18,16 +19,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/SplitIt', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
-
-// User schema
-const Schema = mongoose.Schema;
-const userSchema = new Schema({
-    username: String,
-    email: { type: String, required: true, unique: true },
-    password: String,
-});
-
-const User = mongoose.model('User', userSchema);
 
 // User registration
 app.post('/api/register', async (req, res) => {
@@ -79,6 +70,12 @@ app.post('/api/login', async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+const groupsRouter = require('./routes/groups');
+app.use('/api/groups', groupsRouter);
+
+const usersRouter = require('./routes/users');
+app.use('/api/users', usersRouter);
 
 // Listening on port 3000
 const PORT = 3000;

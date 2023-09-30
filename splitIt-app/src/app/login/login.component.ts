@@ -16,6 +16,7 @@ export class LoginComponent {
     this.authService.login(this.formData).subscribe({
       next : (response: any)=> { 
         localStorage.setItem('token', response.token)
+        localStorage.setItem('userEmail', this.formData.email)
         this.errorMessage='';
         this.router.navigate(['/'])
         // console.log('Login successful')

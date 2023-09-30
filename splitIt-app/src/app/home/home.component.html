@@ -1,1 +1,13 @@
-<p>home works!</p>
+<div class="bg-gray-100 min-h-screen">
+    <h1 class="text-4xl font-bold mb-4 flex justify-center">Split It</h1>
+    <app-create-group></app-create-group>
+    <div class="bg-white p-4 rounded shadow-md">
+        <h2 class="text-2xl font-semibold mb-4">Your Groups</h2>
+        <ul>
+            <li *ngFor="let group of groups" class="text-gray-700 mb-2">
+                {{ group.groupName }}
+            </li>
+        </ul>
+    </div>
+
+</div>

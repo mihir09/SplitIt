@@ -1,0 +1,16 @@
+<div class="flex items-center justify-center">
+  <div class="bg-white p-6 mt-4 rounded-lg shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-4">Create Group</h2>
+    <form [formGroup]="createForm" (ngSubmit)="onCreateGroup()">
+      <div class="mb-4">
+        <label for="groupName" class="block text-gray-700">Group Name:</label>
+        <input type="text" id="groupName" formControlName="name" required
+          class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500">
+      </div>
+      <button type="submit"
+        class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+        Create Group
+      </button>
+    </form>
+  </div>
+</div>
