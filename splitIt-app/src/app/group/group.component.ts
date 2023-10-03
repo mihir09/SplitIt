@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { GroupService } from '../group.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,13 +15,13 @@ export class GroupComponent implements OnInit{
   createForm: FormGroup;
   errorMessage: string = '';
   groupId: string = '';
-  members$!: Observable<any[]>;
-  groupDetails!: Group;
+  members$!: any;
+  groupDetails$!: Group;
+
   constructor(private fb: FormBuilder, 
     private groupService: GroupService, 
     private usersService: UsersService,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef) {
+    private route: ActivatedRoute) {
     this.createForm = this.fb.group({
       email: ['', Validators.required],
     });
@@ -32,22 +32,32 @@ export class GroupComponent implements OnInit{
   ngOnInit() {
     this.route.params.subscribe(res => this.groupId = res['groupId']);
     this.fetchGroupDetails()
+    this.groupService.refreshRequired.subscribe(response =>{
+      this.fetchGroupDetails();
+    })
   }
 
   private fetchGroupDetails(){
     this.groupService.getGroupDetails(this.groupId).subscribe({
-      next: (response) => {
-        this.groupDetails = response
-        const memberObservables = this.groupDetails.members.map(memberId =>
-          this.usersService.getUserDetails(memberId)
-        );
-        this.members$ = forkJoin(memberObservables);
-        this.cdr.detectChanges();
+        next: (response) => {
+        this.groupDetails$ = response
+        const membersArray: { name: any; id: any; email: any; }[] = []
+        this.groupDetails$.members.map((memberId: any)=> {
+
+          this.usersService.getUserDetails(memberId).subscribe((response) => {
+            
+            const member = {name:response.name, id:response.id, email:response.email}
+            membersArray.push(member)
+          })
+        })
+        this.members$ = membersArray;
+        console.log(this.groupDetails$)
       },
       error: (error) => {
-        console.error('Error fetching group details', error);
+        this.errorMessage = error.error.message;
+        console.error('Error adding user to group:', error);
       }
-    });
+  });
   }
 
   onAddUser() {
@@ -58,14 +68,12 @@ export class GroupComponent implements OnInit{
           console.log('User added to the group successfully');
           this.errorMessage = '';
           this.createForm.reset();
-          this.fetchGroupDetails()
         },
         error: (error) => {
           this.errorMessage = error.error.message;
           console.error('Error adding user to group:', error);
         }
       });
-      this.cdr.detectChanges();
     }
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 import { Group } from './models/group.model';
 import { AuthService } from './auth.service';
 
@@ -9,8 +9,13 @@ import { AuthService } from './auth.service';
 })
 export class GroupService {
   private baseUrl = 'http://localhost:3000/api/groups';
+  private _refreshRequired = new Subject<void>();
 
   constructor(private http: HttpClient, private authService: AuthService) { }
+
+  get refreshRequired(){
+    return this._refreshRequired;
+  }
 
   createGroup(groupData: any): Observable<Group> {
     groupData = {
@@ -24,7 +29,9 @@ export class GroupService {
   
     return this.http.post(`${this.baseUrl}/${groupId}/addUserByEmail`, {
       userEmail
-    });
+    }).pipe( tap(()=>{
+      this.refreshRequired.next();
+    }));
   }
 
   getGroupDetails(groupId: string): Observable<Group>{

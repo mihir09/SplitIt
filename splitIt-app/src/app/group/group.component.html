@@ -3,8 +3,9 @@
     <div class="container mx-auto p-6 mt-4 flex justify-center space-x-8">
       <div class="bg-white p-4 rounded text-center flex-1">
         <h2 class="text-2xl font-semibold mb-4">Members in Group</h2>
-        <ul *ngIf="members$ | async as members">
-          <li *ngFor="let member of members" class="text-lg text-gray-700 mb-2 hover:text-blue-500">
+        
+        <ul>
+          <li *ngFor="let member of members$" class="text-lg text-gray-700 mb-2 hover:text-blue-500">
             {{ member.name }}, {{ member.email}}
           </li>
         </ul>
