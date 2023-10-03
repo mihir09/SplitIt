@@ -9,6 +9,7 @@ import { AuthService } from '../auth.service';
 })
 export class HomeComponent {
   groups: any[] = [];
+  showCreateGroup: boolean = false;
 
   constructor(private usersService: UsersService, private authService: AuthService) {
     this.loadUserGroups();
@@ -26,5 +27,9 @@ export class HomeComponent {
         console.error('Error loading user groups:', error.error.message);
       }
     });
+  }
+
+  toggleCreateGroup() {
+    this.showCreateGroup = !this.showCreateGroup;
   }
 }

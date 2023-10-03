@@ -33,14 +33,14 @@ export class CreateGroupComponent implements OnInit {
           this.groupService.addUserToGroup(group._id, this.authService.getCurrentUser()!).subscribe(
             (response) => {
               console.log('User added to the group successfully');
+              this.router.navigate(['group',group._id ])
             },
             (error) => {
-              console.error('Error adding user to group:', error);
+              console.error('Error adding user to group:', error.error.message);
             }
           );
           this.createForm.reset();
           this.errorMessage = '';
-          this.router.navigate(['group',group._id ])
         },
         (error) => {
           this.errorMessage = error.error.message;

@@ -1,53 +1,53 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { GroupService } from '../group.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsersService } from '../users.service';
 import { Group } from '../models/group.model';
+import { Observable, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-group',
   templateUrl: './group.component.html',
   styleUrls: ['./group.component.css']
 })
-export class GroupComponent {
+export class GroupComponent implements OnInit{
   createForm: FormGroup;
   errorMessage: string = '';
   groupId: string = '';
-  members: any[] = [];
+  members$!: Observable<any[]>;
   groupDetails!: Group;
   constructor(private fb: FormBuilder, 
     private groupService: GroupService, 
     private usersService: UsersService,
     private route: ActivatedRoute,
-    private router: Router) {
+    private cdr: ChangeDetectorRef) {
     this.createForm = this.fb.group({
       email: ['', Validators.required],
     });
-
-    this.route.params.subscribe(res => this.groupId = res['groupId']);
     
+     
+  }
+
+  ngOnInit() {
+    this.route.params.subscribe(res => this.groupId = res['groupId']);
+    this.fetchGroupDetails()
+  }
+
+  private fetchGroupDetails(){
     this.groupService.getGroupDetails(this.groupId).subscribe({
       next: (response) => {
         this.groupDetails = response
-        this.groupDetails.members.map( memberId =>
-        this.usersService.getUserDetails(memberId).subscribe({
-          next: (response) => {
-            this.members.push(response)
-          },
-          error: (error) => {
-            console.error('Error fetching group details', error);
-          }
-        }))
+        const memberObservables = this.groupDetails.members.map(memberId =>
+          this.usersService.getUserDetails(memberId)
+        );
+        this.members$ = forkJoin(memberObservables);
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error fetching group details', error);
       }
     });
-     
-  }
-
-  ngOnInit() {
   }
 
   onAddUser() {
@@ -58,13 +58,14 @@ export class GroupComponent {
           console.log('User added to the group successfully');
           this.errorMessage = '';
           this.createForm.reset();
-          this.router.navigate(['/group', this.groupId]).then(()=> window.location.reload());
+          this.fetchGroupDetails()
         },
         error: (error) => {
           this.errorMessage = error.error.message;
           console.error('Error adding user to group:', error);
         }
       });
+      this.cdr.detectChanges();
     }
   }
 }
