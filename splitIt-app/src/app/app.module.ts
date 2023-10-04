@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CreateGroupComponent } from './create-group/create-group.component';
 import { GroupComponent } from './group/group.component';
+import { ExpenseComponent } from './group/expense/expense.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { GroupComponent } from './group/group.component';
     HomeComponent,
     CreateGroupComponent,
     GroupComponent,
+    ExpenseComponent,
   ],
   imports: [
     BrowserModule,

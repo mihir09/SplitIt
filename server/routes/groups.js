@@ -4,6 +4,9 @@ const router = express.Router();
 const Group = require('../models/group');
 const User = require('../models/user');
 
+const expenseRouter = require('./expenses');
+router.use('/expenses', expenseRouter);
+
 // Create a new group
 router.post('/', async (req, res) => {
   try {
@@ -73,6 +76,25 @@ router.get('/:groupId', async (req, res) => {
     }
 
     return res.status(201).json(group);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Fetch expenses in group
+router.get('/:groupId/expenses', async (req, res) => {
+  try {
+    const { groupId } = req.params;
+
+    const group = await Group.findById(groupId).populate('expenses');
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    const expenses = group.expenses
+    console.log(expenses)
+    return res.status(201).json(expenses);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal server error' });

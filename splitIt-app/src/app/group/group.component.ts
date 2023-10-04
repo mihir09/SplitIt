@@ -4,7 +4,6 @@ import { GroupService } from '../group.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsersService } from '../users.service';
 import { Group } from '../models/group.model';
-import { Observable, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-group',
@@ -51,7 +50,7 @@ export class GroupComponent implements OnInit{
           })
         })
         this.members$ = membersArray;
-        console.log(this.groupDetails$)
+        
       },
       error: (error) => {
         this.errorMessage = error.error.message;

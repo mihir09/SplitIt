@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class GroupService {
-  private baseUrl = 'http://localhost:3000/api/groups';
+  private groupUrl = 'http://localhost:3000/api/groups';
   private _refreshRequired = new Subject<void>();
 
   constructor(private http: HttpClient, private authService: AuthService) { }
@@ -22,12 +22,12 @@ export class GroupService {
       ...groupData,
       creatorEmailId : this.authService.getCurrentUser()
     }
-    return this.http.post<Group>(`${this.baseUrl}`, groupData);
+    return this.http.post<Group>(`${this.groupUrl}`, groupData);
   }
   
   addUserToGroup(groupId: string, userEmail: string): Observable<any> {
   
-    return this.http.post(`${this.baseUrl}/${groupId}/addUserByEmail`, {
+    return this.http.post(`${this.groupUrl}/${groupId}/addUserByEmail`, {
       userEmail
     }).pipe( tap(()=>{
       this.refreshRequired.next();
@@ -35,7 +35,17 @@ export class GroupService {
   }
 
   getGroupDetails(groupId: string): Observable<Group>{
-    return this.http.get<Group>(`${this.baseUrl}/${groupId}`)
+    return this.http.get<Group>(`${this.groupUrl}/${groupId}`)
+  }
+
+  addExpense(expenseData: any): Observable<any> {
+    return this.http.post(`${this.groupUrl}/expenses/`, expenseData).pipe( tap(()=>{
+      this.refreshRequired.next();
+    }));;
+  } 
+
+  getExpensesOfGroup(groupId: String): Observable<any[]> {
+    return this.http.get<any[]>(`${this.groupUrl}/${groupId}/expenses`);
   }
   
 }
