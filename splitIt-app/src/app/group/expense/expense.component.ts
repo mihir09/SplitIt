@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { GroupService } from 'src/app/group.service';
-import { UsersService } from 'src/app/users.service';
+import { ExpenseService } from 'src/app/expense.service';
 
 @Component({
   selector: 'app-expense',
@@ -13,12 +12,12 @@ export class ExpenseComponent {
   @Input() members: any[] = [];
   @Input() groupId: String = '';
   expenses: any[] = [];
-  constructor(private fb: FormBuilder, private groupService: GroupService, private usersService: UsersService) { }
+  constructor(private fb: FormBuilder, private expenseService: ExpenseService) { }
 
   ngOnInit(): void {
     this.initializeForm();
     this.fetchExpenses();
-    this.groupService.refreshRequired.subscribe(response =>{
+    this.expenseService.refreshRequired.subscribe(response =>{
       this.fetchExpenses();
     })
   }
@@ -35,7 +34,7 @@ export class ExpenseComponent {
 
   onAddExpense() {
     if (this.expenseForm.valid) {
-      console.log(this.expenseForm.value.payer)
+
       const expenseData ={
         ...this.expenseForm.value, 
         groupId :this.groupId 
@@ -43,13 +42,19 @@ export class ExpenseComponent {
 
       const payerId = expenseData.payer;
       const payer = this.members.find(member => member.id === payerId);
-
+      let payerName = ''
       if (payer) {
-        expenseData.payerName = payer.name;
+        payerName = payer.name;
       }
-      this.groupService.addExpense(expenseData).subscribe(
+      expenseData.payerName = payerName
+
+      if (!expenseData.expenseDate){
+        expenseData.expenseDate = new Date()
+      }
+
+      this.expenseService.addExpense(expenseData).subscribe(
         (response) => {
-          console.log('Expense added successfully', response);
+          console.log('Expense added successfully');
           this.expenseForm.reset();
         },
         (error) => {
@@ -60,10 +65,9 @@ export class ExpenseComponent {
   }
   
   fetchExpenses() {
-    this.groupService.getExpensesOfGroup(this.groupId).subscribe({
+    this.expenseService.getExpensesOfGroup(this.groupId).subscribe({
       next: (expenses) => {
         this.expenses = expenses;
-        console.log(expenses)
       },
       error: (error) => {
         console.error('Error fetching expenses', error);

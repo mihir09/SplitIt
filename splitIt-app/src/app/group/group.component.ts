@@ -15,7 +15,7 @@ export class GroupComponent implements OnInit{
   errorMessage: string = '';
   groupId: string = '';
   members$!: any;
-  groupDetails$!: Group;
+  groupDetails!: Group;
 
   constructor(private fb: FormBuilder, 
     private groupService: GroupService, 
@@ -39,14 +39,13 @@ export class GroupComponent implements OnInit{
   private fetchGroupDetails(){
     this.groupService.getGroupDetails(this.groupId).subscribe({
         next: (response) => {
-        this.groupDetails$ = response
-        const membersArray: { name: any; id: any; email: any; }[] = []
-        this.groupDetails$.members.map((memberId: any)=> {
+        this.groupDetails = response
+        const membersArray: { name: any; id: any; email: any; balance:any }[] = []
+        this.groupDetails.members.map((memberDetails: any)=> {
 
-          this.usersService.getUserDetails(memberId).subscribe((response) => {
-            
-            const member = {name:response.name, id:response.id, email:response.email}
-            membersArray.push(member)
+              this.usersService.getUserDetails(memberDetails.memberId).subscribe((response) => {
+              const member = {name:response.name, id:response.id, email:response.email, balance: memberDetails.memberBalance}
+              membersArray.push(member)
           })
         })
         this.members$ = membersArray;

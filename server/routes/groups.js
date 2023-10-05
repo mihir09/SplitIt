@@ -42,8 +42,8 @@ router.post('/:groupId/addUserByEmail', async (req, res) => {
     const user = await User.findOne({ email: userEmail });
 
     if (user) {
-      if (!group.members.includes(user._id)) {
-        group.members.push(user._id);
+      if (!group.members.some((member) => member.memberId.equals(user._id))) {
+        group.members.push({memberId:user._id, memberBalance: 0});
         user.groups.push({groupId:group._id, groupName: group.name});
         await user.save();
       }
@@ -93,7 +93,6 @@ router.get('/:groupId/expenses', async (req, res) => {
     }
 
     const expenses = group.expenses
-    console.log(expenses)
     return res.status(201).json(expenses);
   } catch (error) {
     console.error(error);

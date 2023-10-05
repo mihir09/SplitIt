@@ -6,8 +6,8 @@ const groupSchema = new Schema({
     name: { type: String, required: true, unique: true },
     members: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
+            memberId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+            memberBalance: Number
         }
     ],
     expenses: [

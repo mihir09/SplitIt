@@ -37,15 +37,5 @@ export class GroupService {
   getGroupDetails(groupId: string): Observable<Group>{
     return this.http.get<Group>(`${this.groupUrl}/${groupId}`)
   }
-
-  addExpense(expenseData: any): Observable<any> {
-    return this.http.post(`${this.groupUrl}/expenses/`, expenseData).pipe( tap(()=>{
-      this.refreshRequired.next();
-    }));;
-  } 
-
-  getExpensesOfGroup(groupId: String): Observable<any[]> {
-    return this.http.get<any[]>(`${this.groupUrl}/${groupId}/expenses`);
-  }
   
 }

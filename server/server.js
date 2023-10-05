@@ -77,6 +77,9 @@ app.use('/api/groups', groupsRouter);
 const usersRouter = require('./routes/users');
 app.use('/api/users', usersRouter);
 
+const expensesRouter = require('./routes/expenses');
+app.use('/api/expenses', expensesRouter);
+
 // Listening on port 3000
 const PORT = 3000;
 app.listen(PORT, () => {

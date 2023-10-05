@@ -1,76 +1,78 @@
 <h2 class="text-2xl font-bold mb-4 flex justify-center">Add Expense</h2>
-<form [formGroup]="expenseForm" (ngSubmit)="onAddExpense()" class="max-w-md mx-auto mt-4">
-    <div class="mb-4">
-      <label for="expenseName" class="block text-gray-700">Expense Name:</label>
-      <input type="text" id="expenseName" class="form-input mt-1 block w-full" placeholder="Expense Name" formControlName="expenseName" required>
-    </div>
-  
-    <div class="mb-4">
-      <label for="payer" class="block text-gray-700">Payer:</label>
-      <select id="payer" class="form-select mt-1 block w-full" formControlName="payer" required>
-        <option value="" disabled selected>Select Payer</option>
-        <option *ngFor="let member of members" [value]=member.id>{{ member.email }}</option>
-      </select>
-    </div>
-  
-    <div class="mb-4">
-      <label for="expenseDate" class="block text-gray-700">Expense Date:</label>
-      <input type="date" id="expenseDate" class="form-input mt-1 block w-full" formControlName="expenseDate" required>
-    </div>
-  
-    <div class="mb-4">
-      <label for="description" class="block text-gray-700">Description:</label>
-      <input type="text" id="description" class="form-input mt-1 block w-full" placeholder="Description" formControlName="description">
-    </div>
-  
-    <div class="mb-4">
-      <label for="amount" class="block text-gray-700">Amount:</label>
-      <input type="number" id="amount" class="form-input mt-1 block w-full" placeholder="Amount" formControlName="amount" required min="0">
-    </div>
-    
-  <div *ngIf="expenseForm.get('expenseName')?.touched && expenseForm.get('expenseName')?.hasError('required')" class="text-red-600">
+<form [formGroup]="expenseForm" (ngSubmit)="onAddExpense()" class="max-w-md mx-auto mb-4">
+  <div class="mb-4">
+    <label for="expenseName" class="block text-gray-700">Expense Name:</label>
+    <input type="text" id="expenseName" class="form-input mt-1 block w-full" placeholder="Expense Name"
+      formControlName="expenseName" required>
+  </div>
+
+  <div class="mb-4">
+    <label for="payer" class="block text-gray-700">Payer:</label>
+    <select id="payer" class="form-select mt-1 block w-full" formControlName="payer" required>
+      <option value="" disabled selected>Select Payer</option>
+      <option *ngFor="let member of members" [value]=member.id>{{ member.email }}</option>
+    </select>
+  </div>
+
+  <div class="mb-4">
+    <label for="expenseDate" class="block text-gray-700">Expense Date:</label>
+    <input type="date" id="expenseDate" class="form-input mt-1 block w-full" formControlName="expenseDate">
+  </div>
+
+  <div class="mb-4">
+    <label for="description" class="block text-gray-700">Description:</label>
+    <input type="text" id="description" class="form-input mt-1 block w-full" placeholder="Description"
+      formControlName="description">
+  </div>
+
+  <div class="mb-4">
+    <label for="amount" class="block text-gray-700">Amount:</label>
+    <input type="number" id="amount" class="form-input mt-1 block w-full" placeholder="Amount" formControlName="amount"
+      required min="0">
+  </div>
+
+  <div *ngIf="expenseForm.get('expenseName')?.touched && expenseForm.get('expenseName')?.hasError('required')"
+    class="text-red-600">
     Expense Name is required.
   </div>
   <div *ngIf="expenseForm.get('payer')?.touched && expenseForm.get('payer')?.hasError('required')" class="text-red-600">
     Payer is required.
   </div>
-  <div *ngIf="expenseForm.get('expenseDate')?.touched && expenseForm.get('expenseDate')?.hasError('required')" class="text-red-600">
-    Expense Date is required.
-  </div>
-  <div *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.hasError('required')" class="text-red-600">
+  <div *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.hasError('required')"
+    class="text-red-600">
     Amount is required.
   </div>
   <div *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.hasError('min')" class="text-red-600">
     Amount must be greater than or equal to 0.
   </div>
 
-  <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:bg-blue-600"
-  type="submit"
-  [disabled]="expenseForm.invalid"
-  [ngClass]="{'pointer-events-none bg-gray-400': expenseForm.invalid}">Add Expense</button>
-
+  <div class="flex justify-center">
+    <button
+      class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:bg-blue-600"
+      type="submit" [disabled]="expenseForm.invalid"
+      [ngClass]="{'pointer-events-none bg-gray-400': expenseForm.invalid}">Add Expense</button>
+  </div>
 </form>
 
 <div class="bg-white p-4 rounded text-center flex-1">
-    <h2 class="text-2xl font-semibold mb-4">Expenses</h2>
-  
-    <table class="w-full table-fixed">
-      <thead>
-        <tr>
-          <th class="w-1/4">Expense Date</th>
-          <th class="w-1/4">Expense Name</th>
-          <th class="w-1/4">Payer Name</th>
-          <th class="w-1/4">Paid Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let expense of expenses" class="text-lg text-gray-700 hover:text-blue-500">
-          <td class="text-center">{{ expense.expenseDate | date }}</td>
-          <td class="text-center text-xl font-semibold">{{ expense.expenseName }}</td>
-          <td class="text-center">{{ expense.payerName }}</td>
-          <td class="text-center">{{ expense.amount }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  
+  <h2 class="text-2xl font-semibold mb-4">Expenses</h2>
+
+  <table class="w-full table-fixed">
+    <thead>
+      <tr>
+        <th class="w-1/4">Expense Date</th>
+        <th class="w-1/4">Expense Name</th>
+        <th class="w-1/4">Payer Name</th>
+        <th class="w-1/4">Paid Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let expense of expenses" class="text-lg text-gray-700 hover:text-blue-500">
+        <td class="text-center">{{ expense.expenseDate | date }}</td>
+        <td class="text-center text-xl font-semibold">{{ expense.expenseName }}</td>
+        <td class="text-center">{{ expense.payerName }}</td>
+        <td class="text-center">{{ expense.amount }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
