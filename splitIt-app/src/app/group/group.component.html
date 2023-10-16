@@ -1,5 +1,9 @@
 <div class="bg-gray-100 min-h-screen p-2">
-  <h1 class="text-4xl font-bold mt-2 flex justify-center">{{groupDetails.name}}</h1>
+  <h1 class="text-4xl font-bold mt-2 flex justify-center" *ngIf="groupDetails">{{groupDetails.name}}</h1>
+
+  <p class="text-xl m-2 flex justify-center" *ngIf="currentUser async">
+    {{currentUser.name}} {{currentUser.balance}}
+  </p>
 
   <div class="container mx-auto p-6 flex justify-center space-x-8">
     <app-expense [members]="members$" [groupId]="groupId"></app-expense>

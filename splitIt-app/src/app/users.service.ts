@@ -11,11 +11,15 @@ export class UsersService {
 
   constructor(private http: HttpClient) { }
 
-  getUserGroups(userId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${userId}/groups`);
+  getUserGroups(userEmail: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${userEmail}/groups`);
   }
 
   getUserDetails(userId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/${userId}`);
+  }
+
+  getUserDetailsByEmail(userEmail: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/email/${userEmail}`);
   }
 }
