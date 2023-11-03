@@ -12,6 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { CreateGroupComponent } from './create-group/create-group.component';
 import { GroupComponent } from './group/group.component';
 import { ExpenseComponent } from './group/expense/expense.component';
+import { MatCardModule } from '@angular/material/card';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -24,11 +26,13 @@ import { ExpenseComponent } from './group/expense/expense.component';
     ExpenseComponent,
   ],
   imports: [
+    MatCardModule,
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

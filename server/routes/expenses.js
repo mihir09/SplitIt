@@ -3,6 +3,8 @@ const router = express.Router();
 const Expense = require('../models/expense');
 const Group = require('../models/group');
 const User = require('../models/user');
+const Balance = require('../models/balance');
+const balance = require('../models/balance');
 
 // Create a new expense
 router.post('/', async (req, res) => {
@@ -68,6 +70,7 @@ router.post('/', async (req, res) => {
 
       console.log(groupBalance);
 
+
       while (debtors.length > 0){
         debtor = debtors[0]
         debtorMember = group.members.find(member => member._id == debtor._id);
@@ -85,7 +88,13 @@ router.post('/', async (req, res) => {
         console.log("updated balance ",creditorMember.memberBalance)
         creditors.shift();
       }
+
+      group.balance = [];
       
+      groupBalance.forEach(balance => {
+        group.balance.push(balance);
+      });
+      console.log(group.balance)
       await group.save();
     }
 

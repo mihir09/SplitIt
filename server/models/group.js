@@ -16,6 +16,13 @@ const groupSchema = new Schema({
           ref: 'Expense',
         },
     ],
+    balance: [
+        {
+            from: { type: mongoose.Schema.Types.ObjectId, ref: 'Member' },
+            to: { type: mongoose.Schema.Types.ObjectId, ref: 'Member' },
+            balance: Number
+        }
+    ]
 });
 
 module.exports = mongoose.model('Group', groupSchema);
