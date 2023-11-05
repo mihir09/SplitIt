@@ -116,12 +116,14 @@ router.post('/:groupId/transaction/:transactionId', async (req, res) => {
 
     // console.log('debtor', group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].from))
     debtor = group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].from)
-    debtor.memberBalance += group.balance[transactionIndex].balance
+    debtor.memberBalance += group.balance[transactionIndex].balance;
+    debtor.memberBalance = Number(debtor.memberBalance).toFixed(2);
     // console.log(debtor.memberBalance)
 
     // console.log('creditor', group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].to))
     creditor = group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].to)
-    creditor.memberBalance -= group.balance[transactionIndex].balance
+    creditor.memberBalance -= group.balance[transactionIndex].balance;
+    creditor.memberBalance = Number(creditor.memberBalance).toFixed(2);
     // console.log(creditor.memberBalance)
 
     group.balance.splice(transactionIndex, 1);

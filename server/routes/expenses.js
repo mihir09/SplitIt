@@ -62,37 +62,38 @@ router.post('/', async (req, res) => {
       await group.save();
       // settleBalance
       membersDetails = JSON.parse(JSON.stringify(group.members));
-
+      // console.log("Before",members)
       const [groupBalance, debtors, creditors] = settleDebts(membersDetails);
 
 
-      console.log(groupBalance);
+      // console.log(groupBalance);
 
 
       while (debtors.length > 0){
         debtor = debtors[0]
         debtorMember = group.members.find(member => member._id == debtor._id);
-        debtorMember.memberBalance+=debtor.memberBalance
-        console.log("updated balance ",debtorMember.memberBalance)
+        debtorMember.memberBalance-=debtor.memberBalance
+        debtorMember.memberBalance = Number(debtorMember.memberBalance.toFixed(2));
+        // console.log("updated balance ",debtorMember.memberBalance)
         debtors.shift();
       }
 
       while (creditors.length > 0){
         creditor = creditors[0]
         creditorMember = group.members.find(member => member._id == creditor._id);
-        creditorMember.memberBalance-=creditor.memberBalance
+        creditorMember.memberBalance+=creditor.memberBalance
         creditorMember.memberBalance = Number(creditorMember.memberBalance.toFixed(2));
 
-        console.log("updated balance ",creditorMember.memberBalance)
+        // console.log("updated balance ",creditorMember.memberBalance)
         creditors.shift();
       }
 
       group.balance = [];
-      
+      // console.log(members)
       groupBalance.forEach(balance => {
         group.balance.push(balance);
       });
-      console.log(group.balance)
+      // console.log(group.balance)
       await group.save();
     }
 
