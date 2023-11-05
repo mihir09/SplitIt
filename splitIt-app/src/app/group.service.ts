@@ -37,5 +37,11 @@ export class GroupService {
   getGroupDetails(groupId: string): Observable<Group>{
     return this.http.get<Group>(`${this.groupUrl}/${groupId}`)
   }
+
+  settleBalance(groupId: string, transactionId: string): Observable<any> {
+    return this.http.post<any>(`${this.groupUrl}/${groupId}/transaction/${transactionId}`, {}).pipe( tap(()=>{
+      this.refreshRequired.next();
+    }));
+  }  
   
 }

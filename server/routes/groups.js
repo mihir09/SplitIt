@@ -63,7 +63,6 @@ router.post('/:groupId/addUserByEmail', async (req, res) => {
   }
 });
 
-
 // Fetch group details
 router.get('/:groupId', async (req, res) => {
   try {
@@ -94,6 +93,41 @@ router.get('/:groupId/expenses', async (req, res) => {
 
     const expenses = group.expenses
     return res.status(201).json(expenses);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Settle transaction
+router.post('/:groupId/transaction/:transactionId', async (req, res) => {
+  try {
+    const { groupId, transactionId } = req.params;
+    const group = await Group.findById(groupId)
+    const transactionIndex = group.balance.findIndex(
+      (transaction) => transaction._id.toString() === transactionId
+    );
+
+    if (transactionIndex === -1) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+    // console.log(group.balance[transactionIndex])
+
+
+    // console.log('debtor', group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].from))
+    debtor = group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].from)
+    debtor.memberBalance += group.balance[transactionIndex].balance
+    // console.log(debtor.memberBalance)
+
+    // console.log('creditor', group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].to))
+    creditor = group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].to)
+    creditor.memberBalance -= group.balance[transactionIndex].balance
+    // console.log(creditor.memberBalance)
+
+    group.balance.splice(transactionIndex, 1);
+    await group.save()
+    
+    return res.status(200).json({ message: 'Transaction settled' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal server error' });

@@ -22,9 +22,28 @@ export class GroupComponent implements OnInit {
   currentUser: any;
   currentUserEmail: string = '';
   balanceWithNames!: any;
-  showRadioButtons: boolean = false;
+  settle: boolean = false;
   selectedBalance: any;
-  settleSelectedBalance() { }
+
+  confirmSettleBalance(index: number): void {
+    const confirmed = window.confirm('Are you sure you want to settle this balance?');
+    if (confirmed) {
+      this.settleSelectedBalance(index);
+    }
+  }
+  
+  settleSelectedBalance(index: any) {
+    console.log(index)
+    const transactionId = this.groupDetails.balance[index]._id;
+  this.groupService.settleBalance(this.groupId, transactionId).subscribe({
+    next: (response) => {
+      console.log(response.message)
+    },
+    error: (error) => {
+      console.error('Error settling balance:', error);
+    }
+  });
+   }
 
   constructor(private fb: FormBuilder,
     private groupService: GroupService,
@@ -54,7 +73,7 @@ export class GroupComponent implements OnInit {
     this.groupService.getGroupDetails(this.groupId).subscribe({
       next: (response) => {
         this.groupDetails = response
-        console.log(this.groupDetails.balance)
+        
         const membersArray: { name: any; id: any; email: any; balance: any }[] = []
 
         const memberDetailObservables = this.groupDetails.members.map((memberDetails: any) => {
@@ -79,7 +98,7 @@ export class GroupComponent implements OnInit {
           const memberDetailsMap = new Map(
             membersArray.map((member: any) => [member.id, member.name])
           );
-
+            
           const balancesWithNames = this.groupDetails.balance.map((balanceItem: any) => {
             const fromMember = memberDetailsMap.get(balanceItem.from) || balanceItem.from;
             const toMember = memberDetailsMap.get(balanceItem.to) || balanceItem.to;
