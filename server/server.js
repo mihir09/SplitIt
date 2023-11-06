@@ -25,6 +25,10 @@ app.post('/api/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
+        if (!username || !email || !password) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
@@ -36,7 +40,13 @@ app.post('/api/register', async (req, res) => {
         const user = new User({ username, email, password: hashedPassword });
         await user.save();
 
-        return res.status(201).json({ message: 'User registered successfully' });
+        const currentUser = await User.findOne({ email });
+
+        const token = jwt.sign({ userId: currentUser._id }, process.env.ACCESS_TOKEN_SECRET, {
+            expiresIn: '1h',
+        });
+
+        return res.status(200).json({ token: token, message: 'User registered successfully' });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
@@ -51,20 +61,20 @@ app.post('/api/login', async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(401).json({ message: 'Authentication failed' });
+            return res.status(401).json({ message: 'User not found. Please verify the email address.' });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Authentication failed' });
+            return res.status(401).json({ message: 'Incorrect password. Please verify it.' });
         }
 
         const token = jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, {
             expiresIn: '1h',
         });
 
-        return res.status(200).json({ token });
+        return res.status(200).json({ token: token, message: 'Successfully Logged In.' });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
