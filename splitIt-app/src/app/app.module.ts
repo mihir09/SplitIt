@@ -14,6 +14,7 @@ import { GroupComponent } from './group/group.component';
 import { ExpenseComponent } from './group/expense/expense.component';
 import { MatCardModule } from '@angular/material/card';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     CreateGroupComponent,
     GroupComponent,
     ExpenseComponent,
+    NavbarComponent,
   ],
   imports: [
     MatCardModule,

@@ -1,0 +1,12 @@
+<div class="fixed top-0 left-0 right-0 bg-white border-b border-gray-100 z-10">
+    <div class="text-2xl p-4 font-bold flex justify-around">
+        <div>
+            <h1><a routerLink="/">Split It</a></h1>
+        </div>
+        <div class="space-x-4">
+            <button (click)="onLogout()" *ngIf="authService.isAuthenticated()">Logout</button>
+            <button routerLink="/login" *ngIf="!authService.isAuthenticated()">Login</button>
+            <button routerLink="/register" *ngIf="!authService.isAuthenticated()">Register</button>
+        </div>
+    </div>
+</div>

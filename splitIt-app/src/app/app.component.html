@@ -1,7 +1,7 @@
 <div>
-  <div class="text-2xl p-4 font-bold flex justify-around">
-    <h1>Split It</h1>
-    <a routerLink="/">Home</a>
+  <app-navbar></app-navbar>
+  <div class="pt-16">
+    <router-outlet></router-outlet>
   </div>
-  <router-outlet></router-outlet>
+  <button class="fixed bottom-4 right-4 bg-blue-300 hover:bg-blue-700 text-white py-2 px-4 rounded scroll-to-top-button" (click)="scrollToTop()" #scrollToTopButton>Scroll To Top</button>
 </div>

@@ -22,13 +22,13 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/login`, credentials);
   }
 
-  isloggedIn() {
+  isAuthenticated() {
     return !!localStorage.getItem('token')
   }
 
   logout() {
     localStorage.removeItem('token')
-    localStorage.removeItem('user')
+    localStorage.removeItem('userEmail')
     this.router.navigate(['/login'])
   }
 
