@@ -58,7 +58,7 @@ Open your browser and go to http://localhost:4200 to access the SplitIt frontend
    ```bash
    node server.js
 
-Test using Postman API or other endpoint testing API platforms.
+Test the server's API by making requests to http://localhost:3000 using Postman or any other suitable endpoint testing platform.
 
 # Future Steps and Improvements
 
@@ -79,3 +79,93 @@ SplitIt is an ongoing project, and there are several potential improvements and 
 Please feel free to contribute to the project or provide feedback to help us make SplitIt even better!
 
 Thank you for using SplitIt!
+
+## Snap Shots
+
+1. Register Page 
+
+![Register](gitSnaps/Register.png "Register Page")
+
+2. Register Validations 
+
+![Register Validations](gitSnaps/Register_Validations.png "Register Validations")
+
+3. Register Validations Ok
+
+![Register Validations Ok](gitSnaps/Register_Validations_Ok.png "Register Validations Ok")
+
+4. Login Page 
+
+![Login](gitSnaps/Login.png "Login Page")
+
+5. Login Validations 
+
+![Login Validations](gitSnaps/Login_Validations.png "Login Validations")
+
+6. Login Validations Ok
+
+![Login Validations Ok](gitSnaps/Login_Validations_Ok.png "Login Validations Ok")
+
+7. Home 
+
+![Home](gitSnaps/Home.png "Home")
+
+8. Create Group
+
+![Create Group](gitSnaps/Create_Group.png "Create Group")
+
+9. Group
+
+![Group](gitSnaps/Group.png "Group")
+
+10. Group
+
+![Group](gitSnaps/Group_1.png "Group")
+
+11. Member Validations
+
+![Member Validations](gitSnaps/Member_Validations.png "Member Validations")
+
+12. Member Added
+
+![Member Added](gitSnaps/Member_Added.png "Member Added")
+
+13. Expense
+
+![Expense](gitSnaps/Expense.png "Expense")
+
+14. Member Splits
+
+![Member Splits](gitSnaps/Member_Splits.png "Member Splits")
+
+15. Group Balance
+
+![Group Balance](gitSnaps/Group_Balance.png "Group Balance")
+
+16. Expense Multiple User
+
+![Expense Multiple User](gitSnaps/Expense_Multiple_User.png "Expense Multiple User")
+
+17. Group Balance Multiple User
+
+![Group Balance Multiple User](gitSnaps/Group_Balance_Multiple_User.png "Group Balance Multiple User")
+
+18. Settle Balance
+
+![Settle Balance](gitSnaps/Settle_Balance.png "Settle Balance")
+
+19. Settle Balance Confirmation
+
+![Settle Balance Confirmation](gitSnaps/Settle_Balance_Confirmation.png "Settle Balance Confirmation")
+
+20. Settled Balance
+
+![Settled Balance](gitSnaps/Settled_Balance.png "Settled Balance")
+
+21. Member Settled Balance
+
+![Member Settled Balance](gitSnaps/Member_Settled_Balance.png "Member Settled Balance")
+
+22. Home Group List
+
+![Home Group List](gitSnaps/Home_Group_List.png "Home Group List")
