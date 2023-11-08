@@ -15,10 +15,18 @@ app.use(express.json());
 app.use(cors());
 
 // MongoDb database setup
-mongoose.connect('mongodb://127.0.0.1:27017/SplitIt', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+// mongoose.connect('mongodb://127.0.0.1:27017/SplitIt', {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+// });
+
+const uri = process.env.MONGODB_URI;
+
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
+
 
 // User registration
 app.post('/api/register', async (req, res) => {
