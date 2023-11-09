@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class GroupService {
-  private groupUrl = 'http://localhost:3000/api/groups';
+  private groupUrl = 'https://split-it-server.onrender.com/api/groups';
   private _refreshRequired = new Subject<void>();
 
   constructor(private http: HttpClient, private authService: AuthService) { }

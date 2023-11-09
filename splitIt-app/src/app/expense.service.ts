@@ -7,8 +7,8 @@ import { GroupService } from './group.service';
   providedIn: 'root',
 })
 export class ExpenseService {
-  private expensesUrl = 'http://localhost:3000/api/expenses';
-  private groupUrl = 'http://localhost:3000/api/groups';
+  private expensesUrl = 'https://split-it-server.onrender.com/api/expenses';
+  private groupUrl = 'https://split-it-server.onrender.com/api/groups';
   private _refreshRequired = new Subject<void>();
 
   constructor(private http: HttpClient, private groupService: GroupService) { }

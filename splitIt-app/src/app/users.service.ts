@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class UsersService {
 
-  private baseUrl = 'http://localhost:3000/api/users';
+  private baseUrl = 'https://split-it-server.onrender.com/api/users';
 
   constructor(private http: HttpClient) { }
 

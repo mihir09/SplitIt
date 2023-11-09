@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = 'https://split-it-server.onrender.com/api';
 
   constructor(private http: HttpClient, private router: Router) {
     window.addEventListener('onload', () => {
