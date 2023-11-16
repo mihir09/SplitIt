@@ -60,6 +60,12 @@ Open your browser and go to http://localhost:4200 to access the SplitIt frontend
 
 Test the server's API by making requests to http://localhost:3000 using Postman or any other suitable endpoint testing platform.
 
+# Deployment
+
+Launched website at https://splititapp.netlify.app/
+
+Used Renderer for Backend server hosting and netlify for Frontend hosting.
+
 # Future Steps and Improvements
 
 SplitIt is an ongoing project, and there are several potential improvements and future steps:
