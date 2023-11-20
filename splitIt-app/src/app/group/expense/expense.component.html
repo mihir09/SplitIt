@@ -61,7 +61,7 @@
     <div class="relative">
       <input type="text" id="search"
         class="form-input px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
-        [(ngModel)]="searchTerm" placeholder="Search Expense">
+        [(ngModel)]="searchTerm" (keyup)="applyFilterExpense()" placeholder="Search Expense">
     </div>
   </div>
 
@@ -69,8 +69,8 @@
     <mat-form-field>
       <mat-label>Enter a date range</mat-label>
       <mat-date-range-input [rangePicker]="picker">
-        <input matStartDate [(ngModel)]="startDate" placeholder="Start date">
-        <input matEndDate [(ngModel)]="endDate" placeholder="End date">
+        <input matStartDate [(ngModel)]="startDate" (dateInput)="applyFilterExpense()" (dateChange)="applyFilterExpense()" placeholder="Start date">
+        <input matEndDate [(ngModel)]="endDate" (dateInput)="applyFilterExpense()" (dateChange)="applyFilterExpense()" placeholder="End date">
       </mat-date-range-input>
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <button mat-icon-button matSuffix (click)="clearDateRange()">
@@ -79,25 +79,29 @@
       <mat-date-range-picker #picker></mat-date-range-picker>
     </mat-form-field>
   </div>
-  
 
-  <table class="w-full table-fixed">
-    <thead>
-      <tr>
-        <th class="w-1/4">Expense Date</th>
-        <th class="w-1/4">Expense Name</th>
-        <th class="w-1/4">Payer Name</th>
-        <th class="w-1/4">Amount Paid</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let expense of expenses | expenseFilter: searchTerm : startDate! : endDate!"
-        class="text-lg text-gray-700 hover:text-blue-500">
-        <td class="text-center">{{ expense.expenseDate | date }}</td>
-        <td class="text-center text-xl font-semibold">{{ expense.expenseName }}</td>
-        <td class="text-center">{{ expense.payerName }}</td>
-        <td class="text-center">{{ expense.amount }}</td>
-      </tr>
-    </tbody>
+  <table mat-table [dataSource]="expenseList" matSort class="w-full table-fixed">
+    <ng-container matColumnDef="expenseDate">
+      <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Expense Date</th>
+      <td class="text-center" mat-cell *matCellDef="let element">{{ element.expenseDate | date }}</td>
+    </ng-container>
+    <ng-container matColumnDef="expenseName">
+      <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Expense Name</th>
+      <td class="text-center text-xl font-semibold" mat-cell *matCellDef="let element">{{ element.expenseName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="payerName">
+      <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Payer Name</th>
+      <td class="text-center" mat-cell *matCellDef="let element">{{ element.payerName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="amount">
+      <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Amount Paid</th>
+      <td class="text-center" mat-cell *matCellDef="let element">{{ element.amount }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
+
 </div>
