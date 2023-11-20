@@ -13,7 +13,6 @@ import { CreateGroupComponent } from './create-group/create-group.component';
 import { GroupComponent } from './group/group.component';
 import { ExpenseComponent } from './group/expense/expense.component';
 
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ExpenseFilterPipe } from './expense-filter.pipe';
 
@@ -23,6 +22,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -49,6 +52,10 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatNativeDateModule,
     MatIconModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatSortModule,
+    BrowserAnimationsModule,
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]
