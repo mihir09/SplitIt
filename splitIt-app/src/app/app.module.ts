@@ -12,9 +12,17 @@ import { HttpClientModule } from '@angular/common/http';
 import { CreateGroupComponent } from './create-group/create-group.component';
 import { GroupComponent } from './group/group.component';
 import { ExpenseComponent } from './group/expense/expense.component';
-import { MatCardModule } from '@angular/material/card';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavbarComponent } from './navbar/navbar.component';
+import { ExpenseFilterPipe } from './expense-filter.pipe';
+
+import { MatCardModule } from '@angular/material/card';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -26,6 +34,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     GroupComponent,
     ExpenseComponent,
     NavbarComponent,
+    ExpenseFilterPipe,
   ],
   imports: [
     MatCardModule,
@@ -34,7 +43,12 @@ import { NavbarComponent } from './navbar/navbar.component';
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatNativeDateModule,
+    MatIconModule,
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

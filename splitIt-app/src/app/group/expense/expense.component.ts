@@ -12,6 +12,10 @@ export class ExpenseComponent {
   @Input() members: any[] = [];
   @Input() groupId: String = '';
   expenses: any[] = [];
+  searchTerm: string = '';
+  startDate!: Date | null;
+  endDate!: Date | null;
+
   constructor(private fb: FormBuilder, private expenseService: ExpenseService) { }
 
   ngOnInit(): void {
@@ -73,5 +77,10 @@ export class ExpenseComponent {
         console.error('Error fetching expenses', error);
       },
     });
+  }
+
+  clearDateRange(){
+    this.startDate = null;
+    this.endDate = null;
   }
 }

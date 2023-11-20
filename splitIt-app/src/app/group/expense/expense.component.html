@@ -57,6 +57,30 @@
 <div class="bg-white p-4 rounded text-center flex-1">
   <h2 class="text-2xl font-semibold mb-4">Expenses</h2>
 
+  <div class="mb-4">
+    <div class="relative">
+      <input type="text" id="search"
+        class="form-input px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
+        [(ngModel)]="searchTerm" placeholder="Search Expense">
+    </div>
+  </div>
+
+  <div class="flex justify-center">
+    <mat-form-field>
+      <mat-label>Enter a date range</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input matStartDate [(ngModel)]="startDate" placeholder="Start date">
+        <input matEndDate [(ngModel)]="endDate" placeholder="End date">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <button mat-icon-button matSuffix (click)="clearDateRange()">
+        <mat-icon aria-label="Clear range">clear</mat-icon>
+      </button>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+  </div>
+  
+
   <table class="w-full table-fixed">
     <thead>
       <tr>
@@ -67,7 +91,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let expense of expenses" class="text-lg text-gray-700 hover:text-blue-500">
+      <tr *ngFor="let expense of expenses | expenseFilter: searchTerm : startDate! : endDate!"
+        class="text-lg text-gray-700 hover:text-blue-500">
         <td class="text-center">{{ expense.expenseDate | date }}</td>
         <td class="text-center text-xl font-semibold">{{ expense.expenseName }}</td>
         <td class="text-center">{{ expense.payerName }}</td>
