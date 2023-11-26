@@ -31,6 +31,7 @@ import { ListExpenseComponent } from './group/expense/list-expense/list-expense.
 import { AddMemberComponent } from './group/member/add-member/add-member.component';
 
 import { ListBalanceComponent } from './group/balance/list-balance/list-balance.component';
+import { AbsPipe } from './abs.pipe';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { ListBalanceComponent } from './group/balance/list-balance/list-balance.
     ListExpenseComponent,
     AddMemberComponent,
     ListBalanceComponent,
+    AbsPipe,
   ],
   imports: [
     MatCardModule,

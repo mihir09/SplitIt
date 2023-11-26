@@ -10,13 +10,8 @@ import { UsersService } from './users.service';
 })
 export class GroupService {
   private groupUrl = 'https://split-it-server.onrender.com/api/groups';
-  private _refreshRequired = new Subject<void>();
 
   constructor(private http: HttpClient, private authService: AuthService, private usersService: UsersService) { }
-
-  get refreshRequired(){
-    return this._refreshRequired;
-  }
 
   createGroup(groupData: any): Observable<Group> {
     groupData = {
@@ -30,9 +25,7 @@ export class GroupService {
   
     return this.http.post(`${this.groupUrl}/${groupId}/addUserByEmail`, {
       userEmail
-    }).pipe( tap(()=>{
-      this.refreshRequired.next();
-    }));
+    })
   }
 
   getGroupDetailsWithMembers(groupId: string): Observable<any> {
@@ -87,9 +80,7 @@ export class GroupService {
   }
 
   settleBalance(groupId: string, transactionId: string): Observable<any> {
-    return this.http.post<any>(`${this.groupUrl}/${groupId}/transaction/${transactionId}`, {}).pipe( tap(()=>{
-      this.refreshRequired.next();
-    }));
+    return this.http.post<any>(`${this.groupUrl}/${groupId}/transaction/${transactionId}`, {})
   }  
   
 }

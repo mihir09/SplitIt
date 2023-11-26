@@ -17,10 +17,11 @@ export class GroupComponent implements OnInit {
   groupId: string = '';
   groupName: string = '';
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private groupService: GroupService) {}
 
   ngOnInit() {
     this.route.params.subscribe(res => this.groupId = res['groupId']);
+    this.groupService.getGroupDetails(this.groupId).subscribe(response => this.groupName = response.name)
   }
 
   handleGroupName(groupName: string) {
