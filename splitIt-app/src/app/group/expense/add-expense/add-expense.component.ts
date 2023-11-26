@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Expense } from 'src/app/expense.model';
 import { ExpenseService } from 'src/app/expense.service';
 import { GroupService } from 'src/app/group.service';
@@ -14,14 +14,14 @@ export class AddExpenseComponent {
   members: any[] = [];
   groupId!: string | null;
   expenses!: Expense[];
-  searchTerm: string = '';
   expenseForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private expenseService: ExpenseService,
     private groupService: GroupService,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private router: Router) {
     this.expenseForm = this.fb.group({
       expenseName: ['', Validators.required],
       payer: ['', Validators.required],
@@ -77,6 +77,7 @@ export class AddExpenseComponent {
         (response) => {
           console.log('Expense added successfully');
           this.expenseForm.reset();
+          this.router.navigate(['group', this.groupId, 'list-balance'], { queryParams: { groupId: this.groupId } });
           
         },
         (error) => {

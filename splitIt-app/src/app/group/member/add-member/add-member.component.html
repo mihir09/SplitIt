@@ -1,0 +1,17 @@
+<div class="p-6 rounded-lg text-center flex-1">
+    <h2 class="text-2xl font-bold mb-4">Add New Member</h2>
+    <form [formGroup]="createForm" (ngSubmit)="onAddUser()">
+      <div class="mb-4">
+        <label for="userEmail" class="block text-gray-700">User Email:</label>
+        <input type="text" id="userEmail" formControlName="email" required
+          class="px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500">
+      </div>
+      <div class="text-red-600" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+      <button type="submit"
+        class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+        Add
+      </button>
+    </form>
+  </div>

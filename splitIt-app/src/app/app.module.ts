@@ -11,7 +11,6 @@ import { AuthService } from './auth.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CreateGroupComponent } from './create-group/create-group.component';
 import { GroupComponent } from './group/group.component';
-import { ExpenseComponent } from './group/expense/expense.component';
 
 import { NavbarComponent } from './navbar/navbar.component';
 import { ExpenseFilterPipe } from './expense-filter.pipe';
@@ -27,6 +26,11 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddExpenseComponent } from './group/expense/add-expense/add-expense.component';
+import { ListExpenseComponent } from './group/expense/list-expense/list-expense.component';
+
+import { AddMemberComponent } from './group/member/add-member/add-member.component';
+
+import { ListBalanceComponent } from './group/balance/list-balance/list-balance.component';
 
 @NgModule({
   declarations: [
@@ -36,10 +40,12 @@ import { AddExpenseComponent } from './group/expense/add-expense/add-expense.com
     HomeComponent,
     CreateGroupComponent,
     GroupComponent,
-    ExpenseComponent,
     NavbarComponent,
     ExpenseFilterPipe,
     AddExpenseComponent,
+    ListExpenseComponent,
+    AddMemberComponent,
+    ListBalanceComponent,
   ],
   imports: [
     MatCardModule,

@@ -1,0 +1,54 @@
+<div class="container mx-auto p-6 mt-4 flex justify-center space-x-8">
+    <div class="bg-white p-4 rounded-lg text-center flex-1">
+        <h2 class="text-2xl font-semibold mb-4">Group Balance</h2>
+        <ng-container *ngIf="!settle; else settleContent">
+            <div *ngIf="balanceWithNames && balanceWithNames.length>0; else settledUp">
+                <ul class="mt-4">
+                    <li *ngFor="let balance of balanceWithNames"
+                        class="text-lg text-gray-700 mb-2 p-1 hover:text-blue-500">
+                        <strong>{{ balance.from }} owes {{ balance.to }}</strong>
+                        <span class="text-red-600"> ${{ balance.balance | number: '1.2-2' }}</span>
+                    </li>
+                </ul>
+                <br>
+                <button class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                    (click)="settle = true">
+                    Settle Balance
+                </button>
+            </div>
+        </ng-container>
+        <ng-template #settleContent>
+            <div>
+                <ul class="mt-4">
+                    <li *ngFor="let balance of balanceWithNames; let i = index"
+                        (click)="confirmSettleBalance(i); settle = false"
+                        class="text-lg text-gray-700 mb-2 p-1 hover:drop-shadow-md hover:text-green-500 cursor-pointer">
+                        <strong class="underline">{{ balance.from }} owes {{ balance.to }}</strong>
+                        <span class="text-red-600"> ${{ balance.balance | number: '1.2-2' }}</span>
+                    </li>
+                </ul>
+                <br>
+
+                <button class="bg-red-500 hover.bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    (click)="settle = false">
+                    Cancel
+                </button>
+            </div>
+        </ng-template>
+        <ng-template #settledUp>
+            <span>This group is settled up.</span>
+        </ng-template>
+    </div>
+
+    <div class="bg-white p-4 rounded text-center flex-1">
+        <h2 class="text-2xl font-semibold mb-4">Members Balance</h2>
+
+        <ul>
+            <li *ngFor="let member of members$" class="text-lg text-gray-700 mb-2 hover:text-blue-500">
+                {{ member.name }}, {{ member.email}}, {{member.balance}}
+            </li>
+        </ul>
+    </div>
+
+
+</div>
