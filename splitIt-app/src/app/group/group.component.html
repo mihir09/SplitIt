@@ -42,15 +42,16 @@
     </ng-template>
   </div>
 
-
-
-
-
-
+<!-- Expense -->
 
   <div class="container mx-auto p-6 flex justify-center space-x-8">
+    <a [routerLink]="['add-expense']" [queryParams]="{ groupId: groupId}">Add Expense</a>
+
+    <router-outlet></router-outlet>
     <app-expense [members]="members$" [groupId]="groupId"></app-expense>
   </div>
+
+<!-- Members -->
 
   <h2 class="text-2xl font-bold mb-4 flex justify-center">Members</h2>
   <div class="container mx-auto p-6 mt-4 flex justify-center space-x-8">

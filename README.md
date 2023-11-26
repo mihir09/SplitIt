@@ -14,6 +14,10 @@ SplitIt is a finance management application that simplifies the process of addin
 
 - **Validation**: SplitIt incorporates validation mechanisms to ensure that the bills and expenses are correctly input and that calculations are accurate.
 
+- **Expense Filter**: Effortlessly locate expenses by utilizing our intuitive search bar and refine results further with a selectable date range, providing a seamless and tailored filtering experience.
+
+- **Expense Pagination**: Users can take control of thier expense list with our Pagination feature, allowing to view and manage expenses at thier own pace.
+
 ## Technologies Used
 
 - **Frontend (Angular)**: The frontend of SplitIt is built using Angular, a popular web application framework. Angular provides a robust structure for building dynamic and responsive user interfaces.
@@ -64,7 +68,7 @@ Test the server's API by making requests to http://localhost:3000 using Postman 
 
 Launched website at https://splititapp.netlify.app/
 
-Used Renderer for Backend server hosting and netlify for Frontend hosting.
+Used Render for hosting Backend server and netlify for Frontend.
 
 # Future Steps and Improvements
 
