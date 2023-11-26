@@ -13,9 +13,7 @@ export class ExpenseService {
   constructor(private http: HttpClient, private groupService: GroupService) { }
 
   addExpense(expenseData: any): Observable<any> {
-    return this.http.post(`${this.expensesUrl}`, expenseData).pipe( tap(()=>{
-      // this.groupService.refreshRequired.next();
-    }));
+    return this.http.post(`${this.expensesUrl}`, expenseData)
   } 
 
   getExpensesOfGroup(groupId: string): Observable<any[]> {
