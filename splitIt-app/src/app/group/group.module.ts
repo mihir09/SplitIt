@@ -4,6 +4,7 @@ import { GroupRoutingModule } from './group-routing.module';
 
 @NgModule({
   declarations: [
+  
   ],
   imports: [
     CommonModule,

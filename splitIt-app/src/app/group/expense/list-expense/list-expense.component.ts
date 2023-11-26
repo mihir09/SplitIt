@@ -1,19 +1,18 @@
-import { Component, Input, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { ExpenseService } from 'src/app/expense.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-expense',
-  templateUrl: './expense.component.html',
-  styleUrls: ['./expense.component.css']
+  selector: 'app-list-expense',
+  templateUrl: './list-expense.component.html',
+  styleUrls: ['./list-expense.component.css']
 })
-export class ExpenseComponent implements AfterViewInit {
-  expenseForm!: FormGroup;
-  @Input() members: any[] = [];
-  @Input() groupId: String = '';
+export class ListExpenseComponent implements OnInit {
+  members: any[] = [];
+  groupId!: string;
   expenses: any[] = [];
   searchTerm: string = '';
   startDate!: Date | null;
@@ -25,60 +24,18 @@ export class ExpenseComponent implements AfterViewInit {
   displayedColumns: string[] = ['expenseDate', 'expenseName', 'payerName', 'amount'];
   expenseList = new MatTableDataSource<any>([]);
 
-  constructor(private fb: FormBuilder, private expenseService: ExpenseService) { }
+  constructor(private expenseService: ExpenseService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.initializeForm();
-    this.fetchExpenses();
-    this.expenseService.refreshRequired.subscribe(response =>{
+    this.route.queryParams.subscribe(params => {
+      this.groupId = params['groupId'];
+      console.log(params['groupId'])
       this.fetchExpenses();
-    })
-  }
-  ngAfterViewInit(): void {
-  }
-
-  initializeForm(): void {
-    this.expenseForm = this.fb.group({
-      expenseName: ['', Validators.required],
-      payer: ['', Validators.required],
-      expenseDate: [new Date()],
-      description: [''],
-      amount: ['', [Validators.required, Validators.min(0)]]
+      console.log(this.groupId, this.members)
     });
   }
 
-  onAddExpense() {
-    if (this.expenseForm.valid) {
-
-      const expenseData ={
-        ...this.expenseForm.value, 
-        groupId :this.groupId 
-      }
-
-      const payerId = expenseData.payer;
-      const payer = this.members.find(member => member.id === payerId);
-      let payerName = ''
-      if (payer) {
-        payerName = payer.name;
-      }
-      expenseData.payerName = payerName
-
-      if (!expenseData.expenseDate){
-        expenseData.expenseDate = new Date()
-      }
-
-      this.expenseService.addExpense(expenseData).subscribe(
-        (response) => {
-          console.log('Expense added successfully');
-          this.expenseForm.reset();
-        },
-        (error) => {
-          console.error('Error adding expense:', error);
-        }
-      );
-    }
-  }
-  
+ 
   fetchExpenses() {
     this.expenseService.getExpensesOfGroup(this.groupId).subscribe({
       next: (expenses) => {
@@ -135,3 +92,4 @@ export class ExpenseComponent implements AfterViewInit {
     this.applyFilterExpense();
   }
 }
+

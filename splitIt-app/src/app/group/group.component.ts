@@ -14,139 +14,16 @@ import { switchMap, map } from 'rxjs/operators';
   styleUrls: ['./group.component.css']
 })
 export class GroupComponent implements OnInit {
-  createForm: FormGroup;
-  errorMessage: string = '';
   groupId: string = '';
-  members$!: any;
-  groupDetails!: Group;
-  currentUser: any;
-  currentUserEmail: string = '';
-  balanceWithNames!: any;
-  settle: boolean = false;
-  selectedBalance: any;
+  groupName: string = '';
 
-  confirmSettleBalance(index: number): void {
-    const confirmed = window.confirm('Are you sure you want to settle this balance?');
-    if (confirmed) {
-      this.settleSelectedBalance(index);
-    }
-  }
-  
-  settleSelectedBalance(index: any) {
-    console.log(index)
-    const transactionId = this.groupDetails.balance[index]._id;
-  this.groupService.settleBalance(this.groupId, transactionId).subscribe({
-    next: (response) => {
-      console.log(response.message)
-    },
-    error: (error) => {
-      console.error('Error settling balance:', error);
-    }
-  });
-   }
-
-  constructor(private fb: FormBuilder,
-    private groupService: GroupService,
-    private usersService: UsersService,
-    private route: ActivatedRoute,
-    private authService: AuthService) {
-    this.createForm = this.fb.group({
-      email: ['', Validators.required],
-    });
-
-
-  }
+  constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
     this.route.params.subscribe(res => this.groupId = res['groupId']);
-    this.currentUser = this.usersService.getUserDetailsByEmail(this.authService.getCurrentUser() || '').subscribe((response) => {
-      this.currentUser = response
-    })
-    this.fetchGroupDetails()
-    this.groupService.refreshRequired.subscribe(response => {
-      this.fetchGroupDetails();
-    })
   }
-  private fetchGroupDetails() {
-      this.groupService.getGroupDetailsWithMembers(this.groupId).subscribe({
-        next: (groupDetails) => {
-          this.groupDetails = groupDetails;
-          this.members$ = this.groupDetails.members;
-          this.balanceWithNames = this.groupDetails.balancesWithNames;
-        },
-        error: (error) => {
-          console.error('Error fetching group details', error);
-        },
-      });
-  }
-  
 
-  // private fetchGroupDetails() {
-  //   this.groupService.getGroupDetails(this.groupId).subscribe({
-  //     next: (response) => {
-  //       this.groupDetails = response
-        
-  //       const membersArray: { name: any; id: any; email: any; balance: any }[] = []
-
-  //       const memberDetailObservables = this.groupDetails.members.map((memberDetails: any) => {
-  //         return this.usersService.getUserDetails(memberDetails.memberId);
-  //       });
-
-  //       forkJoin(memberDetailObservables).subscribe((memberResponses) => {
-  //         this.groupDetails.members.forEach((memberDetails: any, index: number) => {
-  //           const response = memberResponses[index];
-  //           if (this.currentUser && response.email == this.currentUser.email) {
-  //             this.currentUser.balance = memberDetails.memberBalance;
-  //           }
-  //           const member = {
-  //             name: response.name,
-  //             id: response.id,
-  //             email: response.email,
-  //             balance: memberDetails.memberBalance,
-  //           };
-  //           membersArray.push(member);
-  //         });
-
-  //         const memberDetailsMap = new Map(
-  //           membersArray.map((member: any) => [member.id, member.name])
-  //         );
-            
-  //         const balancesWithNames = this.groupDetails.balance.map((balanceItem: any) => {
-  //           const fromMember = memberDetailsMap.get(balanceItem.from) || balanceItem.from;
-  //           const toMember = memberDetailsMap.get(balanceItem.to) || balanceItem.to;
-
-  //           return {
-  //             from: fromMember,
-  //             to: toMember,
-  //             balance: balanceItem.balance,
-  //           };
-  //         });
-  //         this.members$ = membersArray;
-  //         this.balanceWithNames = balancesWithNames;
-  //       });
-  //     },
-
-  //     error: (error) => {
-  //       this.errorMessage = error.error.message;
-  //       console.error('Error adding user to group:', error);
-  //     }
-  //   });
-  // }
-
-  onAddUser() {
-    if (this.createForm.valid) {
-      const userEmail = this.createForm.value.email
-      this.groupService.addUserToGroup(this.groupId, userEmail).subscribe({
-        next: (response) => {
-          console.log('User added to the group successfully');
-          this.errorMessage = '';
-          this.createForm.reset();
-        },
-        error: (error) => {
-          this.errorMessage = error.error.message;
-          console.error('Error adding user to group:', error);
-        }
-      });
-    }
+  handleGroupName(groupName: string) {
+    this.groupName = groupName
   }
 }
