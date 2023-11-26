@@ -26,6 +26,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AddExpenseComponent } from './group/expense/add-expense/add-expense.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ExpenseComponent,
     NavbarComponent,
     ExpenseFilterPipe,
+    AddExpenseComponent,
   ],
   imports: [
     MatCardModule,
