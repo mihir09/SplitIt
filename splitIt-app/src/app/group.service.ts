@@ -9,7 +9,7 @@ import { UsersService } from './users.service';
   providedIn: 'root',
 })
 export class GroupService {
-  private groupUrl = 'https://split-it-server.onrender.com/api/groups';
+  private groupUrl = 'https://gray-angry-dalmatian.cyclic.app/api/groups';
 
   constructor(private http: HttpClient, private authService: AuthService, private usersService: UsersService) { }
 
