@@ -20,5 +20,10 @@ export class ExpenseService {
   getExpensesOfGroup(groupId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.groupUrl}/${groupId}/expenses`);
   }
+
+  deleteExpense(expenseId: string): Observable<any> {
+    const url = `${this.expensesUrl}/${expenseId}`;
+    return this.http.delete(url);
+  }
   
 }

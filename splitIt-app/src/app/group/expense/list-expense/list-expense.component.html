@@ -43,6 +43,14 @@
         <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Amount Paid</th>
         <td class="text-center" mat-cell *matCellDef="let element">{{ element.amount }}</td>
     </ng-container>
+    <ng-container matColumnDef="actions">
+        <th class="w-1/4" mat-header-cell *matHeaderCellDef>Actions</th>
+        <td class="text-center" mat-cell *matCellDef="let element">
+            <button mat-icon-button color="warn" (click)="deleteExpense(element)" matTooltip="Delete">
+                <mat-icon class="text-red-500">delete</mat-icon>
+            </button>
+        </td>
+    </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
