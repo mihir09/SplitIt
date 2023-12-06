@@ -21,7 +21,7 @@ export class ListExpenseComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  displayedColumns: string[] = ['expenseDate', 'expenseName', 'payerName', 'amount'];
+  displayedColumns: string[] = ['expenseDate', 'expenseName', 'payerName', 'amount', 'actions'];
   expenseList = new MatTableDataSource<any>([]);
 
   constructor(private expenseService: ExpenseService, private route: ActivatedRoute) { }
@@ -29,9 +29,7 @@ export class ListExpenseComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.groupId = params['groupId'];
-      console.log(params['groupId'])
       this.fetchExpenses();
-      console.log(this.groupId, this.members)
     });
   }
 
@@ -51,7 +49,6 @@ export class ListExpenseComponent implements OnInit {
   }
 
   applyFilterExpense(): void {
-    console.log("expense filter called")
     const filterValue = this.searchTerm.toLowerCase();
     const filterObj: any = {searchTerm : filterValue, startDate: this.startDate, endDate:this.endDate};
     this.expenseList.filter = filterObj;
@@ -59,7 +56,6 @@ export class ListExpenseComponent implements OnInit {
 
   expenseFilter(): (data: any, filter: any) => boolean {
     const filterFunction = (data: any, filter: any): boolean => {
-      console.log("expensFilter running")
       const searchText = filter.searchTerm;
       const isExpenseNameMatch = data.expenseName.toLowerCase().includes(searchText);
       const isPayerNameMatch = data.payerName.toLowerCase().includes(searchText);
@@ -78,11 +74,8 @@ export class ListExpenseComponent implements OnInit {
   }
 
   isDateInRange(date: Date, startDate: Date, endDate: Date): boolean {
-    console.log(date, startDate, endDate)
     const isoDateString = date
     date = new Date(isoDateString);
-
-    console.log(date);
     return (!startDate || date >= startDate) && (!endDate || date <= endDate);
   }
 
@@ -90,6 +83,21 @@ export class ListExpenseComponent implements OnInit {
     this.startDate = null;
     this.endDate = null;
     this.applyFilterExpense();
+  }
+
+  deleteExpense(expense: any): void {
+    const confirmDelete = confirm('Are you sure you want to delete this expense?');
+    if (confirmDelete) {
+      this.expenseService.deleteExpense(expense._id).subscribe({
+        next: (res) => {
+          console.log(res.message)
+          this.fetchExpenses();
+        },
+        error: (error) => {
+          console.error('Error deleting expense', error);
+        },
+      });
+    }
   }
 }
 

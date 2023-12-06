@@ -24,6 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddExpenseComponent } from './group/expense/add-expense/add-expense.component';
 import { ListExpenseComponent } from './group/expense/list-expense/list-expense.component';
@@ -65,6 +66,7 @@ import { AbsPipe } from './abs.pipe';
     MatPaginatorModule,
     MatTableModule,
     MatSortModule,
+    MatTooltipModule,
     BrowserAnimationsModule,
   ],
   providers: [AuthService],
