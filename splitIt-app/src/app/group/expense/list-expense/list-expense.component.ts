@@ -3,7 +3,8 @@ import { ExpenseService } from 'src/app/expense.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Expense } from 'src/app/expense.model';
 
 @Component({
   selector: 'app-list-expense',
@@ -24,7 +25,7 @@ export class ListExpenseComponent implements OnInit {
   displayedColumns: string[] = ['expenseDate', 'expenseName', 'payerName', 'amount', 'actions'];
   expenseList = new MatTableDataSource<any>([]);
 
-  constructor(private expenseService: ExpenseService, private route: ActivatedRoute) { }
+  constructor(private expenseService: ExpenseService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -98,6 +99,17 @@ export class ListExpenseComponent implements OnInit {
         },
       });
     }
+  }
+
+  editExpense(expense: any) {
+    const expenseString = JSON.stringify(expense);
+    this.router.navigate(['group', this.groupId, 'add-expense'], {
+      queryParams: {
+        mode: 'edit',
+        expense: expenseString,
+        groupId: this.groupId
+      },
+    });
   }
 }
 

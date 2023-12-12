@@ -68,7 +68,7 @@ Test the server's API by making requests to http://localhost:3000 using Postman 
 
 Launched website at https://splititapp.netlify.app/
 
-Used Render for hosting Backend server and netlify for Frontend.
+Shifted to Cyclic.sh for hosting Backend server and Netlify for Frontend.
 
 # Future Steps and Improvements
 

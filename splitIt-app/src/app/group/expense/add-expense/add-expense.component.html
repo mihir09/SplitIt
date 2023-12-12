@@ -1,6 +1,6 @@
 <div class="p-2 rounded-lg text-center flex-1">
 <h2 class="text-2xl font-bold mb-4 flex justify-center">Add Expense</h2>
-<form [formGroup]="expenseForm" (ngSubmit)="onAddExpense()" class="max-w-md mx-auto mb-4">
+<form [formGroup]="expenseForm" (ngSubmit)="onAddOrUpdateExpense()" class="max-w-md mx-auto mb-4">
   <div class="mb-4">
     <label for="expenseName" class="block text-gray-700">Expense Name:</label>
     <input type="text" id="expenseName" class="form-input mt-1 block w-full" placeholder="Expense Name"
@@ -17,7 +17,7 @@
 
   <div class="mb-4">
     <label for="expenseDate" class="block text-gray-700">Expense Date:</label>
-    <input type="date" id="expenseDate" class="form-input mt-1 block w-full" formControlName="expenseDate">
+    <input type="date" id="expenseDate" class="form-input mt-1 block w-full" formControlName="expenseDate" [value]="expenseForm.value.expenseDate">
   </div>
 
   <div class="mb-4">
