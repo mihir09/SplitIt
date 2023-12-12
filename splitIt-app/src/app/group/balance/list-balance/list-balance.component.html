@@ -7,7 +7,7 @@
                     <li *ngFor="let balance of balanceWithNames"
                         class="text-lg text-gray-700 mb-2 p-1 hover:text-blue-500">
                         <strong>{{ balance.from == currentUser.name ? 'You owe' : balance.from+' owes'  }} {{ balance.to == currentUser.name ? 'You' : balance.to }}</strong>
-                        <span class="text-red-600"> ${{ balance.balance | number: '1.2-2' }}</span>
+                        <span class="text-red-600"> ${{ balance.balance | abs | number: '1.2-2' }}</span>
                     </li>
                 </ul>
                 <br>
@@ -24,7 +24,7 @@
                         (click)="confirmSettleBalance(i); settle = false"
                         class="text-lg text-gray-700 mb-2 p-1 hover:drop-shadow-md hover:text-green-500 cursor-pointer">
                         <strong class="underline">{{ balance.from }} owes {{ balance.to }}</strong>
-                        <span class="text-red-600"> ${{ balance.balance | number: '1.2-2' }}</span>
+                        <span class="text-red-600"> ${{ balance.balance | abs | number: '1.2-2' }}</span>
                     </li>
                 </ul>
                 <br>
@@ -50,7 +50,7 @@
                 'text-green-600': member.balance > 0,
               }">{{ member.name }} 
                 {{ member.balance === 0 ? 'is settled up' : member.balance >= 0 ? 'lent ' : 'owes ' }}
-                {{ member.balance === 0 ? '' : member.balance | currency }}
+                {{ member.balance === 0 ? '' : member.balance | abs | currency }}
               </span>
             </li>
           </ul>

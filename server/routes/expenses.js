@@ -209,6 +209,42 @@ router.delete('/:expenseId', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  const expenseId = req.params.id;
+
+  try {
+    const updatedExpense = await Expense.findByIdAndUpdate(
+      expenseId,
+      { $set: req.body },
+      { new: true }
+    );
+
+    if (!updatedExpense) {
+      return res.status(404).json({ message: 'Expense not found' });
+    }
+
+    if (!updatedExpense.groupId) {
+      return res.status(404).json({ message: 'Expense group not found' });
+    }
+    
+    const group = await Group.findById(updatedExpense.groupId);
+    
+    if (!group) {
+      return res.status(404).json({ message: 'Expense group not found' });
+    }
+
+    const index = group.expenses.findIndex(e => e.equals(updatedExpense._id));
+    group.expenses[index] = updatedExpense;
+    await group.save();
+
+    return res.status(200).json(updatedExpense);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 function settleDebts(members) {
   const debtors = members.filter(member => member.memberBalance < 0).sort((a, b) => a.memberBalance - b.memberBalance);
   const creditors = members.filter(member => member.memberBalance > 0).sort((a, b) => b.memberBalance - a.memberBalance);

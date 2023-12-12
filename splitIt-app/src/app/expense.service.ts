@@ -24,5 +24,10 @@ export class ExpenseService {
     const url = `${this.expensesUrl}/${expenseId}`;
     return this.http.delete(url);
   }
+
+  editExpense(expenseId: string, expenseData: any): Observable<any> {
+    const editUrl = `${this.expensesUrl}/${expenseId}`;
+    return this.http.put(editUrl, expenseData);
+  }
   
 }
