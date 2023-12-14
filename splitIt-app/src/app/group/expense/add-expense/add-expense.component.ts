@@ -118,7 +118,7 @@ export class AddExpenseComponent {
   }
 
   onUpdateExpense(expenseData: any) {
-    this.expenseService.editExpense(this.expensetoEdit._id, expenseData).subscribe(
+    this.expenseService.editExpense(this.expensetoEdit._id, expenseData, this.expensetoEdit).subscribe(
       (response) => {
         console.log('Expense edited successfully');
         this.expenseForm.reset();

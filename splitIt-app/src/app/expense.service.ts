@@ -26,9 +26,10 @@ export class ExpenseService {
     return this.http.delete(url);
   }
 
-  editExpense(expenseId: string, expenseData: any): Observable<any> {
+  editExpense(expenseId: string, expenseData: any, oldExpenseData: any): Observable<any> {
     const editUrl = `${this.expensesUrl}/${expenseId}`;
-    return this.http.put(editUrl, expenseData);
+    const combinedData = {expenseData:expenseData, oldExpenseData:oldExpenseData}
+    return this.http.put(editUrl, combinedData);
   }
   
 }
