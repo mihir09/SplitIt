@@ -27,6 +27,12 @@ mongoose.connect(uri, {
   useUnifiedTopology: true,
 });
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://splititapp.netlify.app');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
 
 // User registration
 app.post('/api/register', async (req, res) => {
