@@ -122,6 +122,7 @@ export class AddExpenseComponent {
       (response) => {
         console.log('Expense edited successfully');
         this.expenseForm.reset();
+        this.router.navigate(['group', this.groupId, 'list-balance'], { queryParams: { groupId: this.groupId } });
       },
       (error) => {
         console.error('Error editing expense:', error);
