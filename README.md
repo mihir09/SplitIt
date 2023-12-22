@@ -74,17 +74,17 @@ Shifted to Cyclic.sh for hosting Backend server and Netlify for Frontend.
 
 SplitIt is an ongoing project, and there are several potential improvements and future steps:
 
-- **User Roles**: Implement different user roles (e.g., admin, regular user) to control access and permissions.
-
-- **Security**: Enhance security by implementing user authentication.
+- **Unequal Split**: Implement backend logic and frontend options to enable unequal distribution of expenses.
 
 - **Notifications**: Add email or in-app notifications to keep users informed about their financial activities.
 
 - **Expense Categories**: Allow users to categorize expenses for better tracking.
 
-- **Expense Modifications**: Allow users to modify expenses and resolve balances based on that.
+- ~~**Expense Modifications**: Allow users to modify expenses and resolve balances based on that.~~ ✅
 
 - **Reports and Analytics**: Create visual reports and analytics for a better understanding of spending patterns.
+
+- **Logs**: Introduce activity logs to monitor all changes within the group.
 
 Please feel free to contribute to the project or provide feedback to help us make SplitIt even better!
 

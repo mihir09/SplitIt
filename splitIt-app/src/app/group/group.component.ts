@@ -1,12 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GroupService } from '../group.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { UsersService } from '../users.service';
-import { Group } from '../models/group.model';
-import { AuthService } from '../auth.service';
-import { forkJoin } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-group',
@@ -17,7 +11,11 @@ export class GroupComponent implements OnInit {
   groupId: string = '';
   groupName: string = '';
 
-  constructor(private route: ActivatedRoute, private groupService: GroupService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private groupService: GroupService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.route.params.subscribe(res => this.groupId = res['groupId']);
@@ -26,5 +24,16 @@ export class GroupComponent implements OnInit {
 
   handleGroupName(groupName: string) {
     this.groupName = groupName
+  }
+
+  navigate(event: any): void {
+    const routeName = (event.target as HTMLInputElement).value
+    this.router.navigate(['group', this.groupId, routeName], { queryParams: { groupId: this.groupId } });
+  }
+
+  @ViewChild(RouterOutlet, { static: true }) routerOutlet!: RouterOutlet;
+
+  routerOutletHasContent(): boolean {
+    return this.routerOutlet && this.routerOutlet.isActivated;
   }
 }
