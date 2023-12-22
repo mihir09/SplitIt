@@ -26,6 +26,7 @@
     </mat-form-field>
 </div>
 
+<div class="overflow-x-auto">
 <table mat-table [dataSource]="expenseList" matSort class="w-full table-fixed">
     <ng-container matColumnDef="expenseDate">
         <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Expense Date</th>
@@ -58,7 +59,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
-
+</div>
 <mat-paginator [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 
 </div>
