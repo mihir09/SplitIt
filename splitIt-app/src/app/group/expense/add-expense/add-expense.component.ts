@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Expense } from 'src/app/expense.model';
 import { ExpenseService } from 'src/app/expense.service';
 import { GroupService } from 'src/app/group.service';
 import { DatePipe } from '@angular/common';
+import { catchError, finalize, of, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-add-expense',
@@ -18,6 +19,7 @@ export class AddExpenseComponent {
   expenses!: Expense[];
   expenseForm: FormGroup;
   expensetoEdit: any;
+  participants: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -29,6 +31,7 @@ export class AddExpenseComponent {
     this.expenseForm = this.fb.group({
       expenseName: ['', Validators.required],
       payer: ['', Validators.required],
+      participants: [[]],
       expenseDate: [new Date().toISOString().split('T')[0]],
       description: [''],
       amount: ['', [Validators.required, Validators.min(0)]],
@@ -36,52 +39,69 @@ export class AddExpenseComponent {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.groupId = params['groupId'];
-      console.log(params['groupId'])
-      if (params['mode'] && params['mode'] === 'edit' && params['expense']) {
-        this.expensetoEdit = JSON.parse(params['expense']);
-        this.mode = 'edit';
-        console.log(this.expensetoEdit)
-        this.populateFormWithExpenseData(this.expensetoEdit);
-      }
-      this.fetchMembers();
-      console.log(this.groupId, this.members)
-    });
+    this.route.queryParams.pipe(
+      switchMap(params => {
+        this.groupId = params['groupId'];
+        return this.fetchMembers().pipe(
+          catchError(error => {
+            console.error('Error fetching members:', error);
+            return of([]);
+          }),
+          finalize(() => {
+            if (this.route.snapshot.queryParams['mode'] === 'edit' && this.route.snapshot.queryParams['expense']) {
+              this.expensetoEdit = JSON.parse(this.route.snapshot.queryParams['expense']);
+              this.mode = 'edit';
+              this.populateFormWithExpenseData(this.expensetoEdit);
+            }
+          })
+        );
+      })
+    )
+    .subscribe();
   }
 
-  populateFormWithExpenseData(expense: Expense): void {
+  populateFormWithExpenseData(expense: any): void {
     const expenseDate = new Date(expense.expenseDate).toISOString().split('T')[0];
+    let participants: any = [];
+    Object.keys(expense.participants).forEach(participantId => {
+      let memberDetails = this.members.find(member => member.id === participantId);
+      participants.push(memberDetails);
+    });
     this.expenseForm.setValue({
       expenseName: expense.expenseName,
       payer: expense.payer,
       expenseDate: expenseDate,
       description: expense.description,
       amount: expense.amount,
+      participants: participants,
     });
-    console.log('Form Value:', this.expenseForm.value);
+    this.participants = participants
   }
 
   fetchMembers() {
     if (this.groupId) {
-      this.groupService.getMembers(this.groupId).subscribe(
-        (members) => {
+      return this.groupService.getMembers(this.groupId).pipe(
+        tap(members => {
           this.members = members;
-        },
-        (error) => {
-          console.error('Error fetching members:', error);
-        }
+          this.participants = members;
+        })
       );
+    } else {
+      return of([]);
     }
   }
-  onAddOrUpdateExpense() {
-    if (this.expenseForm.valid) {
 
+  canAddExpense(): boolean {
+    const payerId = this.expenseForm.get('payer')?.value;
+    return this.participants.length >= 1 && this.participants.some(participant => participant.id !== payerId);
+  }
+
+  onAddOrUpdateExpense() {
+    if (this.expenseForm.valid && this.canAddExpense()) {
       const expenseData = {
         ...this.expenseForm.value,
         groupId: this.groupId
       }
-
       const payerId = expenseData.payer;
       const payer = this.members.find(member => member.id === payerId);
       let payerName = ''
@@ -89,7 +109,13 @@ export class AddExpenseComponent {
         payerName = payer.name;
       }
       expenseData.payerName = payerName
+      let participants:any = {}
+      this.participants.forEach((participant) => { 
+        participants[participant.id] = 0
+      });
 
+      expenseData.participants = participants
+      expenseData.amount = parseFloat(expenseData.amount.toFixed(2));
       if (!expenseData.expenseDate) {
         expenseData.expenseDate = new Date().toISOString().split('T')[0]
       }
@@ -102,10 +128,10 @@ export class AddExpenseComponent {
     }
   }
   onAddExpense(expenseData: any) {
-
+    // console.log(expenseData)
     this.expenseService.addExpense(expenseData).subscribe(
       (response) => {
-        console.log('Expense added successfully');
+        // console.log('Expense added successfully');
         this.expenseForm.reset();
         this.router.navigate(['group', this.groupId, 'list-balance'], { queryParams: { groupId: this.groupId } });
 
@@ -120,7 +146,7 @@ export class AddExpenseComponent {
   onUpdateExpense(expenseData: any) {
     this.expenseService.editExpense(this.expensetoEdit._id, expenseData, this.expensetoEdit).subscribe(
       (response) => {
-        console.log('Expense edited successfully');
+        // console.log('Expense edited successfully');
         this.expenseForm.reset();
         this.router.navigate(['group', this.groupId, 'list-balance'], { queryParams: { groupId: this.groupId } });
       },
@@ -128,5 +154,19 @@ export class AddExpenseComponent {
         console.error('Error editing expense:', error);
       }
     );
+  }
+
+  toggleParticipant(participantId: string): void {
+    if (this.participants.find(participant => participant.id === participantId)){
+      this.participants = this.participants.filter(participant => participant.id !== participantId);
+    }
+    else{
+      const memberDetails = this.members.find(member => member.id === participantId)
+      this.participants.push(memberDetails)
+    }
+  }
+
+  isParticipantSelected(participantId: string): boolean {
+    return this.participants.find(participant => participant.id === participantId);
   }
 }

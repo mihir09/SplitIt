@@ -7,7 +7,8 @@ const User = require('../models/user');
 // Create a new expense
 router.post('/', async (req, res) => {
   try {
-    const { expenseName, payer, expenseDate, description, amount, groupId, payerName } = req.body;
+    const { expenseName, payer, expenseDate, description, amount, groupId, payerName, participants } = req.body;
+    // console.log(participants)
     var group;
     if (groupId) {
       group = await Group.findById(groupId);
@@ -22,10 +23,12 @@ router.post('/', async (req, res) => {
       description,
       amount: totalAmount,
       groupId,
-      payerName
+      payerName,
+      participants
     });
 
     await expense.save();
+    // console.log(expense)
 
     if (group) {
       group.expenses.push(expense._id)

@@ -16,6 +16,19 @@
   </div>
 
   <div class="mb-4">
+    <label for="participants" class="block text-gray-700">Participants:</label>
+    <div class="flex items-center justify-center flex-wrap">
+      <button *ngFor="let member of members"
+              type="button" 
+              class="font-bold m-2 p-1 rounded transition-colors duration-300 ease-in-out focus:outline-none focus:ring focus:border-blue-300"
+              [ngClass]="{'bg-gray-500 text-white': isParticipantSelected(member.id)}"
+              (click)="toggleParticipant(member.id)">
+        {{ member.email }}
+      </button>
+    </div>
+  </div>
+
+  <div class="mb-4">
     <label for="expenseDate" class="block text-gray-700">Expense Date:</label>
     <input type="date" id="expenseDate" class="form-input mt-1 block w-full" formControlName="expenseDate" [value]="expenseForm.value.expenseDate">
   </div>
@@ -46,12 +59,16 @@
   <div *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.hasError('min')" class="text-red-600">
     Amount must be greater than or equal to 0.
   </div>
+  <div *ngIf="!canAddExpense()" class="text-red-600">
+    Select at least 1 participant other than payer.
+  </div>
+  
 
   <div class="flex justify-center">
     <button
       class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:bg-blue-600"
-      type="submit" [disabled]="expenseForm.invalid"
-      [ngClass]="{'pointer-events-none bg-gray-400': expenseForm.invalid}">Add Expense</button>
+      type="submit" [disabled]="expenseForm.invalid || !canAddExpense()"
+      [ngClass]="{'pointer-events-none bg-gray-400': expenseForm.invalid || !canAddExpense()}">Add Expense</button>
   </div>
 </form>
 
