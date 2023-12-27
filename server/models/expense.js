@@ -27,7 +27,11 @@ const expenseSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  payerName: String
+  payerName: String,
+  participants: {
+    type: Map,
+    of: Number,
+  },
 });
 
 module.exports = mongoose.model('Expense', expenseSchema);
