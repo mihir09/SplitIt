@@ -1,4 +1,4 @@
-<div class="container mx-auto p-2 mt-4 flex justify-center space-x-8">
+<div class="container mx-auto p-2 mt-4 flex justify-center space-x-8" *ngIf="!loading">
     <div class="bg-white p-4 rounded-lg text-center flex-1">
         <h2 class="text-2xl font-semibold mb-4">Group Balance</h2>
         <ng-container *ngIf="!settle; else settleContent">
@@ -57,3 +57,5 @@
     </div>
 
 </div>
+
+<app-loading-spinner *ngIf="loading"></app-loading-spinner>

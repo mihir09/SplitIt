@@ -1,65 +1,68 @@
-<div class="p-2 rounded-lg text-center flex-1">
-<h2 class="text-2xl font-semibold mb-4 text-center">Expenses</h2>
+<div class="p-2 rounded-lg text-center flex-1"  *ngIf="!loading">
+    <h2 class="text-2xl font-semibold mb-4 text-center">Expenses</h2>
 
-<div class="mb-4 flex justify-center">
-    <div class="relative">
-        <input type="text" id="search"
-            class="form-input px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
-            [(ngModel)]="searchTerm" (keyup)="applyFilterExpense()" placeholder="Search Expense">
+    <div class="mb-4 flex justify-center">
+        <div class="relative">
+            <input type="text" id="search"
+                class="form-input px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
+                [(ngModel)]="searchTerm" (keyup)="applyFilterExpense()" placeholder="Search Expense">
+        </div>
     </div>
-</div>
 
-<div class="flex justify-center">
-    <mat-form-field>
-        <mat-label>Enter a date range</mat-label>
-        <mat-date-range-input [rangePicker]="picker">
-            <input matStartDate [(ngModel)]="startDate" (dateInput)="applyFilterExpense()"
-                (dateChange)="applyFilterExpense()" placeholder="Start date">
-            <input matEndDate [(ngModel)]="endDate" (dateInput)="applyFilterExpense()"
-                (dateChange)="applyFilterExpense()" placeholder="End date">
-        </mat-date-range-input>
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <button mat-icon-button matSuffix (click)="clearDateRange()">
-            <mat-icon aria-label="Clear range">clear</mat-icon>
-        </button>
-        <mat-date-range-picker #picker></mat-date-range-picker>
-    </mat-form-field>
-</div>
-
-<div class="overflow-x-auto">
-<table mat-table [dataSource]="expenseList" matSort class="w-full table-fixed">
-    <ng-container matColumnDef="expenseDate">
-        <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Expense Date</th>
-        <td class="text-center" mat-cell *matCellDef="let element">{{ element.expenseDate | date }}</td>
-    </ng-container>
-    <ng-container matColumnDef="expenseName">
-        <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Expense Name</th>
-        <td class="text-center" mat-cell *matCellDef="let element">{{ element.expenseName }}</td>
-    </ng-container>
-    <ng-container matColumnDef="payerName">
-        <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Payer Name</th>
-        <td class="text-center" mat-cell *matCellDef="let element">{{ element.payerName }}</td>
-    </ng-container>
-    <ng-container matColumnDef="amount">
-        <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Amount Paid</th>
-        <td class="text-center" mat-cell *matCellDef="let element">{{ element.amount }}</td>
-    </ng-container>
-    <ng-container matColumnDef="actions">
-        <th class="w-1/4" mat-header-cell *matHeaderCellDef>Actions</th>
-        <td class="text-center" mat-cell *matCellDef="let element">
-            <button mat-icon-button color="warn" (click)="deleteExpense(element)" matTooltip="Delete">
-                <mat-icon class="text-red-500">delete</mat-icon>
+    <div class="flex justify-center">
+        <mat-form-field>
+            <mat-label>Enter a date range</mat-label>
+            <mat-date-range-input [rangePicker]="picker">
+                <input matStartDate [(ngModel)]="startDate" (dateInput)="applyFilterExpense()"
+                    (dateChange)="applyFilterExpense()" placeholder="Start date">
+                <input matEndDate [(ngModel)]="endDate" (dateInput)="applyFilterExpense()"
+                    (dateChange)="applyFilterExpense()" placeholder="End date">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <button mat-icon-button matSuffix (click)="clearDateRange()">
+                <mat-icon aria-label="Clear range">clear</mat-icon>
             </button>
-            <button mat-icon-button color="primary" (click)="editExpense(element)" matTooltip="Edit">
-                <mat-icon class="text-blue-500">create</mat-icon>
-            </button>
-        </td>
-    </ng-container>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+    </div>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-</div>
-<mat-paginator [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+    <div class="overflow-x-auto">
+        <table mat-table [dataSource]="expenseList" matSort class="w-full table-fixed">
+            <ng-container matColumnDef="expenseDate">
+                <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Expense Date</th>
+                <td class="text-center" mat-cell *matCellDef="let element">{{ element.expenseDate | date }}</td>
+            </ng-container>
+            <ng-container matColumnDef="expenseName">
+                <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Expense Name</th>
+                <td class="text-center" mat-cell *matCellDef="let element">{{ element.expenseName }}</td>
+            </ng-container>
+            <ng-container matColumnDef="payerName">
+                <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Payer Name</th>
+                <td class="text-center" mat-cell *matCellDef="let element">{{ element.payerName }}</td>
+            </ng-container>
+            <ng-container matColumnDef="amount">
+                <th class="w-1/4" mat-header-cell *matHeaderCellDef mat-sort-header>Amount Paid</th>
+                <td class="text-center" mat-cell *matCellDef="let element">{{ element.amount }}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <th class="w-1/4" mat-header-cell *matHeaderCellDef>Actions</th>
+                <td class="text-center" mat-cell *matCellDef="let element">
+                    <button mat-icon-button color="warn" (click)="deleteExpense(element)" matTooltip="Delete">
+                        <mat-icon class="text-red-500">delete</mat-icon>
+                    </button>
+                    <button mat-icon-button color="primary" (click)="editExpense(element)" matTooltip="Edit">
+                        <mat-icon class="text-blue-500">create</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+    </div>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 
 </div>
+
+<app-loading-spinner *ngIf="loading"></app-loading-spinner>

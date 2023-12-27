@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Expense } from 'src/app/expense.model';
@@ -10,7 +10,7 @@ import { catchError, finalize, of, switchMap, tap } from 'rxjs';
 @Component({
   selector: 'app-add-expense',
   templateUrl: './add-expense.component.html',
-  styleUrls: ['./add-expense.component.css']
+  styleUrls: ['./add-expense.component.css'],
 })
 export class AddExpenseComponent {
   mode: 'add' | 'edit' = 'add';
@@ -20,6 +20,7 @@ export class AddExpenseComponent {
   expenseForm: FormGroup;
   expensetoEdit: any;
   participants: any[] = [];
+  loading = true;
 
   constructor(
     private fb: FormBuilder,
@@ -27,7 +28,8 @@ export class AddExpenseComponent {
     private groupService: GroupService,
     private route: ActivatedRoute,
     private router: Router,
-    private datePipe: DatePipe) {
+    private datePipe: DatePipe,
+    private cdr: ChangeDetectorRef) {
     this.expenseForm = this.fb.group({
       expenseName: ['', Validators.required],
       payer: ['', Validators.required],
@@ -53,6 +55,7 @@ export class AddExpenseComponent {
               this.mode = 'edit';
               this.populateFormWithExpenseData(this.expensetoEdit);
             }
+            this.loading = false;
           })
         );
       })
