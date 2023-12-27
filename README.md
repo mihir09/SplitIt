@@ -1,6 +1,41 @@
-# SplitIt
+# SplitIt - Finance Management Application
 
-SplitIt is a finance management application that simplifies the process of adding bills and splitting expenses among group members. It offers advanced features for validation, user authentication, and settling balances, making it an ideal tool for managing shared finances within a group.
+SplitIt is a finance management application that simplifies the process of adding bills and splitting expenses among group members. With advanced functionalities for expense management, including features for adding, updating, deleting expenses, and settling balances, SplitIt emerges as an ideal tool for efficient management of shared finances within a group.
+
+## Latest Feature: Participants-Based Splitting
+
+### Overview
+
+In the latest update, SplitIt introduces a sophisticated expense splitting mechanism based on the participants involved in each bill. This enhancement provides users with more flexibility and accuracy in dividing expenses among group members.
+
+### How it Works
+
+1. **Dynamic Splitting**: SplitIt dynamically calculates the split amount for each participant based on the total expense and the number of participants.
+
+2. **Equal Distribution**: Expenses are divided equally among all participants, ensuring a fair distribution of financial responsibilities.
+
+3. **Real-time Balancing**: The application updates participant balances in real-time, reflecting the immediate impact of added or deleted expenses.
+
+4. **Participant Validation**: The system performs participant validation to ensure that each member is correctly linked to the group before processing the expense.
+
+### Implementation in Action
+
+1. Add Expense by selecting involved participants 
+
+![Participants-based Splitting](gitSnaps/Participants_based_Expense_1.png "Participants-based Splitting")
+
+2. Updated Group Balance 
+
+![Participants-based Splitting](gitSnaps/Participants_based_Expense_2.png "Participants-based Splitting")
+
+3. Edit Expense and change payer or participants
+
+![Participants-based Splitting](gitSnaps/Participants_based_Expense_3.png "Participants-based Splitting")
+
+4. Updated Group Balance
+
+![Participants-based Splitting](gitSnaps/Participants_based_Expense_4.png "Participants-based Splitting")
+
 
 ## Features
 
@@ -8,7 +43,7 @@ SplitIt is a finance management application that simplifies the process of addin
 
 - **Bill Management**: Users can easily add, edit, and delete bills. Each bill can be associated with a description, amount, and the members involved in the expense.
 
-- **Expense Splitting**: SplitIt calculates how much each member owes or is owed based on the bills and the members involved. It simplifies the process of dividing expenses evenly among group members.
+- **Expense Splitting**: SplitIt calculates how much each member owes or is owed based on the bills and the members involved. It simplifies the process of dividing expenses evenly with a participant-based splitting mechanism for spliting exclusively among involved members, guaranteeing a tailored and accurate financial management experience without impacting others.
 
 - **Balance Settlement**: Users can settle balances among group members, making it easy to track who owes money and who is owed.
 
@@ -51,7 +86,12 @@ Open your browser and go to http://localhost:4200 to access the SplitIt frontend
 - Install dependencies:
    ```bash
    npm install
-- Configure the MongoDB connection in server.js file in following code
+- Add .env file and paste following content in it:
+   ```bash
+   ACCESS_TOKEN_SECRET='123'
+   REFRESH_TOKEN_SECRET='123'
+   ```
+- Configure the MongoDB connection in server.js file in following code:
     ```bash
     mongoose.connect('mongodb://127.0.0.1:27017/SplitIt', {
     useNewUrlParser: true,
@@ -75,6 +115,8 @@ Shifted to Cyclic.sh for hosting Backend server and Netlify for Frontend.
 SplitIt is an ongoing project, and there are several potential improvements and future steps:
 
 - **Unequal Split**: Implement backend logic and frontend options to enable unequal distribution of expenses.
+
+- ~~**Participants-based Split**: Implement backend logic and frontend options to select members involved in participants.~~ ✅
 
 - **Notifications**: Add email or in-app notifications to keep users informed about their financial activities.
 
