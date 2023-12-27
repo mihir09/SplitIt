@@ -18,6 +18,7 @@ export class ListExpenseComponent implements OnInit {
   searchTerm: string = '';
   startDate!: Date | null;
   endDate!: Date | null;
+  loading: boolean = true;
   
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -42,6 +43,7 @@ export class ListExpenseComponent implements OnInit {
         this.expenseList.paginator = this.paginator;
         this.expenseList.sort = this.sort;
         this.expenseList.filterPredicate = this.expenseFilter();
+        this.loading = false;
       },
       error: (error) => {
         console.error('Error fetching expenses', error);
@@ -89,6 +91,7 @@ export class ListExpenseComponent implements OnInit {
   deleteExpense(expense: any): void {
     const confirmDelete = confirm('Are you sure you want to delete this expense?');
     if (confirmDelete) {
+      this.loading = true;
       this.expenseService.deleteExpense(expense._id).subscribe({
         next: (res) => {
           console.log(res.message)

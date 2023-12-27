@@ -18,6 +18,7 @@ export class ListBalanceComponent {
   balanceWithNames!: any;
   settle: boolean = false;
   selectedBalance: any;
+  loading: boolean = true;
 
   constructor(
     private groupService: GroupService,
@@ -46,6 +47,7 @@ export class ListBalanceComponent {
             this.currentUser.balance = member.balance;
           }
         })
+        this.loading = false; 
                 
       },
       error: (error) => {
@@ -58,6 +60,7 @@ export class ListBalanceComponent {
   confirmSettleBalance(index: number): void {
     const confirmed = window.confirm('Are you sure you want to settle this balance?');
     if (confirmed) {
+      this.loading = true;
       this.settleSelectedBalance(index);
     }
   }
