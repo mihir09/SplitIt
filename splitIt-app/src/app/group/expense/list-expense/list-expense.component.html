@@ -47,12 +47,17 @@
             <ng-container matColumnDef="actions">
                 <th class="w-1/4" mat-header-cell *matHeaderCellDef>Actions</th>
                 <td class="text-center" mat-cell *matCellDef="let element">
+                    <div class="flex flex-row">
                     <button mat-icon-button color="warn" (click)="deleteExpense(element)" matTooltip="Delete">
                         <mat-icon class="text-red-500">delete</mat-icon>
                     </button>
                     <button mat-icon-button color="primary" (click)="editExpense(element)" matTooltip="Edit">
                         <mat-icon class="text-blue-500">create</mat-icon>
                     </button>
+                    <button mat-icon-button color="primary" (click)="showExpenseDetails(element)" matTooltip="Show Details">
+                        <mat-icon class="text-blue-500">info</mat-icon>
+                    </button>
+                </div>
                 </td>
             </ng-container>
 

@@ -1,17 +1,42 @@
 <div class="p-2 rounded-lg text-center flex-1">
-    <h2 class="text-2xl font-bold mb-4">Add New Member</h2>
-    <form [formGroup]="createForm" (ngSubmit)="onAddUser()">
-      <div class="mb-4">
-        <label for="userEmail" class="block text-gray-700">User Email:</label>
-        <input type="text" id="userEmail" formControlName="email" required
-          class="px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500">
-      </div>
-      <div class="text-red-600" *ngIf="errorMessage">
-        {{ errorMessage }}
-      </div>
-      <button type="submit"
-        class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
-        Add
-      </button>
-    </form>
+  <h2 class="text-2xl font-bold mb-4">Add New Member</h2>
+  <form [formGroup]="createForm" (ngSubmit)="onAddUser()">
+    <div class="mb-4">
+      <label for="userEmail" class="block text-gray-700">User Email:</label>
+      <input type="text" id="userEmail" formControlName="email" required
+        class="px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500">
+    </div>
+    <div class="text-red-600" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+    <button type="submit"
+      class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+      Add
+    </button>
+  </form>
+
+
+  <div class="p-4 rounded text-center flex-1">
+    <h2 class="text-lg font-semibold mb-4">Group Members</h2>
+
+    <ul>
+      <li *ngFor="let member of members" class="text-lg text-gray-700 mb-2 hover:text-blue-500">
+        <div class="flex flex-col justify-center items-center">
+          <div class="flex flex-row items-center space-x-2">
+            <svg class="w-[15px] h-[15px] fill-[#8e8e8e]" viewBox="0 0 448 512">
+              <path
+                d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z">
+              </path>
+            </svg>
+            <p class="text-lg font-semibold">{{ member.name }}</p>
+          </div>
+
+          <div>
+            <p class="text-gray-500">{{ member.email }}</p>
+          </div>
+        </div>
+      </li>
+    </ul>
   </div>
+
+</div>
