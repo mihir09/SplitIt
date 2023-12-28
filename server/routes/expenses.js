@@ -30,7 +30,7 @@ async function createExpense(expenseData) {
 }
 
 // Calculate and update participant amounts
-function calculateAndUpdateBalances(group, expense, operation) {
+async function calculateAndUpdateBalances(group, expense, operation) {
   const payer = group.members.find(member => member.memberId.toString() == expense.payer.toString());
   const participantsList = expense.participants instanceof Map
     ? expense.participants
@@ -51,7 +51,7 @@ function calculateAndUpdateBalances(group, expense, operation) {
       throw new Error("Participant " + participantId + " missing in the group");
     }
 
-    const unroundedResult =  operation === 'add' ? member.memberBalance - participantAmount : member.memberBalance + participantAmount;
+    const unroundedResult = operation === 'add' ? member.memberBalance - participantAmount : member.memberBalance + participantAmount;
     const roundedResult = parseFloat(unroundedResult.toFixed(2));
     member.memberBalance = roundedResult;
   }
@@ -60,7 +60,8 @@ function calculateAndUpdateBalances(group, expense, operation) {
   const unroundedResult = operation === 'add' ? payer.memberBalance + expense.amount : payer.memberBalance - expense.amount;
   const roundedResult = parseFloat(unroundedResult.toFixed(2));
   payer.memberBalance = roundedResult;
-
+  expense.participants = participantsList
+  await expense.save()
   return group;
 }
 
@@ -117,7 +118,7 @@ function settleDebts(members) {
 async function handleExpenseCreation(req, res) {
   try {
     const { expenseName, payer, expenseDate, description, amount, groupId, payerName, participants } = req.body;
-    
+
     // Find Group
     const group = await findGroupById(groupId);
     if (!groupId || !group) {
@@ -154,6 +155,7 @@ async function handleExpenseCreation(req, res) {
 
     // Settle group debts
     settleGroupDebts(group, operation);
+    // console.log(expense)
 
     await group.save();
 
@@ -184,7 +186,7 @@ async function handleExpenseDeletion(req, res) {
 
     // Group has expense or not
     const groupIncludesExpense = group.expenses.includes(expenseId);
-    if(!groupIncludesExpense){
+    if (!groupIncludesExpense) {
       return res.status(404).json({ message: "Expense not found in group" });
     }
 
@@ -221,28 +223,21 @@ async function handleExpenseUpdate(req, res) {
   try {
     const expenseId = req.params.expenseId;
 
-    // Update Expense
-    const updatedExpense = await Expense.findByIdAndUpdate(
-      expenseId,
-      { $set: req.body.expenseData },
-      { new: true }
-    );
-
-    console.log("expense updated", updatedExpense)
-
-    if (!expenseId || !updatedExpense) {
+    const expense = await findExpenseById(expenseId);
+    
+    if (!expenseId || !expense) {
       return res.status(404).json({ message: 'Expense not found' });
     }
 
     // Find Group
-    const group = await findGroupById(updatedExpense.groupId);
-    if (!updatedExpense.groupId || !group) {
+    const group = await findGroupById(expense.groupId);
+    if (!expense.groupId || !group) {
       return res.status(404).json({ message: "Expense Group couldn't be linked" });
     }
 
     // Group has expense or not
     const groupIncludesExpense = group.expenses.includes(expenseId);
-    if(!groupIncludesExpense){
+    if (!groupIncludesExpense) {
       return res.status(404).json({ message: "Expense not found in group" });
     }
 
@@ -259,10 +254,17 @@ async function handleExpenseUpdate(req, res) {
     let operation = 'delete';
 
     // Calculate and update balances
-    calculateAndUpdateBalances(group, oldExpense, operation);
+    calculateAndUpdateBalances(group, expense, operation);
 
     // Settle group debts
     settleGroupDebts(group, operation);
+
+    // Update Expense
+    const updatedExpense = await Expense.findByIdAndUpdate(
+      expenseId,
+      { $set: req.body.expenseData },
+      { new: true }
+    );
 
     // Add modified expense
     const newExpense = req.body.expenseData;
@@ -276,10 +278,10 @@ async function handleExpenseUpdate(req, res) {
     operation = 'add';
 
     // Calculate and update balances
-    calculateAndUpdateBalances(group, newExpense, operation);
+    calculateAndUpdateBalances(group, updatedExpense, operation);
 
     // Settle group debts
-    settleGroupDebts(group, operation);    
+    settleGroupDebts(group, operation);
 
     // Updating expense details in group
     const index = group.expenses.findIndex(e => e.equals(updatedExpense._id));
@@ -287,7 +289,9 @@ async function handleExpenseUpdate(req, res) {
 
     await group.save();
 
-    return res.status(200).json({ message: 'Expense updated successfully' , updatedExpense: updatedExpense});
+    await expense.save()
+
+    return res.status(200).json({ message: 'Expense updated successfully', updatedExpense: updatedExpense });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal server error' });

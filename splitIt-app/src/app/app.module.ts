@@ -28,6 +28,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddExpenseComponent } from './group/expense/add-expense/add-expense.component';
 import { ListExpenseComponent } from './group/expense/list-expense/list-expense.component';
+import { ExpenseDetailsComponent } from './group/expense/list-expense/expense-details/expense-details.component';
 
 import { AddMemberComponent } from './group/member/add-member/add-member.component';
 
@@ -47,6 +48,7 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
     ExpenseFilterPipe,
     AddExpenseComponent,
     ListExpenseComponent,
+    ExpenseDetailsComponent,
     AddMemberComponent,
     ListBalanceComponent,
     AbsPipe,

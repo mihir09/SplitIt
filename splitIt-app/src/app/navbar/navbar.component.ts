@@ -13,14 +13,13 @@ export class NavbarComponent {
 
   constructor(public authService: AuthService, public usersService: UsersService) {
     this._user = this.authService.getCurrentUser()
-    console.log(this._user)
+
     if(!this._user){
       this.authService.logout()
     }
     this.usersService.getUserDetailsByEmail(this._user!).subscribe({
       next: (res) => {
         this._userDetails = res;
-        console.log(this._userDetails);
       },
       error: (error) => {
         console.error('Error fetching user details:', error);

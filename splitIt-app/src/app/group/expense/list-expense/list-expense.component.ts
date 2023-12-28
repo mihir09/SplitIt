@@ -5,6 +5,8 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Expense } from 'src/app/expense.model';
+import { MatDialog } from '@angular/material/dialog';
+import { ExpenseDetailsComponent } from './expense-details/expense-details.component';
 
 @Component({
   selector: 'app-list-expense',
@@ -19,6 +21,7 @@ export class ListExpenseComponent implements OnInit {
   startDate!: Date | null;
   endDate!: Date | null;
   loading: boolean = true;
+  selectedExpense: any | undefined;
   
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -26,7 +29,10 @@ export class ListExpenseComponent implements OnInit {
   displayedColumns: string[] = ['expenseDate', 'expenseName', 'payerName', 'amount', 'actions'];
   expenseList = new MatTableDataSource<any>([]);
 
-  constructor(private expenseService: ExpenseService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private expenseService: ExpenseService, 
+    private route: ActivatedRoute, 
+    private router: Router,
+    private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -112,6 +118,18 @@ export class ListExpenseComponent implements OnInit {
         expense: expenseString,
         groupId: this.groupId
       },
+    });
+  }
+
+  showExpenseDetails(expense: Expense): void {
+    this.selectedExpense = expense;
+    const dialogRef = this.dialog.open(ExpenseDetailsComponent, {
+      width: '400px',
+      data: { expense: expense }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
     });
   }
 }

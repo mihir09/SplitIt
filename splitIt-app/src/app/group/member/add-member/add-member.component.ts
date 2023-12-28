@@ -12,6 +12,7 @@ export class AddMemberComponent implements OnInit {
   createForm: FormGroup;
   errorMessage: string = '';
   groupId: string = '';
+  members: any = [];
 
   constructor(private fb: FormBuilder,
     private groupService: GroupService,
@@ -25,8 +26,17 @@ export class AddMemberComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.groupId = params['groupId'];
-      console.log(params['groupId'])
+      this.groupService.getMembers(this.groupId).subscribe({
+        next: (response) => {
+          console.log(response)
+          this.members = response
+        },
+        error: (error) => {
+          console.log(error)
+        }
+      })
     });
+    
   }
   onAddUser() {
     if (this.createForm.valid) {
