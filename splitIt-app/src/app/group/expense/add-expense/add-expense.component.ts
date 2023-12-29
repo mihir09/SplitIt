@@ -6,6 +6,7 @@ import { ExpenseService } from 'src/app/expense.service';
 import { GroupService } from 'src/app/group.service';
 import { DatePipe } from '@angular/common';
 import { catchError, finalize, of, switchMap, tap } from 'rxjs';
+import { split } from 'postcss/lib/list';
 
 @Component({
   selector: 'app-add-expense',
@@ -20,7 +21,9 @@ export class AddExpenseComponent {
   expenseForm: FormGroup;
   expensetoEdit: any;
   participants: any[] = [];
+  participantAmounts: { [key: string]: number } = {};
   loading = true;
+  selectedSplitType: 'equal' | 'unequal' = 'equal';
 
   constructor(
     private fb: FormBuilder,
@@ -101,6 +104,7 @@ export class AddExpenseComponent {
 
   onAddOrUpdateExpense() {
     if (this.expenseForm.valid && this.canAddExpense()) {
+      console.log(this.participants, this.participantAmounts)
       const expenseData = {
         ...this.expenseForm.value,
         groupId: this.groupId
@@ -112,13 +116,25 @@ export class AddExpenseComponent {
         payerName = payer.name;
       }
       expenseData.payerName = payerName
+      expenseData.amount = parseFloat(expenseData.amount.toFixed(2));
+
       let participants:any = {}
-      this.participants.forEach((participant) => { 
-        participants[participant.id] = 0
-      });
+
+      if (this.selectedSplitType === 'unequal'){
+        this.participants.forEach((participant) => { 
+          participants[participant.id] = this.participantAmounts[participant.id]
+        });
+      }
+      else{
+        const splitAmount = parseFloat((expenseData.amount/this.participants.length).toFixed(2));
+        this.participants.forEach((participant) => { 
+          participants[participant.id] = splitAmount
+        });
+      }
 
       expenseData.participants = participants
-      expenseData.amount = parseFloat(expenseData.amount.toFixed(2));
+      console.log(expenseData.participants)
+      
       if (!expenseData.expenseDate) {
         expenseData.expenseDate = new Date().toISOString().split('T')[0]
       }
@@ -162,14 +178,36 @@ export class AddExpenseComponent {
   toggleParticipant(participantId: string): void {
     if (this.participants.find(participant => participant.id === participantId)){
       this.participants = this.participants.filter(participant => participant.id !== participantId);
+      delete this.participantAmounts[participantId];
     }
     else{
       const memberDetails = this.members.find(member => member.id === participantId)
       this.participants.push(memberDetails)
+      this.participantAmounts[participantId] = 0;
     }
   }
 
   isParticipantSelected(participantId: string): boolean {
     return this.participants.find(participant => participant.id === participantId);
+  }
+
+  updateParticipantAmount(memberId: string, event: any): void {
+    this.participantAmounts[memberId] = +event.target.value;
+  }
+
+  toggleSplitType() {
+    this.selectedSplitType = (this.selectedSplitType === 'equal') ? 'unequal' : 'equal';
+  }
+
+  isTotalAmountValid(): boolean {
+    if (this.selectedSplitType === 'unequal') {
+      const totalParticipantAmount = Object.values(this.participantAmounts)
+        .reduce((sum, amount) => sum + amount, 0);
+      console.log("total = ", totalParticipantAmount)
+  
+      return totalParticipantAmount === this.expenseForm.value.amount;
+    }
+  
+    return true;
   }
 }

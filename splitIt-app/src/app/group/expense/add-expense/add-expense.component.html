@@ -19,13 +19,30 @@
 
     <div class="mb-4">
       <label for="participants" class="block text-gray-700">Participants:</label>
+      <button type="button" (click)="toggleSplitType()">{{selectedSplitType}} Split</button>
       <div class="flex items-center justify-center flex-wrap">
-        <button *ngFor="let member of members" type="button"
-          class="font-bold m-2 p-1 rounded transition-colors duration-300 ease-in-out focus:outline-none focus:ring focus:border-blue-300"
-          [ngClass]="{'bg-gray-500 text-white': isParticipantSelected(member.id)}"
-          (click)="toggleParticipant(member.id)">
-          {{ member.email }}
-        </button>
+        <ng-container *ngFor="let member of members">
+          <button type="button"
+            class="font-bold m-2 p-1 rounded transition-colors duration-300 ease-in-out focus:outline-none focus:ring focus:border-blue-300"
+            [ngClass]="{'bg-gray-500 text-white': isParticipantSelected(member.id)}"
+            (click)="toggleParticipant(member.id)">
+            {{ member.email }}
+          </button>
+    
+          <ng-container *ngIf="isParticipantSelected(member.id)">
+            <ng-container *ngIf="selectedSplitType === 'unequal'">
+              <input
+                type="number"
+                class="form-input mt-1 block w-20"
+                placeholder="Amount"
+                [value]="participantAmounts[member.id] || 0"
+                (input)="updateParticipantAmount(member.id, $event)"
+                required
+                min="0"
+              >
+            </ng-container>
+          </ng-container>
+        </ng-container>
       </div>
     </div>
 
@@ -65,13 +82,16 @@
     <div *ngIf="!canAddExpense()" class="text-red-600">
       Select at least 1 participant other than payer.
     </div>
+    <div *ngIf="expenseForm.get('amount')?.touched && !isTotalAmountValid()" class="text-red-600">
+      Total participant amount must be equal to the expense amount.
+    </div>
 
 
     <div class="flex justify-center">
       <button
         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:bg-blue-600"
-        type="submit" [disabled]="expenseForm.invalid || !canAddExpense()"
-        [ngClass]="{'pointer-events-none bg-gray-400': expenseForm.invalid || !canAddExpense()}">
+        type="submit" [disabled]="expenseForm.invalid || !canAddExpense() || (selectedSplitType === 'unequal' && !isTotalAmountValid())"
+        [ngClass]="{'pointer-events-none bg-gray-400': expenseForm.invalid || !canAddExpense() || (selectedSplitType === 'unequal' && !isTotalAmountValid())}">
         {{ mode === 'add' ? 'Add Expense' : 'Edit Expense' }}
       </button>
     </div>
