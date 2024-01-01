@@ -35,13 +35,13 @@ async function calculateAndUpdateBalances(group, expense, operation) {
   const participantsList = expense.participants instanceof Map
     ? expense.participants
     : new Map(Object.entries(expense.participants));
-  const rawSplitAmount = expense.amount / participantsList.size;
-  const splitAmount = parseFloat(rawSplitAmount.toFixed(2));
+  // const rawSplitAmount = expense.amount / participantsList.size;
+  // const splitAmount = parseFloat(rawSplitAmount.toFixed(2));
 
-  // Update participant amounts by adding the split amount
-  for (const [participantId, participantAmount] of participantsList.entries()) {
-    participantsList.set(participantId, splitAmount);
-  }
+  // // Update participant amounts by adding the split amount
+  // for (const [participantId, participantAmount] of participantsList.entries()) {
+  //   participantsList.set(participantId, splitAmount);
+  // }
 
   // Update participants balance
   for (const [participantId, participantAmount] of participantsList.entries()) {
@@ -117,7 +117,7 @@ function settleDebts(members) {
 // Create a new expense
 async function handleExpenseCreation(req, res) {
   try {
-    const { expenseName, payer, expenseDate, description, amount, groupId, payerName, participants } = req.body;
+    const { expenseName, payer, expenseDate, description, amount, groupId, payerName, participants, splitType } = req.body;
 
     // Find Group
     const group = await findGroupById(groupId);
@@ -140,7 +140,8 @@ async function handleExpenseCreation(req, res) {
       amount,
       groupId,
       payerName,
-      participants
+      participants,
+      splitType
     };
 
     const expense = await createExpense(expenseData);
