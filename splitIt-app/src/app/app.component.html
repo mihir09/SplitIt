@@ -3,5 +3,25 @@
   <div class="pt-12">
     <router-outlet></router-outlet>
   </div>
-  <button class="fixed bottom-4 right-4 bg-blue-300 hover:bg-blue-700 text-white py-2 px-4 rounded scroll-to-top-button" (click)="scrollToTop()" #scrollToTopButton>Scroll To Top</button>
+  <button
+  class="fixed bottom-4 right-4 bg-blue-300 hover:bg-blue-700 text-white py-2 px-4 rounded scroll-to-top-button"
+  (click)="scrollToTop()"
+  #scrollToTopButton
+>
+  <svg
+    class="w-2 h-3"
+    aria-hidden="true"
+    fill="none"
+    viewBox="0 0 10 14"
+  >
+    <path
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M5 13V1m0 0L1 5m4-4 4 4"
+    />
+  </svg>
+</button>
+
 </div>

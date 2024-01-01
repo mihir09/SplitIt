@@ -32,6 +32,7 @@ const expenseSchema = new mongoose.Schema({
     type: Map,
     of: Number,
   },
+  splitType: String,
 });
 
 module.exports = mongoose.model('Expense', expenseSchema);

@@ -6,6 +6,7 @@ import { ExpenseService } from 'src/app/expense.service';
 import { GroupService } from 'src/app/group.service';
 import { DatePipe } from '@angular/common';
 import { catchError, finalize, of, switchMap, tap } from 'rxjs';
+import { split } from 'postcss/lib/list';
 
 @Component({
   selector: 'app-add-expense',
@@ -20,7 +21,9 @@ export class AddExpenseComponent {
   expenseForm: FormGroup;
   expensetoEdit: any;
   participants: any[] = [];
+  participantAmounts: { [key: string]: number } = {};
   loading = true;
+  selectedSplitType: 'equal' | 'unequal' = 'equal';
 
   constructor(
     private fb: FormBuilder,
@@ -36,7 +39,7 @@ export class AddExpenseComponent {
       participants: [[]],
       expenseDate: [new Date().toISOString().split('T')[0]],
       description: [''],
-      amount: ['', [Validators.required, Validators.min(0)]],
+      amount: ['', [Validators.required, Validators.min(0), this.validateDecimal]],
     });
   }
 
@@ -60,7 +63,7 @@ export class AddExpenseComponent {
         );
       })
     )
-    .subscribe();
+      .subscribe();
   }
 
   populateFormWithExpenseData(expense: any): void {
@@ -69,6 +72,7 @@ export class AddExpenseComponent {
     Object.keys(expense.participants).forEach(participantId => {
       let memberDetails = this.members.find(member => member.id === participantId);
       participants.push(memberDetails);
+      this.participantAmounts[participantId] = expense.participants[participantId];
     });
     this.expenseForm.setValue({
       expenseName: expense.expenseName,
@@ -79,6 +83,8 @@ export class AddExpenseComponent {
       participants: participants,
     });
     this.participants = participants
+    this.selectedSplitType = expense.splitType
+    this.participantAmounts
   }
 
   fetchMembers() {
@@ -112,13 +118,26 @@ export class AddExpenseComponent {
         payerName = payer.name;
       }
       expenseData.payerName = payerName
-      let participants:any = {}
-      this.participants.forEach((participant) => { 
-        participants[participant.id] = 0
-      });
+      expenseData.amount = parseFloat(expenseData.amount.toFixed(2));
+
+      let participants: any = {}
+
+      if (this.selectedSplitType === 'unequal') {
+        this.participants.forEach((participant) => {
+          participants[participant.id] = this.participantAmounts[participant.id]
+        });
+        expenseData.splitType = 'unequal'
+      }
+      else {
+        const splitAmount = parseFloat((expenseData.amount / this.participants.length).toFixed(2));
+        this.participants.forEach((participant) => {
+          participants[participant.id] = splitAmount
+        });
+        expenseData.splitType = 'equal'
+      }
 
       expenseData.participants = participants
-      expenseData.amount = parseFloat(expenseData.amount.toFixed(2));
+
       if (!expenseData.expenseDate) {
         expenseData.expenseDate = new Date().toISOString().split('T')[0]
       }
@@ -160,16 +179,56 @@ export class AddExpenseComponent {
   }
 
   toggleParticipant(participantId: string): void {
-    if (this.participants.find(participant => participant.id === participantId)){
+    if (this.participants.find(participant => participant.id === participantId)) {
       this.participants = this.participants.filter(participant => participant.id !== participantId);
+      delete this.participantAmounts[participantId];
     }
-    else{
+    else {
       const memberDetails = this.members.find(member => member.id === participantId)
       this.participants.push(memberDetails)
+      this.participantAmounts[participantId] = 0;
     }
   }
 
   isParticipantSelected(participantId: string): boolean {
     return this.participants.find(participant => participant.id === participantId);
+  }
+
+  updateParticipantAmount(memberId: string, event: any): void {
+    this.participantAmounts[memberId] = event.target.valueAsNumber;
+  }
+  updateParticipantAmountDecimal(memberId: string, event: any): void {
+    this.participantAmounts[memberId] = parseFloat(event.target.valueAsNumber.toFixed(2));
+  }
+
+  toggleSplitType(splitType: 'equal' | 'unequal') {
+    this.selectedSplitType = splitType;
+  }
+
+  isTotalAmountValid(): boolean {
+    if (this.selectedSplitType === 'unequal') {
+      const isAmountValid = Object.keys(this.participantAmounts).every(participantId => {
+        const amount = this.participantAmounts[participantId];
+        return amount > 0;
+      });
+
+      const totalParticipantAmount = Object.values(this.participantAmounts)
+        .reduce((sum, amount) => sum + amount, 0);
+
+      return isAmountValid && totalParticipantAmount.toFixed(2) === this.expenseForm.value.amount.toFixed(2);
+    }
+
+    return true;
+  }
+
+  validateDecimal(control: any): { [key: string]: any } | null {
+    const value = control.value;
+    if (value !== null && value !== undefined) {
+      const decimalRegex = /^\d+(\.\d{1,2})?$/;
+      if (!decimalRegex.test(value)) {
+        return { 'invalidDecimal': true };
+      }
+    }
+    return null;
   }
 }
