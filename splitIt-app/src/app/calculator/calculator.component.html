@@ -1,0 +1,31 @@
+<div class="calculator">
+    <div class="display">{{ display }}</div>
+    <ng-container [ngSwitch]="operator">
+      <div *ngSwitchCase="null">enter value</div>
+      <div *ngSwitchCase="'='">{{ lastOperation }}</div>
+      <div *ngSwitchDefault>{{ operator }}</div>
+    </ng-container>
+  
+    <div class="buttons">
+        <button (click)="onClearClick()">C</button>
+        <button (click)="onClearEntryClick()">CE</button>
+        <button (click)="onOperatorClick('%')">%</button>
+        <button (click)="onOperatorClick('/')">/</button>
+        <button (click)="onDigitClick('7')">7</button>
+        <button (click)="onDigitClick('8')">8</button>
+        <button (click)="onDigitClick('9')">9</button>
+        <button (click)="onOperatorClick('*')">*</button>
+        <button (click)="onDigitClick('4')">4</button>
+        <button (click)="onDigitClick('5')">5</button>
+        <button (click)="onDigitClick('6')">6</button>
+        <button (click)="onOperatorClick('-')">-</button>
+        <button (click)="onDigitClick('1')">1</button>
+        <button (click)="onDigitClick('2')">2</button>
+        <button (click)="onDigitClick('3')">3</button>
+        <button (click)="onOperatorClick('+')">+</button>
+        <button (click)="onDigitClick('00')">00</button>
+        <button (click)="onDigitClick('0')">0</button>
+        <button (click)="onDigitClick('.')">.</button>
+        <button (click)="onEqualClick()">=</button>
+    </div>
+</div>

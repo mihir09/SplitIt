@@ -47,28 +47,33 @@
       <div class="mt-4">
         <p class="mb-2 text-gray-700">Please select a split type:</p>
         <div class="flex space-x-4 justify-center">
-          <button
-            type="button"
-            (click)="toggleSplitType('equal')"
+          <button type="button" (click)="toggleSplitType('equal')"
             class="px-4 py-2 font-semibold border-none focus:outline-none focus:text-blue-500"
-            [class.text-gray-700]="selectedSplitType !== 'equal'"
-            [class.text-blue-500]="selectedSplitType === 'equal'"
-          >
+            [class.text-gray-700]="selectedSplitType !== 'equal'" [class.text-blue-500]="selectedSplitType === 'equal'">
             Equal Split
           </button>
-          <button
-            type="button"
-            (click)="toggleSplitType('unequal')"
+          <button type="button" (click)="toggleSplitType('unequal')"
             class="px-4 py-2 font-semibold border-none focus:outline-none focus:text-blue-500"
             [class.text-gray-700]="selectedSplitType !== 'unequal'"
-            [class.text-blue-500]="selectedSplitType === 'unequal'"
-          >
+            [class.text-blue-500]="selectedSplitType === 'unequal'">
             Unequal Split
+          </button>
+          <button type="button" (click)="toggleSplitType('shares')"
+            class="px-4 py-2 font-semibold border-none focus:outline-none focus:text-blue-500"
+            [class.text-gray-700]="selectedSplitType !== 'shares'"
+            [class.text-blue-500]="selectedSplitType === 'shares'">
+            By Shares
+          </button>
+          <button type="button" (click)="toggleSplitType('percentages')"
+            class="px-4 py-2 font-semibold border-none focus:outline-none focus:text-blue-500"
+            [class.text-gray-700]="selectedSplitType !== 'percentages'"
+            [class.text-blue-500]="selectedSplitType === 'percentages'">
+            By Percentages
           </button>
         </div>
       </div>
-      
-      
+
+
       <label for="participants" class="block text-gray-700">Participants:</label>
       <div class="flex items-center justify-center flex-wrap">
         <ng-container *ngFor="let member of members">
@@ -85,6 +90,16 @@
                 [value]="participantAmounts[member.id] || 0" (input)="updateParticipantAmount(member.id, $event)"
                 required min="1" (change)="updateParticipantAmountDecimal(member.id, $event)">
             </ng-container>
+            <ng-container *ngIf="selectedSplitType === 'shares'">
+              <input type="number" class="form-input mt-1 block w-20" placeholder="Share"
+                [value]="participantShares[member.id] || 0" (input)="updateParticipantShares(member.id, $event)"
+                required min="1" step="1">
+            </ng-container>
+            <ng-container *ngIf="selectedSplitType === 'percentages'">
+              <input type="number" class="form-input mt-1 block w-20" placeholder="Percentage"
+                [value]="participantPercentages[member.id] || 0" (input)="updateParticipantAmount(member.id, $event)"
+                required min="1" (change)="updateParticipantAmountDecimal(member.id, $event)">
+            </ng-container>
           </ng-container>
         </ng-container>
       </div>
@@ -92,12 +107,31 @@
     <div *ngIf="!canAddExpense()" class="text-red-600">
       Select at least 1 participant other than payer.
     </div>
-    <div *ngIf="expenseForm.get('amount')?.touched && !isTotalAmountValid()" class="text-red-600">
+    <div
+      *ngIf="((mode === 'add' && expenseForm.get('amount')?.touched) || mode==='edit') && selectedSplitType === 'unequal' && !isTotalAmountValid()"
+      class="text-red-600">
       Individual participant amount must be greater than 0 and sum of participant amount must be equal to the expense
       amount.
     </div>
+    <div
+      *ngIf="((mode === 'add' && expenseForm.get('amount')?.touched) || mode==='edit') && selectedSplitType === 'shares' && !isTotalAmountValid()"
+      class="text-red-600">
+      Individual share must be Integer and greater than 0.
+    </div>
+    <div
+      *ngIf="((mode === 'add' && expenseForm.get('amount')?.touched) || mode==='edit') && selectedSplitType === 'percentages' && !isTotalAmountValid()"
+      class="text-red-600">
+      Individual participant percentage must be greater than 0 and sum of participant percentages must be equal to 100.
+    </div>
 
-    <div class="mb-4">
+    <button (click)="toggleCalculator()">Toggle Calculator</button>
+
+    <div class="mb-4" [@openClose]="openClose">
+      <app-calculator></app-calculator>
+    </div>
+
+
+    <div class="mb-4 mt-4">
       <label for="expenseDate" class="block text-gray-700">Expense Date:</label>
       <input type="date" id="expenseDate" class="form-input mt-1 block w-full" formControlName="expenseDate"
         [value]="expenseForm.value.expenseDate">
@@ -113,8 +147,8 @@
       <button
         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:bg-blue-600"
         type="submit"
-        [disabled]="expenseForm.invalid || !canAddExpense() || (selectedSplitType === 'unequal' && !isTotalAmountValid())"
-        [ngClass]="{'pointer-events-none bg-gray-400': expenseForm.invalid || !canAddExpense() || (selectedSplitType === 'unequal' && !isTotalAmountValid())}">
+        [disabled]="expenseForm.invalid || !canAddExpense() || (selectedSplitType !== 'equal' && !isTotalAmountValid())"
+        [ngClass]="{'pointer-events-none bg-gray-400': expenseForm.invalid || !canAddExpense() || (selectedSplitType !== 'equal' && !isTotalAmountValid())}">
         {{ mode === 'add' ? 'Add Expense' : 'Edit Expense' }}
       </button>
     </div>
