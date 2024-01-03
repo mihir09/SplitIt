@@ -35,6 +35,7 @@ import { AddMemberComponent } from './group/member/add-member/add-member.compone
 import { ListBalanceComponent } from './group/balance/list-balance/list-balance.component';
 import { AbsPipe } from './abs.pipe';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
+import { CalculatorComponent } from './calculator/calculator.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
     ListBalanceComponent,
     AbsPipe,
     LoadingSpinnerComponent,
+    CalculatorComponent,
   ],
   imports: [
     MatCardModule,

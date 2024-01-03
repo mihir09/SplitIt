@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, HostBinding } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Expense } from 'src/app/expense.model';
@@ -6,11 +6,19 @@ import { ExpenseService } from 'src/app/expense.service';
 import { GroupService } from 'src/app/group.service';
 import { DatePipe } from '@angular/common';
 import { catchError, finalize, of, switchMap, tap } from 'rxjs';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-add-expense',
   templateUrl: './add-expense.component.html',
   styleUrls: ['./add-expense.component.css'],
+  animations: [
+    trigger('openClose', [
+      state('open', style({ height: '*', display: 'block' })),
+      state('closed', style({ height: '0', display: 'none' })),
+      transition('closed => open', [animate('200ms ease-in')]),
+    ]),
+  ],
 })
 export class AddExpenseComponent {
   mode: 'add' | 'edit' = 'add';
@@ -25,6 +33,7 @@ export class AddExpenseComponent {
   participantPercentages: { [key: string]: number } = {};
   loading = true;
   selectedSplitType: 'equal' | 'unequal' | 'shares' | 'percentages' = 'equal';
+  openClose = 'closed';
 
   constructor(
     private fb: FormBuilder,
@@ -294,5 +303,9 @@ export class AddExpenseComponent {
       }
     }
     return null;
+  }
+
+  toggleCalculator() {
+    this.openClose = this.openClose === 'open' ? 'closed' : 'open';
   }
 }

@@ -1,0 +1,15 @@
+.calculator {
+    @apply w-48 mx-auto border rounded p-4 shadow-md;
+}
+
+.display {
+    @apply text-3xl mb-2;
+}
+
+.buttons {
+    @apply grid grid-cols-4 gap-2;
+}
+
+button {
+    @apply p-2 text-lg bg-gray-200 hover:bg-gray-300 rounded;
+}

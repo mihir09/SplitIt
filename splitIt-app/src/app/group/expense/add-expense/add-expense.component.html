@@ -124,7 +124,14 @@
       Individual participant percentage must be greater than 0 and sum of participant percentages must be equal to 100.
     </div>
 
-    <div class="mb-4">
+    <button (click)="toggleCalculator()">Toggle Calculator</button>
+
+    <div class="mb-4" [@openClose]="openClose">
+      <app-calculator></app-calculator>
+    </div>
+
+
+    <div class="mb-4 mt-4">
       <label for="expenseDate" class="block text-gray-700">Expense Date:</label>
       <input type="date" id="expenseDate" class="form-input mt-1 block w-full" formControlName="expenseDate"
         [value]="expenseForm.value.expenseDate">
