@@ -1,12 +1,11 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
+import { Component, ChangeDetectorRef } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Expense } from 'src/app/expense.model';
 import { ExpenseService } from 'src/app/expense.service';
 import { GroupService } from 'src/app/group.service';
 import { DatePipe } from '@angular/common';
 import { catchError, finalize, of, switchMap, tap } from 'rxjs';
-import { split } from 'postcss/lib/list';
 
 @Component({
   selector: 'app-add-expense',
@@ -22,8 +21,10 @@ export class AddExpenseComponent {
   expensetoEdit: any;
   participants: any[] = [];
   participantAmounts: { [key: string]: number } = {};
+  participantShares: { [key: string]: number } = {};
+  participantPercentages: { [key: string]: number } = {};
   loading = true;
-  selectedSplitType: 'equal' | 'unequal' = 'equal';
+  selectedSplitType: 'equal' | 'unequal' | 'shares' | 'percentages' = 'equal';
 
   constructor(
     private fb: FormBuilder,
@@ -53,6 +54,11 @@ export class AddExpenseComponent {
             return of([]);
           }),
           finalize(() => {
+            this.participants.forEach((participant) => {
+              this.participantAmounts[participant.id] = 0
+              this.participantShares[participant.id] = 0
+              this.participantPercentages[participant.id] = 0
+            });
             if (this.route.snapshot.queryParams['mode'] === 'edit' && this.route.snapshot.queryParams['expense']) {
               this.expensetoEdit = JSON.parse(this.route.snapshot.queryParams['expense']);
               this.mode = 'edit';
@@ -73,6 +79,8 @@ export class AddExpenseComponent {
       let memberDetails = this.members.find(member => member.id === participantId);
       participants.push(memberDetails);
       this.participantAmounts[participantId] = expense.participants[participantId];
+      this.participantShares[participantId] = 0;
+      this.participantPercentages[participantId] = parseFloat(((expense.participants[participantId] * 100) / expense.amount).toFixed(2));
     });
     this.expenseForm.setValue({
       expenseName: expense.expenseName,
@@ -84,7 +92,6 @@ export class AddExpenseComponent {
     });
     this.participants = participants
     this.selectedSplitType = expense.splitType
-    this.participantAmounts
   }
 
   fetchMembers() {
@@ -127,6 +134,22 @@ export class AddExpenseComponent {
           participants[participant.id] = this.participantAmounts[participant.id]
         });
         expenseData.splitType = 'unequal'
+      }
+      else if (this.selectedSplitType === 'shares') {
+        const totalShares = Object.values(this.participantShares)
+          .reduce((sum, share) => sum + share, 0);
+        this.participants.forEach((participant) => {
+          const splitAmount = parseFloat(((expenseData.amount * this.participantShares[participant.id]) / totalShares).toFixed(2));
+          participants[participant.id] = splitAmount
+        });
+        expenseData.splitType = 'shares'
+      }
+      else if (this.selectedSplitType === 'percentages') {
+        this.participants.forEach((participant) => {
+          const splitAmount = parseFloat(((expenseData.amount * this.participantPercentages[participant.id]) / 100).toFixed(2));
+          participants[participant.id] = splitAmount
+        });
+        expenseData.splitType = 'percentages'
       }
       else {
         const splitAmount = parseFloat((expenseData.amount / this.participants.length).toFixed(2));
@@ -182,11 +205,15 @@ export class AddExpenseComponent {
     if (this.participants.find(participant => participant.id === participantId)) {
       this.participants = this.participants.filter(participant => participant.id !== participantId);
       delete this.participantAmounts[participantId];
+      delete this.participantShares[participantId];
+      delete this.participantPercentages[participantId];
     }
     else {
       const memberDetails = this.members.find(member => member.id === participantId)
       this.participants.push(memberDetails)
       this.participantAmounts[participantId] = 0;
+      this.participantShares[participantId] = 0;
+      this.participantPercentages[participantId] = 0;
     }
   }
 
@@ -195,13 +222,28 @@ export class AddExpenseComponent {
   }
 
   updateParticipantAmount(memberId: string, event: any): void {
-    this.participantAmounts[memberId] = event.target.valueAsNumber;
+    if (this.selectedSplitType === 'percentages') {
+      this.participantPercentages[memberId] = event.target.valueAsNumber;
+    }
+    else {
+      this.participantAmounts[memberId] = event.target.valueAsNumber;
+    }
   }
   updateParticipantAmountDecimal(memberId: string, event: any): void {
-    this.participantAmounts[memberId] = parseFloat(event.target.valueAsNumber.toFixed(2));
+    if (this.selectedSplitType === 'percentages') {
+      this.participantPercentages[memberId] = parseFloat(event.target.valueAsNumber.toFixed(2));
+    }
+    else {
+      this.participantAmounts[memberId] = parseFloat(event.target.valueAsNumber.toFixed(2));
+    }
+
+  }
+  updateParticipantShares(memberId: string, event: any): void {
+    this.participantShares[memberId] = event.target.valueAsNumber;
+    // console.log(this.participantShares[memberId], typeof(this.participantShares[memberId]))
   }
 
-  toggleSplitType(splitType: 'equal' | 'unequal') {
+  toggleSplitType(splitType: 'equal' | 'unequal' | 'shares' | 'percentages') {
     this.selectedSplitType = splitType;
   }
 
@@ -209,6 +251,7 @@ export class AddExpenseComponent {
     if (this.selectedSplitType === 'unequal') {
       const isAmountValid = Object.keys(this.participantAmounts).every(participantId => {
         const amount = this.participantAmounts[participantId];
+        // console.log(typeof(amount), this.participantAmounts)
         return amount > 0;
       });
 
@@ -216,6 +259,27 @@ export class AddExpenseComponent {
         .reduce((sum, amount) => sum + amount, 0);
 
       return isAmountValid && totalParticipantAmount.toFixed(2) === this.expenseForm.value.amount.toFixed(2);
+    }
+
+    else if (this.selectedSplitType === 'shares') {
+      const isShareValid = Object.keys(this.participantShares).every(participantId => {
+        const share = this.participantShares[participantId];
+        // console.log(typeof(share), this.participantShares, Number.isInteger(share) && share > 0)
+        return Number.isInteger(share) && share > 0;
+      });
+
+      return isShareValid;
+    }
+
+    else if (this.selectedSplitType === 'percentages') {
+      const isPercentageValid = Object.keys(this.participantPercentages).every(participantId => {
+        const percentage = this.participantPercentages[participantId];
+        return percentage > 0;
+      });
+
+      const totalParticipantPercentage = Object.values(this.participantPercentages)
+        .reduce((sum, percentage) => sum + percentage, 0);
+      return isPercentageValid && totalParticipantPercentage == 100;
     }
 
     return true;
