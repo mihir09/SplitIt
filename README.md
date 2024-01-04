@@ -1,16 +1,16 @@
 # SplitIt - Finance Management Application
 
-SplitIt is a finance management application that simplifies the process of adding bills and splitting expenses among group members. With advanced functionalities for expense management, including features for adding, updating, deleting expenses, and settling balances, SplitIt emerges as an ideal tool for efficient management of shared finances within a group.
+SplitIt is a finance management application that simplifies the process of adding bills and splitting expenses among group members. Expense management including features for adding, updating, deleting expenses, and settling balances. With advanced functionalities for splitting Equally, Unequally, by Shares and by Percentages. SplitIt emerges as an ideal tool for efficient management of shared finances within a group.
 
-## Latest Feature: Unequal Splitting
+## Latest Feature: Shares and Perecentage Splitting + Calculator
 
 ### Overview
 
-In this latest update, SplitIt introduces an advanced option for expense splitting – "Unequal Splitting." This enhancement offers users a more personalized approach to dividing expenses among group members, allowing for greater flexibility in financial arrangements.
+In this latest update, SplitIt introduces an advanced option of splitting expense by shares or perecentages. This enhancement offers users a more personalized approach to dividing expenses among group members, allowing for greater flexibility in financial arrangements. Not only that now users can utilize calculator for performing advance calculation without need to switch to other application.
 
 ### How it Works
 
-1. **Customized Splitting**: SplitIt now enables users to customize the contribution of each participant individually. Users can specify the exact amount each member should contribute to the expense.
+1. **Customized Splitting**: SplitIt now enables users to customize the shares or percentages of each participant individually.
 
 2. **Real-time Balancing**: The application updates participant balances in real-time, reflecting the immediate impact of added or deleted expenses.
 
@@ -18,13 +18,9 @@ In this latest update, SplitIt introduces an advanced option for expense splitti
 
 ### Implementation in Action
 
-1. Unequal Split
+1. Share Split, Perecentage Split and Calculator
 
-![Unequal Split](gitSnaps/UnequalSplit_1.png "Unequal Split")
-
-2. Updated Group Balance 
-
-![Unequal Split](gitSnaps/UnequalSplit_2.png "Unequal Split")
+![Share Split, Perecentage Split and Calculator](gitSnaps/Shares_Percentages_Calculator.png " Share Split, Perecentage Split and Calculator")
 
 ## Features
 
@@ -32,7 +28,7 @@ In this latest update, SplitIt introduces an advanced option for expense splitti
 
 - **Bill Management**: Users can easily add, edit, and delete bills. Each bill can be associated with a description, amount, and the members involved in the expense.
 
-- **Expense Splitting**: SplitIt calculates how much each member owes or is owed based on the bills and the members involved. It simplifies the process of dividing expenses evenly with a participant-based splitting mechanism for spliting exclusively among involved members, guaranteeing a tailored and accurate financial management experience without impacting others. Introducing an advanced option for expense splitting – "Unequal Splitting." This feature allows users to customize the contribution of each participant individually, providing a more personalized and flexible approach to expense sharing. Users can specify the exact amount each member should contribute to the expense, enhancing the granularity and customization of financial arrangements within the group.
+- **Expense Splitting**: SplitIt calculates how much each member owes or is owed based on the bills and the members involved. It simplifies the process of dividing expenses evenly with a participant-based splitting mechanism for spliting exclusively among involved members, guaranteeing a tailored and accurate financial management experience without impacting others. Introducing an advanced option for expense splitting – "Unequal Splitting." This feature allows users to customize the contribution of each participant individually, providing a more personalized and flexible approach to expense sharing. Users can specify the exact amount each member should contribute to the expense, enhancing the granularity and customization of financial arrangements within the group. Additionally, features like "Shares Split" and "Percentage Split" provide alternatives to determine contribution shares and percentages instead of exact amounts, further diversifying the options for users in managing shared expenses.
 
 - **Balance Settlement**: Users can settle balances among group members, making it easy to track who owes money and who is owed.
 
@@ -106,6 +102,8 @@ SplitIt is an ongoing project, and there are several potential improvements and 
 - ~~**Unequal Split**: Implement backend logic and frontend options to enable unequal distribution of expenses.~~ ✅
 
 - ~~**Participants-based Split**: Implement backend logic and frontend options to select members involved in participants.~~ ✅
+
+- ~~**Shares and Perecentages Split**: Implement backend logic and frontend options to enable unequal distribution of expenses by mentioning shares or perecentages of involved participants.~~ ✅
 
 - **Notifications**: Add email or in-app notifications to keep users informed about their financial activities.
 
