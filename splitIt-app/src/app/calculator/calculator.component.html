@@ -1,10 +1,8 @@
 <div class="calculator">
     <div class="display">{{ display }}</div>
-    <ng-container [ngSwitch]="operator">
-      <div *ngSwitchCase="null">enter value</div>
-      <div *ngSwitchCase="'='">{{ lastOperation }}</div>
-      <div *ngSwitchDefault>{{ operator }}</div>
-    </ng-container>
+    <div *ngIf="operator && operator!=='='">{{operator}}</div>
+    <div *ngIf="operator=='=' && lastOperation">{{lastOperation}}</div>
+    <div *ngIf="!operator">enter value</div>
   
     <div class="buttons">
         <button (click)="onClearClick()">C</button>
