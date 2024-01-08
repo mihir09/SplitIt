@@ -117,7 +117,7 @@ function settleDebts(members) {
 // Create a new expense
 async function handleExpenseCreation(req, res) {
   try {
-    const { expenseName, payer, expenseDate, description, amount, groupId, payerName, participants, splitType } = req.body;
+    const { expenseName, payer, expenseDate, description, amount, groupId, payerName, participants, splitType, category } = req.body;
 
     // Find Group
     const group = await findGroupById(groupId);
@@ -141,7 +141,8 @@ async function handleExpenseCreation(req, res) {
       groupId,
       payerName,
       participants,
-      splitType
+      splitType,
+      category
     };
 
     const expense = await createExpense(expenseData);

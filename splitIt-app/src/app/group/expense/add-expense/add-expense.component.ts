@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Expense } from 'src/app/expense.model';
 import { ExpenseService } from 'src/app/expense.service';
 import { GroupService } from 'src/app/group.service';
-import { DatePipe } from '@angular/common';
 import { catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
@@ -34,15 +33,21 @@ export class AddExpenseComponent {
   loading = true;
   selectedSplitType: 'equal' | 'unequal' | 'shares' | 'percentages' = 'equal';
   openClose = 'closed';
+  categories: { title: string, categories: string[] }[] = [
+    { title: 'Entertainment', categories: ['Games', 'Movies', 'Music', 'Sports'] },
+    { title: 'Food and drink', categories: ['Groceries', 'Dine out', 'Liquor'] },
+    { title: 'Home', categories: ['Rent', 'Mortgage', 'Household supplies', 'Furniture', 'Maintenance', 'Pets', 'Services', 'Electronics'] },
+    { title: 'Transportation', categories: ['Parking', 'Car', 'Bus/train', 'Gas/fuel', 'Taxi', 'Bicycle', 'Hotel', 'Rental Vehicle'] },
+    { title: 'Utilities', categories: ['Electricity', 'Heat/gas', 'Water', 'TV/Phone/Internet', 'Trash', 'Cleaning'] },
+    { title: 'Uncategorized', categories: ['Other'] },
+  ];
 
   constructor(
     private fb: FormBuilder,
     private expenseService: ExpenseService,
     private groupService: GroupService,
     private route: ActivatedRoute,
-    private router: Router,
-    private datePipe: DatePipe,
-    private cdr: ChangeDetectorRef) {
+    private router: Router,) {
     this.expenseForm = this.fb.group({
       expenseName: ['', Validators.required],
       payer: ['', Validators.required],
@@ -50,6 +55,7 @@ export class AddExpenseComponent {
       expenseDate: [new Date().toISOString().split('T')[0]],
       description: [''],
       amount: ['', [Validators.required, Validators.min(0), this.validateDecimal]],
+      category: ['Other'],
     });
   }
 
@@ -98,6 +104,7 @@ export class AddExpenseComponent {
       description: expense.description,
       amount: expense.amount,
       participants: participants,
+      category: expense.category,
     });
     this.participants = participants
     this.selectedSplitType = expense.splitType
@@ -169,7 +176,7 @@ export class AddExpenseComponent {
       }
 
       expenseData.participants = participants
-
+      console.log(expenseData)
       if (!expenseData.expenseDate) {
         expenseData.expenseDate = new Date().toISOString().split('T')[0]
       }

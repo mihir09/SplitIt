@@ -4,22 +4,27 @@
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
     </svg>
   </button>
-  
+
   <h2 class="text-2xl font-semibold mb-4 text-center">Expense Details</h2>
   <div class="mb-6">
     <p class="mb-2"><strong class="text-blue-500">Expense Name:</strong> {{ expense.expenseName }}</p>
     <p class="mb-2"><strong class="text-blue-500">Expense Date:</strong> {{ expense.expenseDate | date }}</p>
     <p class="mb-2"><strong class="text-blue-500">Payer Name:</strong> {{ expense.payerName }}</p>
     <p class="mb-2"><strong class="text-blue-500">Amount Paid:</strong> {{ expense.amount }}</p>
-  
+
     <div *ngIf="participantsArray">
       <p class="mb-2"><strong class="text-blue-500">Participants:</strong></p>
       <ul class="pl-6">
         <li *ngFor="let participant of participantsArray" class="mb-1 text-lg">
-          {{ participant.name }}, {{ participant.amount }}
+          {{ participant.name }}'s share is {{ participant.amount }}
         </li>
       </ul>
     </div>
+
+    <p class="mb-2"><strong class="text-blue-500">Split Type:</strong> {{ expense.splitType }}</p>
+    <p class="mb-2"><strong class="text-blue-500">Expense Category:</strong> {{ expense.category }}</p>
+
+    <p class="mb-2" *ngIf="expense.description"><strong class="text-blue-500">Expense Description:</strong> {{ expense.description }}</p>
   </div>
 
 </div>

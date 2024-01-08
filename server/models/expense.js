@@ -33,6 +33,10 @@ const expenseSchema = new mongoose.Schema({
     of: Number,
   },
   splitType: String,
+  category: {
+    type: String,
+    required: false,
+  },
 });
 
 module.exports = mongoose.model('Expense', expenseSchema);
