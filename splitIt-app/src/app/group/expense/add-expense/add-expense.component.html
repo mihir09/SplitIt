@@ -46,7 +46,7 @@
     <div class="mb-4">
       <div class="mt-4">
         <p class="mb-2 text-gray-700">Please select a split type:</p>
-        <div class="flex space-x-4 justify-center">
+        <div class="flex space-x-2 justify-center">
           <button type="button" (click)="toggleSplitType('equal')"
             class="px-4 py-2 font-semibold border-none focus:outline-none focus:text-blue-500"
             [class.text-gray-700]="selectedSplitType !== 'equal'" [class.text-blue-500]="selectedSplitType === 'equal'">
@@ -124,14 +124,27 @@
       Individual participant percentage must be greater than 0 and sum of participant percentages must be equal to 100.
     </div>
 
-    <button (click)="toggleCalculator()">Calculator</button>
+    <button (click)="toggleCalculator()" class="text-gray-700">Calculator</button>
 
     <div class="mb-4" [@openClose]="openClose">
       <app-calculator></app-calculator>
     </div>
 
-
     <div class="mb-4 mt-4">
+      <label for="category" class="block text-gray-700">Select a category:</label>
+      <select id="category" class="form-input mt-1 block w-full" formControlName="category">
+        <ng-container *ngFor="let category of categories">
+          <optgroup [label]="category.title">
+            <option *ngFor="let subcategory of category.categories" [value]="subcategory">
+              {{ subcategory }}
+            </option>
+          </optgroup>
+        </ng-container>
+      </select>
+    </div>
+
+
+    <div class="mb-4">
       <label for="expenseDate" class="block text-gray-700">Expense Date:</label>
       <input type="date" id="expenseDate" class="form-input mt-1 block w-full" formControlName="expenseDate"
         [value]="expenseForm.value.expenseDate">

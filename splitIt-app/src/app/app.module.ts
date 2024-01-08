@@ -25,6 +25,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSelectModule } from '@angular/material/select';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddExpenseComponent } from './group/expense/add-expense/add-expense.component';
 import { ListExpenseComponent } from './group/expense/list-expense/list-expense.component';
@@ -73,6 +75,7 @@ import { CalculatorComponent } from './calculator/calculator.component';
     MatTableModule,
     MatSortModule,
     MatTooltipModule,
+    MatSelectModule,
     BrowserAnimationsModule,
   ],
   providers: [AuthService],
