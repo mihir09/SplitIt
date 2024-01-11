@@ -95,6 +95,16 @@ Open your browser and go to http://localhost:4200 to access the SplitIt frontend
 
 Test the server's API by making requests to http://localhost:3000 using Postman or any other suitable endpoint testing platform.
 
+For checking out without signup user either of following details to login:
+
+Email: testuser1@gmail.com
+Password: testuser1
+
+or
+
+Email: testuser2@gmail.com
+Password: testuser2
+
 # Deployment
 
 Launched website at https://splititapp.netlify.app/
