@@ -18,7 +18,6 @@ export class HomeComponent {
     private usersService: UsersService,
     private authService: AuthService,
     private router: Router,
-    private titleService: Title,
     @Inject(DOCUMENT) private document: Document
     ) {
     this.loadUserGroups();
@@ -47,7 +46,6 @@ export class HomeComponent {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const title = this.getTitle(this.router.routerState, this.router.routerState.root).join('-');
-        this.titleService.setTitle(title);
         gtag('event', 'page_view', {
           page_title: title,
           page_path: event.urlAfterRedirects,

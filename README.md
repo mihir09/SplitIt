@@ -6,7 +6,7 @@ SplitIt is a finance management application that simplifies the process of addin
 
 ### Overview
 
-In this latest update, SplitIt introduces an advanced option of splitting expense by shares or perecentages. This enhancement offers users a more personalized approach to dividing expenses among group members, allowing for greater flexibility in financial arrangements. Not only that now users can utilize calculator for performing advance calculation without need to switch to other application.
+In this latest update, SplitIt introduces an advanced option of splitting expense by shares or perecentages. This enhancement offers users a more personalized approach to dividing expenses among group members, allowing for greater flexibility in financial arrangements. Not only that, now users can utilize calculator for performing advance calculation without need to switch to other application. In addition to this, users have the option to choose an expense category to classify their spending.
 
 ### How it Works
 
@@ -16,11 +16,17 @@ In this latest update, SplitIt introduces an advanced option of splitting expens
 
 3. **Participant Validation**: The system performs participant validation to ensure that each member is correctly linked to the group before processing the expense.
 
+4. **Expense Categorization**: SplitIt now supports expense categorization for expense classifications.
+
 ### Implementation in Action
 
 1. Share Split, Perecentage Split and Calculator
 
-![Share Split, Perecentage Split and Calculator](gitSnaps/Shares_Percentages_Calculator.png " Share Split, Perecentage Split and Calculator")
+![Share Split, Perecentage Split and Calculator](gitSnaps/Shares_Percentages_Calculator.png "Share Split, Perecentage Split and Calculator")
+
+2. Expense Category
+
+![Expense Category](gitSnaps/Expense_Category.png "Expense Category")
 
 ## Features
 
@@ -107,7 +113,7 @@ SplitIt is an ongoing project, and there are several potential improvements and 
 
 - **Notifications**: Add email or in-app notifications to keep users informed about their financial activities.
 
-- **Expense Categories**: Allow users to categorize expenses for better tracking.
+- ~~**Expense Categories**: Allow users to categorize expenses for better tracking.~~ ✅
 
 - ~~**Expense Modifications**: Allow users to modify expenses and resolve balances based on that.~~ ✅
 
