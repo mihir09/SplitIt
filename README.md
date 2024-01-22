@@ -2,11 +2,11 @@
 
 SplitIt is a finance management application that simplifies the process of adding bills and splitting expenses among group members. Expense management including features for adding, updating, deleting expenses, and settling balances. With advanced functionalities for splitting Equally, Unequally, by Shares and by Percentages. SplitIt emerges as an ideal tool for efficient management of shared finances within a group.
 
-## Latest Feature: Shares and Perecentage Splitting + Calculator
+## Latest Feature: Shares and Percentage Splitting + Calculator
 
 ### Overview
 
-In this latest update, SplitIt introduces an advanced option of splitting expense by shares or perecentages. This enhancement offers users a more personalized approach to dividing expenses among group members, allowing for greater flexibility in financial arrangements. Not only that, now users can utilize calculator for performing advance calculation without need to switch to other application. In addition to this, users have the option to choose an expense category to classify their spending.
+In this latest update, SplitIt introduces an advanced option of splitting expense by shares or percentages. This enhancement offers users a more personalized approach to dividing expenses among group members, allowing for greater flexibility in financial arrangements. Not only that, now users can utilize calculator for performing advance calculation without need to switch to other application. In addition to this, users have the option to choose an expense category to classify their spending.
 
 ### How it Works
 
@@ -20,9 +20,9 @@ In this latest update, SplitIt introduces an advanced option of splitting expens
 
 ### Implementation in Action
 
-1. Share Split, Perecentage Split and Calculator
+1. Share Split, Percentage Split and Calculator
 
-![Share Split, Perecentage Split and Calculator](gitSnaps/Shares_Percentages_Calculator.png "Share Split, Perecentage Split and Calculator")
+![Share Split, percentage Split and Calculator](gitSnaps/Shares_Percentages_Calculator.png "Share Split, percentage Split and Calculator")
 
 2. Expense Category
 
@@ -119,7 +119,7 @@ SplitIt is an ongoing project, and there are several potential improvements and 
 
 - ~~**Participants-based Split**: Implement backend logic and frontend options to select members involved in participants.~~ ✅
 
-- ~~**Shares and Perecentages Split**: Implement backend logic and frontend options to enable unequal distribution of expenses by mentioning shares or perecentages of involved participants.~~ ✅
+- ~~**Shares and Percentages Split**: Implement backend logic and frontend options to enable unequal distribution of expenses by mentioning shares or percentages of involved participants.~~ ✅
 
 - **Notifications**: Add email or in-app notifications to keep users informed about their financial activities.
 
