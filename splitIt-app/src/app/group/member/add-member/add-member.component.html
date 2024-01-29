@@ -9,6 +9,9 @@
     <div class="text-red-600" *ngIf="errorMessage">
       {{ errorMessage }}
     </div>
+    <div class="text-green-600 mb-2" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
     <button type="submit"
       class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
       Add

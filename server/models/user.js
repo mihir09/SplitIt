@@ -9,7 +9,8 @@ const userSchema = new Schema({
     groups: [{
         groupId: { type: mongoose.Schema.Types.ObjectId, ref: 'Group' },
         groupName: String
-    }]
+    }],
+    invitations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Invitation' }]
 });
 
 module.exports = mongoose.model('User', userSchema);
