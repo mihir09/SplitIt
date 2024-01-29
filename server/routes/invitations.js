@@ -61,7 +61,8 @@ router.post('/accept', async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        if (invitation.recipientId !== user._id) {
+        if (invitation.recipientId.toString() !== user._id.toString()) {
+            console.log(invitation.recipientId, user._id)
             return res.status(403).json({ message: 'Invalid user for this invitation' });
         }
 
@@ -84,7 +85,7 @@ router.post('/accept', async (req, res) => {
 
         await User.findByIdAndUpdate(
             { _id: invitation.recipientId },
-            { $pull: { invitationsReceived: invitation._id } }
+            { $pull: { invitations: invitation._id } }
         );
 
         await group.save();
@@ -113,7 +114,7 @@ router.post('/decline', async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        if (invitation.recipientId !== user._id) {
+        if (invitation.recipientId.toString() !== user._id.toString()) {
             return res.status(403).json({ message: 'Invalid user for this invitation' });
         }
 
@@ -122,7 +123,7 @@ router.post('/decline', async (req, res) => {
 
         await User.findByIdAndUpdate(
             { _id: invitation.recipientId },
-            { $pull: { invitationsReceived: invitation._id } }
+            { $pull: { invitations: invitation._id } }
         );
 
         res.status(200).json({ message: 'Invitation declined successfully' });

@@ -1,4 +1,21 @@
 <div class="bg-gray-100 min-h-screen flex flex-col items-center">
+
+  <div *ngIf="invitations.length > 0" class="bg-white p-4 m-7 rounded shadow-md text-center min-w-[300px]">
+    <h2 class="text-lg font-semibold mb-4">Invitations</h2>
+    <ul>
+      <li *ngFor="let invitation of invitations" class="border-b p-2">
+        <div class="flex items-center space-x-2">
+          <p class="text-lg text-gray-800">Invited by {{ invitation.senderName }} to join group "{{ invitation.groupName }}"</p>
+        </div> 
+        <div class="flex justify-center mt-2">
+          <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600" (click)="acceptInvitation(invitation.id)">Accept</button>
+          <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:bg-red-600 ml-2" (click)="declineInvitation(invitation.id)">Decline</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+  
+
   <div *ngIf="groups.length > 0" class="bg-white p-4 m-7 rounded shadow-md text-center minWidth">
     <h2 class="text-2xl font-semibold mb-4">Groups</h2>
     <ul>
