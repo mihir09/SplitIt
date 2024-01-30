@@ -2,31 +2,27 @@
 
 SplitIt is a finance management application that simplifies the process of adding bills and splitting expenses among group members. Expense management including features for adding, updating, deleting expenses, and settling balances. With advanced functionalities for splitting Equally, Unequally, by Shares and by Percentages. SplitIt emerges as an ideal tool for efficient management of shared finances within a group.
 
-## Latest Feature: Shares and Percentage Splitting + Calculator
+## Latest Feature: Invitation to join group
 
 ### Overview
 
-In this latest update, SplitIt introduces an advanced option of splitting expense by shares or percentages. This enhancement offers users a more personalized approach to dividing expenses among group members, allowing for greater flexibility in financial arrangements. Not only that, now users can utilize calculator for performing advance calculation without need to switch to other application. In addition to this, users have the option to choose an expense category to classify their spending.
+In this latest update, SplitIt introduces a new feature for sending invitations to existing users, providing them with the option to either accept or decline the invitation.
 
 ### How it Works
 
-1. **Customized Splitting**: SplitIt now enables users to customize the shares or percentages of each participant individually.
+1. **Invitation System**: Users can send invitations to existing users to join their group.
 
-2. **Real-time Balancing**: The application updates participant balances in real-time, reflecting the immediate impact of added or deleted expenses.
-
-3. **Participant Validation**: The system performs participant validation to ensure that each member is correctly linked to the group before processing the expense.
-
-4. **Expense Categorization**: SplitIt now supports expense categorization for expense classifications.
+2. **Accept or Decline Invitations**: Receiving users have the option to either accept or decline the invitation.
 
 ### Implementation in Action
 
-1. Share Split, Percentage Split and Calculator
+1. Invitation Sent
 
-![Share Split, percentage Split and Calculator](gitSnaps/Shares_Percentages_Calculator.png "Share Split, percentage Split and Calculator")
+![Invitation Sent](gitSnaps/Inivitation_Sent.png "Invitation Sent")
 
-2. Expense Category
+2. Invitation Received
 
-![Expense Category](gitSnaps/Expense_Category.png "Expense Category")
+![Invitation Received](gitSnaps/Inivitation_Received.png "Invitation Received")
 
 ## Features
 
