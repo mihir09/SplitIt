@@ -90,7 +90,7 @@ router.post('/accept', async (req, res) => {
 
         await group.save();
 
-        return res.status(200).json({ message: 'User added to the group successfully' });
+        return res.status(200).json({ message: 'User added to the group successfully', groupId: group._id });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });

@@ -100,7 +100,6 @@ export class ListExpenseComponent implements OnInit {
       this.loading = true;
       this.expenseService.deleteExpense(expense._id).subscribe({
         next: (res) => {
-          console.log(res.message)
           this.fetchExpenses();
         },
         error: (error) => {
@@ -129,7 +128,7 @@ export class ListExpenseComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      // console.log('The dialog was closed');
     });
   }
 }

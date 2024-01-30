@@ -81,10 +81,9 @@ export class HomeComponent {
 
   acceptInvitation(invitationId: string){
     this.invitationsService.acceptInvitation(invitationId, this.currentUser).subscribe({
-      next : (message) => {
-        console.log("Accepted", message)
-        this.invitations = this.invitations.filter(invitation => invitation._id !== invitationId);
-        this.cdr.detectChanges();
+      next : (response) => {
+        // console.log("Accepted", response.message)
+        this.router.navigate(['group', response.groupId ])
       },
       error: (error) => {
         console.error('Error ', error.error.message);
@@ -97,7 +96,14 @@ export class HomeComponent {
       next : (message) => {
         console.log("Declined", message)
         this.invitations = this.invitations.filter(invitation => invitation._id !== invitationId);
-        this.cdr.detectChanges();
+        this.usersService.getUserInvitations(this.currentUser).subscribe({
+          next: (invitations) => {
+            this.invitations = invitations;
+          },
+          error: (error) => {
+            console.error('Error fetching invitations:', error);
+          }
+        });
       },
       error: (error) => {
         console.error('Error ', error.error.message);
