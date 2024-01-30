@@ -29,10 +29,10 @@ export class CreateGroupComponent implements OnInit {
       };
       this.groupService.createGroup(groupData).subscribe(
         (group) => {
-          console.log('Group created successfully:');
+          // console.log('Group created successfully:');
           this.groupService.addUserToGroup(group._id, this.authService.getCurrentUser()!).subscribe(
             (response) => {
-              console.log('User added to the group successfully');
+              // console.log('User added to the group successfully');
               this.router.navigate(['group',group._id ])
             },
             (error) => {

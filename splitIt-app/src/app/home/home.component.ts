@@ -1,9 +1,9 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectorRef } from '@angular/core';
 import { UsersService } from '../users.service';
 import { AuthService } from '../auth.service';
 import { DOCUMENT } from '@angular/common';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router, RouterState } from '@angular/router';
+import { InvitationService } from '../invitation.service';
 
 @Component({
   selector: 'app-home',
@@ -12,12 +12,16 @@ import { ActivatedRoute, NavigationEnd, Router, RouterState } from '@angular/rou
 })
 export class HomeComponent {
   groups: any[] = [];
+  invitations: any[] = [];
   showCreateGroup: boolean = false;
+  currentUser: string = '';
 
   constructor(
     private usersService: UsersService,
     private authService: AuthService,
+    private invitationsService: InvitationService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
     @Inject(DOCUMENT) private document: Document
     ) {
     this.loadUserGroups();
@@ -25,6 +29,15 @@ export class HomeComponent {
   }
 
   ngOnInit(): void {
+    this.currentUser = this.authService.getCurrentUser()!
+    this.usersService.getUserInvitations(this.currentUser).subscribe({
+      next: (invitations) => {
+        this.invitations = invitations;
+      },
+      error: (error) => {
+        console.error('Error fetching invitations:', error);
+      }
+    });
   }
 
   loadUserGroups() {
@@ -64,6 +77,38 @@ export class HomeComponent {
       data.push(...this.getTitle(state, parent.firstChild));
     }
     return data;
+  }
+
+  acceptInvitation(invitationId: string){
+    this.invitationsService.acceptInvitation(invitationId, this.currentUser).subscribe({
+      next : (response) => {
+        // console.log("Accepted", response.message)
+        this.router.navigate(['group', response.groupId ])
+      },
+      error: (error) => {
+        console.error('Error ', error.error.message);
+      }
+    });
+  }
+
+  declineInvitation(invitationId: string){
+    this.invitationsService.declineInvitation(invitationId, this.currentUser).subscribe({
+      next : (message) => {
+        console.log("Declined", message)
+        this.invitations = this.invitations.filter(invitation => invitation._id !== invitationId);
+        this.usersService.getUserInvitations(this.currentUser).subscribe({
+          next: (invitations) => {
+            this.invitations = invitations;
+          },
+          error: (error) => {
+            console.error('Error fetching invitations:', error);
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error ', error.error.message);
+      }
+    });
   }
 
 }

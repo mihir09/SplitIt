@@ -22,4 +22,8 @@ export class UsersService {
   getUserDetailsByEmail(userEmail: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/email/${userEmail}`);
   }
+
+  getUserInvitations(userEmail: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/invitations/${userEmail}`);
+  }
 }

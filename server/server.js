@@ -78,7 +78,7 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ message: 'User not found. Please verify the email address.' });
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Incorrect password. Please verify it.' });
@@ -97,6 +97,9 @@ app.post('/api/login', async (req, res) => {
 
 const groupsRouter = require('./routes/groups');
 app.use('/api/groups', groupsRouter);
+
+const invitationsRouter = require('./routes/invitations');
+app.use('/api/invitations', invitationsRouter);
 
 const usersRouter = require('./routes/users');
 app.use('/api/users', usersRouter);

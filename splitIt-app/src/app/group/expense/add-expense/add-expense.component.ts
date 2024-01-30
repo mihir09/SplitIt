@@ -176,7 +176,7 @@ export class AddExpenseComponent {
       }
 
       expenseData.participants = participants
-      console.log(expenseData)
+      // console.log(expenseData)
       if (!expenseData.expenseDate) {
         expenseData.expenseDate = new Date().toISOString().split('T')[0]
       }

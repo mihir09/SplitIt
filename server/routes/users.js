@@ -57,4 +57,28 @@ router.get('/email/:userEmail', async (req, res) => {
     }
 });
 
+// Get user Invitations by user email
+router.get('/invitations/:userEmail', async (req, res) => {
+    try {
+        const { userEmail } = req.params;
+
+        const user = await User.findOne({ email: userEmail }).populate('invitations')
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const userInvitations = []
+
+       for (const invitation of user.invitations) {
+            const sender = await User.findById(invitation.senderId);
+            userInvitations.push({ id: invitation._id, senderName: sender.username, groupName: invitation.groupName });
+        }
+
+        return res.status(200).json(userInvitations);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 module.exports = router;
