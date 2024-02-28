@@ -3,6 +3,56 @@ const router = express.Router();
 const User = require('../models/user');
 const Invitation = require('../models/invitation');
 const Group = require('../models/group');
+const sgMail = require('@sendgrid/mail');
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// Function to send invitation email
+const sendInviteEmail = async (senderName, recipientEmail) => {
+    const msg = {
+        to: recipientEmail,
+        from: 'splititmail@gmail.com',
+        templateId: process.env.SENDGRID_TEMPLATE_ID,
+        dynamicTemplateData: {
+            sender_name: senderName,
+        }
+    };
+
+    try {
+        await sgMail.send(msg);
+        console.log(`Invitation email sent to ${recipientEmail}`);
+        return true;
+    } catch (error) {
+        console.error(`Failed to send invitation email to ${recipientEmail}:`, error);
+        return false;
+    }
+};
+
+// Sending invite emails
+router.post('/invite', async (req, res) => {
+    try {
+        const { senderEmail, userEmail } = req.body;
+        const sender = await User.findOne({ email: senderEmail })
+
+        if (!sender) {
+            return res.status(404).json({
+                message: 'Could not be authroized.',
+                type: 'sender_not_found',
+                suggestion: 'Please log in again to send invites.'
+            });
+        }
+
+        const emailSent = await sendInviteEmail(sender.username, userEmail);
+        if (!emailSent) {
+            throw new Error('Failed to send invitation email.');
+        }
+
+        res.status(200).json({ message: 'Invitation email sent successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 // Send Group Invitation
 router.post('/send', async (req, res) => {
@@ -12,22 +62,46 @@ router.post('/send', async (req, res) => {
         const group = await Group.findById(groupId);
 
         if (!group) {
-            return res.status(404).json({ message: 'Group not found' });
+            return res.status(404).json({
+                message: 'Group not found. Please select a valid group to proceed.',
+                type: 'group_not_found',
+                suggestion: 'Please choose a different group or create a new one.'
+            });
         }
 
         const sender = await User.findOne({ email: senderEmail });
         const user = await User.findOne({ email: userEmail }).populate('invitations');
 
-        if (!user || !sender) {
-            return res.status(404).json({ message: 'User not found' });
+        if (!sender) {
+            return res.status(404).json({
+                message: 'Could not be authroized.',
+                type: 'sender_not_found',
+                suggestion: 'Please log in again to send invites.'
+            });
+        }
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not in database.',
+                type: 'user_not_found',
+                suggestion: 'Would you like to invite them to SplitIt?'
+            });
         }
 
         if (group.members.some((member) => member.memberId.equals(user._id))) {
-            return res.status(400).json({ message: 'User already present in group' });
+            return res.status(409).json({ 
+                message: 'User already present in group.',
+                type: 'user_already_present',
+                suggestion: 'Looks like someone snuck in! Let\'s SplitIt.' 
+            });
         }
-        
+
         if (user.invitations.some(invitation => invitation.groupId.equals(groupId))) {
-            return res.status(400).json({ message: 'User already invited to this group' });
+            return res.status(409).json({ 
+                message: 'User already invited to this group.',
+                type: 'user_already_invited',
+                suggestion: 'Looks like someone\'s quite popular or has a lot to payback.', 
+            });
         }
 
         const invitation = await Invitation.create({ senderId: sender._id, recipientId: user._id, groupName: group.name, groupId });

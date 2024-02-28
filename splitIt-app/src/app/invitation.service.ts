@@ -10,6 +10,10 @@ export class InvitationService {
 
   constructor(private http: HttpClient) { }
 
+  inviteNewUser(senderEmail: string, userEmail: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/invite`, { senderEmail, userEmail });
+  }
+
   sendInvitation(senderEmail: string, userEmail: string, groupId: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/send`, { senderEmail, userEmail, groupId });
   }

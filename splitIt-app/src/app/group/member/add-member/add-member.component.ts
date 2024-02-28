@@ -16,6 +16,8 @@ export class AddMemberComponent implements OnInit {
   successMessage: string = '';
   groupId: string = '';
   members: any = [];
+  showInviteButton: boolean = false;
+  userEmailToInvite: string = '';
 
   constructor(private fb: FormBuilder,
     private groupService: GroupService,
@@ -40,7 +42,7 @@ export class AddMemberComponent implements OnInit {
         }
       })
     });
-    
+
   }
   onAddUser() {
     if (this.createForm.valid) {
@@ -53,10 +55,51 @@ export class AddMemberComponent implements OnInit {
           this.createForm.reset();
         },
         error: (error) => {
-          this.errorMessage = error.error.message;
+          this.showInviteButton = false;
+          switch (error.error.type) {
+            case 'user_not_found':
+              this.errorMessage = error.error.message + " " + error.error.suggestion;
+              this.showInviteButton = true;
+              this.userEmailToInvite = userEmail;
+              break;
+            case 'user_already_present':
+              this.errorMessage = error.error.message + " " + error.error.suggestion;
+              break;
+            case 'user_already_invited':
+              this.errorMessage = error.error.message + " " + error.error.suggestion;
+              break;
+
+            case 'group_not_found':
+              this.errorMessage = error.error.message + " " + error.error.suggestion;
+              break;
+
+            case 'sender_not_found':
+              this.errorMessage = error.error.message + " You will be logged out in 10 seconds. " + error.error.suggestion;
+              setTimeout(() => {
+                this.authService.logout();
+                this.router.navigate(['/login']);
+              }, 10000);
+              break;
+            default:
+              this.errorMessage = 'An unexpected error occurred.';
+          }
           console.error('Error adding user to group:', error);
         }
       });
     }
+  }
+
+  onInvite(userEmail: string) {
+    const senderEmail = this.authService.getCurrentUser();
+    this.showInviteButton = false;
+    this.invitationService.inviteNewUser(senderEmail!, userEmail).subscribe({
+      next: (response) => {
+        this.successMessage = 'Invitation sent successfully to ' + userEmail;
+        this.errorMessage = '';
+      },
+      error: (error) => {
+        console.error('Error sending invitation:', error);
+      }
+    });
   }
 }

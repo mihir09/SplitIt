@@ -46,7 +46,7 @@ app.post('/api/register', async (req, res) => {
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
-            return res.status(400).json({ message: 'Email address is already in use. Please choose a different email.' });
+            return res.status(400).json({ message: 'Email address is already in use. Please login to continue.' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -89,6 +89,39 @@ app.post('/api/login', async (req, res) => {
         });
 
         return res.status(200).json({ token: token, message: 'Successfully Logged In.' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Forget Password
+app.post('/api/reset-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        const existingUser = await User.findOne({ email });
+
+        if (!existingUser) {
+            return res.status(400).json({ message: 'Email not in our system. Please register to continue.' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = new User({ username, email, password: hashedPassword });
+        await user.save();
+
+        const currentUser = await User.findOne({ email });
+
+        const token = jwt.sign({ userId: currentUser._id }, process.env.ACCESS_TOKEN_SECRET, {
+            expiresIn: '1h',
+        });
+
+        return res.status(200).json({ token: token, message: 'User registered successfully' });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });

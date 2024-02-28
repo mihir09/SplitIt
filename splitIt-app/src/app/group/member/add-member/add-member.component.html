@@ -9,6 +9,15 @@
     <div class="text-red-600" *ngIf="errorMessage">
       {{ errorMessage }}
     </div>
+    <div *ngIf="showInviteButton">
+      <button 
+        (click)="onInvite(userEmailToInvite)"
+        class="px-4 py-2 mb-2 text-white bg-green-600 rounded hover:bg-green-800 focus:outline-none focus:bg-green-600">
+        Send Invitation
+      </button>
+
+
+    </div>
     <div class="text-green-600 mb-2" *ngIf="successMessage">
       {{ successMessage }}
     </div>
