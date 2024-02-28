@@ -4,6 +4,7 @@ const User = require('../models/user');
 const Invitation = require('../models/invitation');
 const Group = require('../models/group');
 const sgMail = require('@sendgrid/mail');
+require('dotenv').config();
 const cors = require('cors');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
