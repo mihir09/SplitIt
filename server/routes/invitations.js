@@ -27,7 +27,6 @@ const sendInviteEmail = async (senderName, recipientEmail) => {
             sender_name: senderName,
         }
     };
-    console.log(msg)
 
     try {
         await sgMail.send(msg);
@@ -68,7 +67,6 @@ router.post('/invite', async (req, res) => {
 // Send Group Invitation
 router.post('/send', async (req, res) => {
     try {
-        console.log("Send")
         const { senderEmail, userEmail, groupId } = req.body;
 
         const group = await Group.findById(groupId);
