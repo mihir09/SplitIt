@@ -33,6 +33,8 @@ export class AddMemberComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.groupId = params['groupId'];
+      this.errorMessage = '';
+      this.successMessage = '';
       this.groupService.getMembers(this.groupId).subscribe({
         next: (response) => {
           this.members = response
@@ -46,6 +48,8 @@ export class AddMemberComponent implements OnInit {
   }
   onAddUser() {
     if (this.createForm.valid) {
+      this.errorMessage = '';
+      this.successMessage = '';
       const userEmail = this.createForm.value.email;
       const senderEmail = this.authService.getCurrentUser();
       this.invitationService.sendInvitation(senderEmail!, userEmail, this.groupId).subscribe({
@@ -90,15 +94,17 @@ export class AddMemberComponent implements OnInit {
   }
 
   onInvite(userEmail: string) {
+    this.errorMessage = '';
+    this.successMessage = '';
     const senderEmail = this.authService.getCurrentUser();
     this.showInviteButton = false;
     this.invitationService.inviteNewUser(senderEmail!, userEmail).subscribe({
       next: (response) => {
         this.successMessage = 'Invitation sent successfully to ' + userEmail;
-        this.errorMessage = '';
       },
       error: (error) => {
         console.error('Error sending invitation:', error);
+        this.errorMessage = 'Error sending invite. Please try again.';
       }
     });
   }
