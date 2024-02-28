@@ -4,8 +4,17 @@ const User = require('../models/user');
 const Invitation = require('../models/invitation');
 const Group = require('../models/group');
 const sgMail = require('@sendgrid/mail');
+const cors = require('cors');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+router.use(cors());
+router.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://splititapp.netlify.app');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
 
 // Function to send invitation email
 const sendInviteEmail = async (senderName, recipientEmail) => {
