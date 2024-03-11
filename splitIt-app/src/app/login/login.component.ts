@@ -8,8 +8,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  formData = { email: '', password: '' };
+  formData = { email: '', password:'' };
   errorMessage: string = '';
+  errorType: string = '';
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
@@ -22,7 +23,17 @@ export class LoginComponent {
         // console.log('Login successful')
       },
       error: (error) => {
-        this.errorMessage = error.error.message;
+        if (error.error.type && error.error.type=='incorrect_password'){
+          this.errorType = error.error.type;
+        }
+        let suggestion = '';
+        if (error.error.suggestion)
+        {
+          suggestion = error.error.suggestion
+        }
+
+        this.errorMessage = error.error.message + ' ' + suggestion;
+        
         console.error('Login failed:', error.error.message);
       }
   });

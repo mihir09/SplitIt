@@ -12,7 +12,7 @@ export class NavbarComponent {
   _userDetails: any;
 
   constructor(public authService: AuthService, public usersService: UsersService) {
-    this._user = this.authService.getCurrentUser()
+    this._user = this.authService.getCurrentUser()!
 
     if(!this._user){
       this.authService.logout()
