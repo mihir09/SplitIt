@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ResetPasswordService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'https://gray-angry-dalmatian.cyclic.app';
 
   constructor(private http: HttpClient) { }
 
