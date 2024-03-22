@@ -38,6 +38,7 @@ import { ListBalanceComponent } from './group/balance/list-balance/list-balance.
 import { AbsPipe } from './abs.pipe';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import { CalculatorComponent } from './calculator/calculator.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { CalculatorComponent } from './calculator/calculator.component';
     AbsPipe,
     LoadingSpinnerComponent,
     CalculatorComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     MatCardModule,
