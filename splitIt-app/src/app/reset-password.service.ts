@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ResetPasswordService {
-  private apiUrl = 'https://gray-angry-dalmatian.cyclic.app';
+  private apiUrl = 'https://split-it-server.onrender.com';
 
   constructor(private http: HttpClient) { }
 

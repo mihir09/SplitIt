@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class InvitationService {
-  private apiUrl = 'https://gray-angry-dalmatian.cyclic.app/api/invitations';
+  private apiUrl = 'https://split-it-server.onrender.com/api/invitations';
 
   constructor(private http: HttpClient) { }
 
