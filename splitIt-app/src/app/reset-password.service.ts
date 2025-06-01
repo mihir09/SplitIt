@@ -6,15 +6,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ResetPasswordService {
-  private apiUrl = 'https://split-it-server.onrender.com';
+  private apiUrl = 'https://split-it-server.onrender.com/api';
 
   constructor(private http: HttpClient) { }
 
   sendResetOTP(email: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/api/reset-password`, { email });
+    return this.http.post<any>(`${this.apiUrl}/reset-password`, { email });
   }
 
   resetPassword(data: { email: string, otp: string, newPassword: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/api/reset-password/verify`, data);
+    return this.http.post<any>(`${this.apiUrl}/reset-password/verify`, data);
   }
 }
