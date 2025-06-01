@@ -113,38 +113,36 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 app.post('/api/reset-password', async (req, res) => {
     try {
         const { email } = req.body;
-
-        if (!email) {
-            return res.status(400).json({ message: 'Please enter the email.' });
-        }
+        console.log('✔️ Received reset-password request for:', email);
 
         const existingUser = await User.findOne({ email });
-
         if (!existingUser) {
-            return res.status(400).json({ message: 'Email not in our system. Please register to continue or check email entered is correct.' });
+            console.warn('❌ No user found for:', email);
+            return res.status(400).json({ message: 'Email not in our system.' });
         }
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
         const expiration = new Date();
         expiration.setMinutes(expiration.getMinutes() + 10);
 
         await OTP.create({ email, otp, expiration });
+        console.log('✔️ OTP created and saved');
+
         const resetLink = `https://splititapp.netlify.app/reset-password?email=${email}&otp=${otp}`;
         const msg = {
             to: email,
             from: 'splititmail@gmail.com',
             subject: 'Password Reset OTP',
-            text: `Your OTP for password reset is: ${otp}`,
-            html: `<p>Your OTP for password reset is: <strong>${otp}</strong></p>
-                   <p>Click <a href="${resetLink}">here</a> to reset your password with this OTP.</p>`
+            text: `Your OTP is: ${otp}`,
+            html: `<p>Your OTP is: <strong>${otp}</strong></p><a href="${resetLink}">Reset Link</a>`
         };
 
         await sgMail.send(msg);
+        console.log('✔️ Email sent via SendGrid');
 
         return res.status(200).json({ message: 'Reset OTP sent successfully.' });
     } catch (error) {
-        console.error(error);
+        console.error('❗Error in /api/reset-password:', error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
