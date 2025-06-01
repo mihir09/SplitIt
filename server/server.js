@@ -130,7 +130,7 @@ app.post('/api/reset-password', async (req, res) => {
         expiration.setMinutes(expiration.getMinutes() + 10);
 
         await OTP.create({ email, otp, expiration });
-        const resetLink = `http://localhost:3000/reset-password?email=${email}&otp=${otp}`;
+        const resetLink = `https://splititapp.netlify.app/reset-password?email=${email}&otp=${otp}`;
         const msg = {
             to: email,
             from: 'splititmail@gmail.com',
