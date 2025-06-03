@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,21 @@ export class AuthService {
       return userEmail;
     }
     return this.logout();
+  }
+
+  getCurrentUserId(): string | null {
+    const token = localStorage.getItem('token');
+    console.log(token)
+    if (!token) return null;
+  
+    try {
+      const decoded: any = jwtDecode(token);
+      console.log(decoded)
+      return decoded.userId;
+    } catch (error) {
+      console.error('Invalid token:', error);
+      return null;
+    }
   }
 
   getToken() {

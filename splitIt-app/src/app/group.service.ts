@@ -47,10 +47,11 @@ export class GroupService {
   }
 
   private fetchAndProcessMembers(memberDetails: any[]): Observable<any[]> {
-    const memberDetailObservables = memberDetails.map((member) =>
-      this.usersService.getUserDetails(member.memberId)
-    );
-
+    const memberDetailObservables = memberDetails.map((member) => {
+      const memberId = typeof member.memberId === 'object' ? member.memberId._id : member.memberId;
+      return this.usersService.getUserDetails(memberId);
+    });
+  
     return forkJoin(memberDetailObservables).pipe(
       map((memberResponses) =>
         memberResponses.map((response, index) => ({
@@ -62,6 +63,7 @@ export class GroupService {
       )
     );
   }
+  
 
   private mapBalancesWithNames(balanceItems: any[], members: any[]): any[] {
     const memberDetailsMap = new Map(members.map((member) => [member.id, member.name]));

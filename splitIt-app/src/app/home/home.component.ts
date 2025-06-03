@@ -15,6 +15,8 @@ export class HomeComponent {
   invitations: any[] = [];
   showCreateGroup: boolean = false;
   currentUser: string = '';
+  settledGroups: any[] = [];
+  unsettledGroups: any[] = [];
 
   constructor(
     private usersService: UsersService,
@@ -23,7 +25,7 @@ export class HomeComponent {
     private router: Router,
     private cdr: ChangeDetectorRef,
     @Inject(DOCUMENT) private document: Document
-    ) {
+  ) {
     this.loadUserGroups();
     this.handleRouteEvents();
   }
@@ -41,9 +43,26 @@ export class HomeComponent {
   }
 
   loadUserGroups() {
-    this.usersService.getUserGroups(this.authService.getCurrentUser()!).subscribe({
-      next : (groups) => {
+    this.currentUser = this.authService.getCurrentUser()!;
+    const userId = this.authService.getCurrentUserId();
+  if (!userId) return;
+    this.settledGroups = [];
+    this.unsettledGroups = [];
+  
+    this.usersService.getUserGroups(this.currentUser).subscribe({
+      next: (groups) => {
         this.groups = groups;
+        groups.forEach((group: any) => {
+          const user = group.members.find((m: any) => m.memberId === userId || m.memberId?._id === userId);
+          const balance = parseFloat(user?.memberBalance || '0');
+          group.currentUserBalance = balance;
+          
+          if (Math.abs(balance) < 0.01) {
+            this.settledGroups.push(group);
+          } else {
+            this.unsettledGroups.push(group);
+          }
+        });
       },
       error: (error) => {
         console.error('Error loading user groups:', error.error.message);
@@ -79,11 +98,11 @@ export class HomeComponent {
     return data;
   }
 
-  acceptInvitation(invitationId: string){
+  acceptInvitation(invitationId: string) {
     this.invitationsService.acceptInvitation(invitationId, this.currentUser).subscribe({
-      next : (response) => {
+      next: (response) => {
         // console.log("Accepted", response.message)
-        this.router.navigate(['group', response.groupId ])
+        this.router.navigate(['group', response.groupId])
       },
       error: (error) => {
         console.error('Error ', error.error.message);
@@ -91,9 +110,9 @@ export class HomeComponent {
     });
   }
 
-  declineInvitation(invitationId: string){
+  declineInvitation(invitationId: string) {
     this.invitationsService.declineInvitation(invitationId, this.currentUser).subscribe({
-      next : (message) => {
+      next: (message) => {
         console.log("Declined", message)
         this.invitations = this.invitations.filter(invitation => invitation._id !== invitationId);
         this.usersService.getUserInvitations(this.currentUser).subscribe({
@@ -109,6 +128,10 @@ export class HomeComponent {
         console.error('Error ', error.error.message);
       }
     });
+  }
+
+  getAbs(value: number): number {
+    return Math.abs(value);
   }
 
 }
