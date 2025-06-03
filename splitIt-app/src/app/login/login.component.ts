@@ -11,11 +11,18 @@ export class LoginComponent {
   formData = { email: '', password:'' };
   errorMessage: string = '';
   errorType: string = '';
+  isLoggingIn = false;
+  spinnerMessage = "Loggin In....";
+
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
+    this.isLoggingIn = true;
+    this.spinnerMessage = 'Using free server🥲.... This may take up to a minute or two ⏳';
+
     this.authService.login(this.formData).subscribe({
       next : (response: any)=> { 
+        this.isLoggingIn = false;
         localStorage.setItem('token', response.token)
         localStorage.setItem('userEmail', this.formData.email)
         this.errorMessage='';
@@ -23,6 +30,7 @@ export class LoginComponent {
         // console.log('Login successful')
       },
       error: (error) => {
+        this.isLoggingIn = false;
         if (error.error.type && error.error.type=='incorrect_password'){
           this.errorType = error.error.type;
         }

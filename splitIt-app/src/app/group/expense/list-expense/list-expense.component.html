@@ -48,8 +48,8 @@
                 <th class="w-1/4" mat-header-cell *matHeaderCellDef>Actions</th>
                 <td class="text-center" mat-cell *matCellDef="let element">
                     <div class="flex flex-row">
-                    <button mat-icon-button color="warn" (click)="deleteExpense(element)" matTooltip="Delete">
-                        <mat-icon class="text-red-500">delete</mat-icon>
+                    <button mat-icon-button color="warn" (click)="deleteExpense(element)" matTooltip="Undo">
+                        <mat-icon class="text-red-500">undo</mat-icon>
                     </button>
                     <button mat-icon-button color="primary" (click)="editExpense(element)" matTooltip="Edit">
                         <mat-icon class="text-blue-500">create</mat-icon>

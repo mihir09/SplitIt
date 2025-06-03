@@ -40,6 +40,14 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
 import { CalculatorComponent } from './calculator/calculator.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
+import { LottieModule } from 'ngx-lottie';
+import player from 'lottie-web';
+
+export function playerFactory() {
+  return player;
+}
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -79,6 +87,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     MatTooltipModule,
     MatSelectModule,
     BrowserAnimationsModule,
+    LottieModule.forRoot({ player: playerFactory })
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

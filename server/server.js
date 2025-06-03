@@ -113,11 +113,9 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 app.post('/api/reset-password', async (req, res) => {
     try {
         const { email } = req.body;
-        console.log('✔️ Received reset-password request for:', email);
-
+        
         const existingUser = await User.findOne({ email });
         if (!existingUser) {
-            console.warn('❌ No user found for:', email);
             return res.status(400).json({ message: 'Email not in our system.' });
         }
 
@@ -126,8 +124,7 @@ app.post('/api/reset-password', async (req, res) => {
         expiration.setMinutes(expiration.getMinutes() + 10);
 
         await OTP.create({ email, otp, expiration });
-        console.log('✔️ OTP created and saved');
-
+        
         const resetLink = `https://splititapp.netlify.app/reset-password?email=${email}&otp=${otp}`;
         const msg = {
             to: email,
@@ -138,11 +135,9 @@ app.post('/api/reset-password', async (req, res) => {
         };
 
         await sgMail.send(msg);
-        console.log('✔️ Email sent via SendGrid');
-
+        
         return res.status(200).json({ message: 'Reset OTP sent successfully.' });
     } catch (error) {
-        console.error('❗Error in /api/reset-password:', error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 });

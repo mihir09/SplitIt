@@ -6,6 +6,8 @@ import { ExpenseService } from 'src/app/expense.service';
 import { GroupService } from 'src/app/group.service';
 import { catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { AnimationOptions } from 'ngx-lottie';
+import { AnimationItem } from 'lottie-web';
 
 @Component({
   selector: 'app-add-expense',
@@ -41,6 +43,15 @@ export class AddExpenseComponent {
     { title: 'Utilities', categories: ['Electricity', 'Heat/gas', 'Water', 'TV/Phone/Internet', 'Trash', 'Cleaning'] },
     { title: 'Uncategorized', categories: ['Other'] },
   ];
+  animationOptions: AnimationOptions = {
+    path: 'https://lottie.host/3419d991-1edb-4ddf-b98e-3d286f6182b1/2KbLPyUKO0.json',
+    autoplay: true,
+    loop: true,
+    renderer: 'svg'
+  };
+  showAnimation = false;
+  isProcessing = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -189,30 +200,41 @@ export class AddExpenseComponent {
     }
   }
   onAddExpense(expenseData: any) {
-    // console.log(expenseData)
-    this.expenseService.addExpense(expenseData).subscribe(
-      (response) => {
-        // console.log('Expense added successfully');
-        this.expenseForm.reset();
-        this.router.navigate(['group', this.groupId, 'list-balance'], { queryParams: { groupId: this.groupId } });
+    this.showAnimation = true;
+    this.isProcessing = true;
 
+    this.expenseService.addExpense(expenseData).subscribe(
+      () => {
+        this.expenseForm.reset();
+        this.showAnimation = false;
+        this.isProcessing = false;
+        this.router.navigate(['group', this.groupId, 'list-balance'], {
+          queryParams: { groupId: this.groupId }})
       },
-      (error) => {
+      error => {
         console.error('Error adding expense:', error);
+        this.showAnimation = false;
+        this.isProcessing = false;
       }
     );
-
   }
 
   onUpdateExpense(expenseData: any) {
+    this.showAnimation = true;
+    this.isProcessing = true;
+
     this.expenseService.editExpense(this.expensetoEdit._id, expenseData, this.expensetoEdit).subscribe(
-      (response) => {
-        // console.log('Expense edited successfully');
+      () => {
         this.expenseForm.reset();
-        this.router.navigate(['group', this.groupId, 'list-balance'], { queryParams: { groupId: this.groupId } });
+        this.showAnimation = false;
+        this.isProcessing = false;
+        this.router.navigate(['group', this.groupId, 'list-balance'], {
+          queryParams: { groupId: this.groupId }})
       },
-      (error) => {
+      error => {
         console.error('Error editing expense:', error);
+        this.showAnimation = false;
+        this.isProcessing = false;
       }
     );
   }

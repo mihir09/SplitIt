@@ -1,172 +1,191 @@
-<div class="p-2 rounded-lg text-center flex-1" *ngIf="!loading">
-  <h2 class="text-2xl font-bold mb-4 flex justify-center" *ngIf="mode === 'add'">Add Expense</h2>
-  <h2 class="text-2xl font-bold mb-4 flex justify-center" *ngIf="mode === 'edit'">Edit Expense</h2>
+<div class="bg-white p-8 rounded-2xl shadow-2xl max-w-3xl mx-auto mt-10 animate-fade-in"
+  *ngIf="!loading && !showAnimation">
+  <h2 class="text-4xl font-extrabold mb-8 text-center text-gray-700 tracking-wide">
+    {{ mode === 'add' ? 'Add Expense' : 'Edit Expense' }}
+  </h2>
 
-  <form [formGroup]="expenseForm" (ngSubmit)="onAddOrUpdateExpense()" class="max-w-md mx-auto mb-4">
-    <div class="mb-4">
-      <label for="expenseName" class="block text-gray-700">Expense Name:</label>
-      <input type="text" id="expenseName" class="form-input mt-1 block w-full" placeholder="Expense Name"
-        formControlName="expenseName" required>
-    </div>
-    <div *ngIf="expenseForm.get('expenseName')?.touched && expenseForm.get('expenseName')?.hasError('required')"
-      class="text-red-600">
-      Expense Name is required.
+  <form [formGroup]="expenseForm" (ngSubmit)="onAddOrUpdateExpense()" class="space-y-6">
+    <!-- Expense Name -->
+    <div>
+      <label for="expenseName" class="block text-lg text-gray-700 font-medium">📝 Expense Name</label>
+      <input type="text" id="expenseName" formControlName="expenseName" placeholder="Dinner at Chili’s"
+        class="form-input mt-1 p-2 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+        required>
+      <div *ngIf="expenseForm.get('expenseName')?.touched && expenseForm.get('expenseName')?.hasError('required')"
+        class="text-sm text-red-600 mt-1">Expense Name is required.</div>
     </div>
 
-    <div class="mb-4">
-      <label for="payer" class="block text-gray-700">Payer:</label>
-      <select id="payer" class="form-select mt-1 block w-full" formControlName="payer" required>
+    <!-- Payer -->
+    <div>
+      <label for="payer" class="block text-lg text-gray-700 font-medium">💳 Payer</label>
+      <select id="payer" formControlName="payer"
+        class="form-select mt-1 p-2 block w-full rounded-md border border-gray-300">
         <option value="" disabled selected>Select Payer</option>
-        <option *ngFor="let member of members" [value]=member.id>{{ member.email }}</option>
+        <option *ngFor="let member of members" [value]="member.id">{{ member.email }}</option>
       </select>
-    </div>
-    <div *ngIf="expenseForm.get('payer')?.touched && expenseForm.get('payer')?.hasError('required')"
-      class="text-red-600">
-      Payer is required.
+      <div *ngIf="expenseForm.get('payer')?.touched && expenseForm.get('payer')?.hasError('required')"
+        class="text-sm text-red-600 mt-1">Payer is required.</div>
     </div>
 
-    <div class="mb-4">
-      <label for="amount" class="block text-gray-700">Amount:</label>
-      <input type="number" id="amount" class="form-input mt-1 block w-full" placeholder="Amount"
-        formControlName="amount" required min="0" appDecimalInput>
+    <!-- Amount -->
+    <div>
+      <label for="amount" class="block text-lg text-gray-700 font-medium">💰 Amount</label>
+      <input type="number" id="amount" formControlName="amount" placeholder="65.50" min="0" appDecimalInput
+        class="form-input mt-1 p-2 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+        required>
+      <div *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.errors"
+        class="text-sm text-red-600 mt-1">
+        <div *ngIf="expenseForm.get('amount')?.hasError('required')">Amount is required.</div>
+        <div *ngIf="expenseForm.get('amount')?.hasError('min')">Must be ≥ 0.</div>
+        <div *ngIf="expenseForm.get('amount')?.hasError('invalidDecimal')">Only 2 decimal places allowed.</div>
+      </div>
     </div>
 
-    <div *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.hasError('required')"
-      class="text-red-600">
-      Amount is required.
-    </div>
-    <div *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.hasError('min')" class="text-red-600">
-      Amount must be greater than or equal to 0.
-    </div>
-    <div *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.hasError('invalidDecimal')"
-      class="text-red-600">
-      Please enter a valid amount with up to two decimal places.
+    <!-- Split Type -->
+    <div>
+      <p class="text-lg text-gray-700 font-medium mb-2">🧾 Split Type</p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <button type="button"
+                (click)="toggleSplitType('equal')"
+                class="rounded-full px-4 py-1 shadow hover:scale-105 transition-transform"
+                [ngClass]="{
+                  'bg-blue-600 text-white': selectedSplitType === 'equal',
+                  'bg-gray-100 text-gray-800': selectedSplitType !== 'equal'
+                }">
+          Equal Split
+        </button>
+      
+        <button type="button"
+                (click)="toggleSplitType('unequal')"
+                class="rounded-full px-4 py-1 shadow hover:scale-105 transition-transform"
+                [ngClass]="{
+                  'bg-blue-600 text-white': selectedSplitType === 'unequal',
+                  'bg-gray-100 text-gray-800': selectedSplitType !== 'unequal'
+                }">
+          Unequal
+        </button>
+      
+        <button type="button"
+                (click)="toggleSplitType('shares')"
+                class="rounded-full px-4 py-1 shadow hover:scale-105 transition-transform"
+                [ngClass]="{
+                  'bg-blue-600 text-white': selectedSplitType === 'shares',
+                  'bg-gray-100 text-gray-800': selectedSplitType !== 'shares'
+                }">
+          By Shares
+        </button>
+      
+        <button type="button"
+                (click)="toggleSplitType('percentages')"
+                class="rounded-full px-4 py-1 shadow hover:scale-105 transition-transform"
+                [ngClass]="{
+                  'bg-blue-600 text-white': selectedSplitType === 'percentages',
+                  'bg-gray-100 text-gray-800': selectedSplitType !== 'percentages'
+                }">
+          By Percentages
+        </button>
+      </div>
+      
     </div>
 
-    <div class="mb-4">
-      <div class="mt-4">
-        <p class="mb-2 text-gray-700">Please select a split type:</p>
-        <div class="flex space-x-2 justify-center">
-          <button type="button" (click)="toggleSplitType('equal')"
-            class="px-4 py-2 font-semibold border-none focus:outline-none focus:text-blue-500"
-            [class.text-gray-700]="selectedSplitType !== 'equal'" [class.text-blue-500]="selectedSplitType === 'equal'">
-            Equal Split
-          </button>
-          <button type="button" (click)="toggleSplitType('unequal')"
-            class="px-4 py-2 font-semibold border-none focus:outline-none focus:text-blue-500"
-            [class.text-gray-700]="selectedSplitType !== 'unequal'"
-            [class.text-blue-500]="selectedSplitType === 'unequal'">
-            Unequal Split
-          </button>
-          <button type="button" (click)="toggleSplitType('shares')"
-            class="px-4 py-2 font-semibold border-none focus:outline-none focus:text-blue-500"
-            [class.text-gray-700]="selectedSplitType !== 'shares'"
-            [class.text-blue-500]="selectedSplitType === 'shares'">
-            By Shares
-          </button>
-          <button type="button" (click)="toggleSplitType('percentages')"
-            class="px-4 py-2 font-semibold border-none focus:outline-none focus:text-blue-500"
-            [class.text-gray-700]="selectedSplitType !== 'percentages'"
-            [class.text-blue-500]="selectedSplitType === 'percentages'">
-            By Percentages
-          </button>
+    <!-- Participants -->
+    <div>
+      <label class="block text-lg text-gray-700 font-medium mb-2">👥 Participants</label>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <ng-container *ngFor="let member of members">
+          <div class="flex flex-col items-center">
+            <button type="button" (click)="toggleParticipant(member.id)"
+              [ngClass]="isParticipantSelected(member.id) ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'"
+              class="rounded-full px-4 py-1 shadow hover:scale-105 transition-transform">
+              {{ member.email }}
+            </button>
+            <input *ngIf="isParticipantSelected(member.id) && selectedSplitType === 'unequal'" type="number"
+              placeholder="Amt" [value]="participantAmounts[member.id] || 0"
+              (input)="updateParticipantAmount(member.id, $event)"
+              class="mt-1 p-2 w-20 text-sm rounded border border-gray-300" />
+            <input *ngIf="isParticipantSelected(member.id) && selectedSplitType === 'shares'" type="number"
+              placeholder="Share" [value]="participantShares[member.id] || 0"
+              (input)="updateParticipantShares(member.id, $event)"
+              class="mt-1 p-2 w-20 text-sm rounded border border-gray-300" />
+            <input *ngIf="isParticipantSelected(member.id) && selectedSplitType === 'percentages'" type="number"
+              placeholder="%" [value]="participantPercentages[member.id] || 0"
+              (input)="updateParticipantAmount(member.id, $event)"
+              class="mt-1 p-2 w-20 text-sm rounded border border-gray-300" />
+          </div>
+        </ng-container>
+        <!-- Calculator -->
+        <div class="w-full mt-6 md:mt-0 md:ml-6 relative">
+          <div class="flex justify-end">
+            <button (click)="toggleCalculator()" title="Open Calculator" class="text-gray-500 hover:text-blue-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm0 2h8v2H6V4zm0 4h2v2H6V8zm4 0h2v2h-2V8zm4 0h-2v2h2V8zM6 12h2v2H6v-2zm4 0h2v2h-2v-2zm4 0h-2v2h2v-2z" />
+              </svg>
+            </button>
+          </div>
+          <div class="flex justify-end">
+
+            <div [@openClose]="openClose" class="absolute top-10 right-0 w-60 bg-white  z-50">
+              <app-calculator></app-calculator>
+            </div>
+
+          </div>
         </div>
       </div>
 
 
-      <label for="participants" class="block text-gray-700">Participants:</label>
-      <div class="flex items-center justify-center flex-wrap">
-        <ng-container *ngFor="let member of members">
-          <button type="button"
-            class="font-bold m-2 p-1 rounded transition-colors duration-300 ease-in-out focus:outline-none focus:ring focus:border-blue-300"
-            [ngClass]="{'bg-gray-500 text-white': isParticipantSelected(member.id)}"
-            (click)="toggleParticipant(member.id)">
-            {{ member.email }}
-          </button>
-
-          <ng-container *ngIf="isParticipantSelected(member.id)">
-            <ng-container *ngIf="selectedSplitType === 'unequal'">
-              <input type="number" class="form-input mt-1 block w-20" placeholder="Amount"
-                [value]="participantAmounts[member.id] || 0" (input)="updateParticipantAmount(member.id, $event)"
-                required min="1" (change)="updateParticipantAmountDecimal(member.id, $event)">
-            </ng-container>
-            <ng-container *ngIf="selectedSplitType === 'shares'">
-              <input type="number" class="form-input mt-1 block w-20" placeholder="Share"
-                [value]="participantShares[member.id] || 0" (input)="updateParticipantShares(member.id, $event)"
-                required min="1" step="1">
-            </ng-container>
-            <ng-container *ngIf="selectedSplitType === 'percentages'">
-              <input type="number" class="form-input mt-1 block w-20" placeholder="Percentage"
-                [value]="participantPercentages[member.id] || 0" (input)="updateParticipantAmount(member.id, $event)"
-                required min="1" (change)="updateParticipantAmountDecimal(member.id, $event)">
-            </ng-container>
-          </ng-container>
-        </ng-container>
-      </div>
-    </div>
-    <div *ngIf="!canAddExpense()" class="text-red-600">
-      Select at least 1 participant other than payer.
-    </div>
-    <div
-      *ngIf="((mode === 'add' && expenseForm.get('amount')?.touched) || mode==='edit') && selectedSplitType === 'unequal' && !isTotalAmountValid()"
-      class="text-red-600">
-      Individual participant amount must be greater than 0 and sum of participant amount must be equal to the expense
-      amount.
-    </div>
-    <div
-      *ngIf="((mode === 'add' && expenseForm.get('amount')?.touched) || mode==='edit') && selectedSplitType === 'shares' && !isTotalAmountValid()"
-      class="text-red-600">
-      Individual share must be Integer and greater than 0.
-    </div>
-    <div
-      *ngIf="((mode === 'add' && expenseForm.get('amount')?.touched) || mode==='edit') && selectedSplitType === 'percentages' && !isTotalAmountValid()"
-      class="text-red-600">
-      Individual participant percentage must be greater than 0 and sum of participant percentages must be equal to 100.
+      <div *ngIf="!canAddExpense()" class="text-sm text-red-600 mt-2">Select at least one participant (not payer).</div>
+      <div *ngIf="selectedSplitType !== 'equal' && !isTotalAmountValid()" class="text-sm text-red-600 mt-1">Ensure
+        values add up correctly.</div>
     </div>
 
-    <button (click)="toggleCalculator()" class="text-gray-700">Calculator</button>
-
-    <div class="mb-4" [@openClose]="openClose">
-      <app-calculator></app-calculator>
-    </div>
-
-    <div class="mb-4 mt-4">
-      <label for="category" class="block text-gray-700">Select a category:</label>
-      <select id="category" class="form-input mt-1 block w-full" formControlName="category">
+    <!-- Category -->
+    <div>
+      <label for="category" class="block text-lg text-gray-700 font-medium">📂 Category</label>
+      <select id="category" formControlName="category"
+        class="form-select mt-1 p-2 block w-full rounded-md border border-gray-300">
         <ng-container *ngFor="let category of categories">
           <optgroup [label]="category.title">
-            <option *ngFor="let subcategory of category.categories" [value]="subcategory">
-              {{ subcategory }}
-            </option>
+            <option *ngFor="let sub of category.categories" [value]="sub">{{ sub }}</option>
           </optgroup>
         </ng-container>
       </select>
     </div>
 
-
-    <div class="mb-4">
-      <label for="expenseDate" class="block text-gray-700">Expense Date:</label>
-      <input type="date" id="expenseDate" class="form-input mt-1 block w-full" formControlName="expenseDate"
-        [value]="expenseForm.value.expenseDate">
+    <!-- Date -->
+    <div>
+      <label for="expenseDate" class="block text-lg text-gray-700 font-medium">📅 Date</label>
+      <input type="date" id="expenseDate" formControlName="expenseDate"
+        class="form-input mt-1 p-2 block w-full rounded-md border border-gray-300" />
     </div>
 
-    <div class="mb-4">
-      <label for="description" class="block text-gray-700">Description:</label>
-      <input type="text" id="description" class="form-input mt-1 block w-full" placeholder="Description"
-        formControlName="description">
+    <!-- Description -->
+    <div>
+      <label for="description" class="block text-lg text-gray-700 font-medium">📝 Description</label>
+      <input type="text" id="description" formControlName="description" placeholder="Optional notes..."
+        class="form-input mt-1 p-2 block w-full rounded-md border border-gray-300" />
     </div>
 
+
+    <!-- Submit -->
     <div class="flex justify-center">
-      <button
-        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:bg-blue-600"
-        type="submit"
+      <button type="submit"
         [disabled]="expenseForm.invalid || !canAddExpense() || (selectedSplitType !== 'equal' && !isTotalAmountValid())"
-        [ngClass]="{'pointer-events-none bg-gray-400': expenseForm.invalid || !canAddExpense() || (selectedSplitType !== 'equal' && !isTotalAmountValid())}">
-        {{ mode === 'add' ? 'Add Expense' : 'Edit Expense' }}
+        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md shadow transition disabled:bg-gray-300">
+        {{ mode === 'add' ? 'Add Expense' : 'Save Changes' }}
       </button>
     </div>
   </form>
-
 </div>
 
+<!-- Loader -->
 <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+
+<!-- Animation Overlay -->
+<div *ngIf="showAnimation"
+  class="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black bg-opacity-40 z-50">
+  <div class="text-center text-white">
+    <ng-lottie [options]="animationOptions" style="width: 300px; height: 300px;"></ng-lottie>
+    <p class="mt-3">Processing your request...</p>
+  </div>
+</div>
