@@ -113,7 +113,7 @@ export class HomeComponent {
   declineInvitation(invitationId: string) {
     this.invitationsService.declineInvitation(invitationId, this.currentUser).subscribe({
       next: (message) => {
-        console.log("Declined", message)
+        // console.log("Declined", message)
         this.invitations = this.invitations.filter(invitation => invitation._id !== invitationId);
         this.usersService.getUserInvitations(this.currentUser).subscribe({
           next: (invitations) => {

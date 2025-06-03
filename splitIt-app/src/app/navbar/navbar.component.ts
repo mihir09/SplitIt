@@ -1,31 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { UsersService } from '../users.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
-  _user: string | void = '';
-  _userDetails: any;
+export class NavbarComponent implements OnInit {
+  _userDetails: any = null;
 
-  constructor(public authService: AuthService, public usersService: UsersService) {
-    this._user = this.authService.getCurrentUser()!
+  constructor(
+    public authService: AuthService,
+    public usersService: UsersService,
+    ) {}
 
-    if(!this._user){
-      this.authService.logout()
-    }
-    this.usersService.getUserDetailsByEmail(this._user!).subscribe({
-      next: (res) => {
-        this._userDetails = res;
-      },
-      error: (error) => {
-        console.error('Error fetching user details:', error);
+  ngOnInit(): void {
+    this.authService.currentUserEmail$.subscribe((email) => {
+      if (email) {
+        this.usersService.getUserDetailsByEmail(email).subscribe({
+          next: (res) => {
+            this._userDetails = res;
+          },
+          error: (err) => {
+            console.error('Error fetching user details:', err);
+            this._userDetails = null;
+          }
+        });
+      } else {
+        this._userDetails = null;
       }
     });
-    
   }
 
   onLogout() {

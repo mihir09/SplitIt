@@ -69,7 +69,6 @@ export class ListBalanceComponent {
     const transactionId = this.groupDetails.balance[index]._id;
     this.groupService.settleBalance(this.groupId, transactionId).subscribe({
       next: (response) => {
-        console.log(response.message)
         this.fetchGroupDetails()
       },
       error: (error) => {

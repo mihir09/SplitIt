@@ -25,6 +25,7 @@ export class LoginComponent {
         this.isLoggingIn = false;
         localStorage.setItem('token', response.token)
         localStorage.setItem('userEmail', this.formData.email)
+        this.authService.setCurrentUser(this.formData.email);
         this.errorMessage='';
         this.router.navigate(['/'])
         // console.log('Login successful')
