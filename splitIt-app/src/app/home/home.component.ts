@@ -1,4 +1,14 @@
-import { Component, Inject, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  Inject,
+  ChangeDetectorRef
+} from '@angular/core';
+import {
+  trigger,
+  transition,
+  style,
+  animate
+} from '@angular/animations';
 import { UsersService } from '../users.service';
 import { AuthService } from '../auth.service';
 import { DOCUMENT } from '@angular/common';
@@ -8,7 +18,18 @@ import { InvitationService } from '../invitation.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  animations: [
+    trigger('slideInFromLeft', [
+      transition(':enter', [
+        style({ transform: 'translateX(-50%)', opacity: 0 }),
+        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ transform: 'translateX(50%)', opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class HomeComponent {
   groups: any[] = [];
@@ -17,6 +38,7 @@ export class HomeComponent {
   currentUser: string = '';
   settledGroups: any[] = [];
   unsettledGroups: any[] = [];
+  activeSection = 'unsettled';
 
   constructor(
     private usersService: UsersService,
@@ -31,7 +53,7 @@ export class HomeComponent {
   }
 
   ngOnInit(): void {
-    this.currentUser = this.authService.getCurrentUser()!
+    this.currentUser = this.authService.getCurrentUser()!;
     this.usersService.getUserInvitations(this.currentUser).subscribe({
       next: (invitations) => {
         this.invitations = invitations;
@@ -45,10 +67,11 @@ export class HomeComponent {
   loadUserGroups() {
     this.currentUser = this.authService.getCurrentUser()!;
     const userId = this.authService.getCurrentUserId();
-  if (!userId) return;
+    if (!userId) return;
+
     this.settledGroups = [];
     this.unsettledGroups = [];
-  
+
     this.usersService.getUserGroups(this.currentUser).subscribe({
       next: (groups) => {
         this.groups = groups;
@@ -56,7 +79,7 @@ export class HomeComponent {
           const user = group.members.find((m: any) => m.memberId === userId || m.memberId?._id === userId);
           const balance = parseFloat(user?.memberBalance || '0');
           group.currentUserBalance = balance;
-          
+
           if (Math.abs(balance) < 0.01) {
             this.settledGroups.push(group);
           } else {
@@ -82,7 +105,7 @@ export class HomeComponent {
           page_title: title,
           page_path: event.urlAfterRedirects,
           page_location: this.document.location.href
-        })
+        });
       }
     });
   }
@@ -101,8 +124,7 @@ export class HomeComponent {
   acceptInvitation(invitationId: string) {
     this.invitationsService.acceptInvitation(invitationId, this.currentUser).subscribe({
       next: (response) => {
-        // console.log("Accepted", response.message)
-        this.router.navigate(['group', response.groupId])
+        this.router.navigate(['group', response.groupId]);
       },
       error: (error) => {
         console.error('Error ', error.error.message);
@@ -112,8 +134,7 @@ export class HomeComponent {
 
   declineInvitation(invitationId: string) {
     this.invitationsService.declineInvitation(invitationId, this.currentUser).subscribe({
-      next: (message) => {
-        // console.log("Declined", message)
+      next: () => {
         this.invitations = this.invitations.filter(invitation => invitation._id !== invitationId);
         this.usersService.getUserInvitations(this.currentUser).subscribe({
           next: (invitations) => {
@@ -133,5 +154,4 @@ export class HomeComponent {
   getAbs(value: number): number {
     return Math.abs(value);
   }
-
 }

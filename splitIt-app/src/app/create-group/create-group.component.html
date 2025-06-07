@@ -1,8 +1,7 @@
-<div class="bg-white p-4 rounded-lg shadow-md w-full max-w-md text-center">
-  <h2 class="text-3xl font-extrabold text-blue-500 mb-6">Create New Group</h2>
+<div class="w-full justify-items-center text-center bg-white border border-gray-100 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-gray-400 transition-all">
   <form [formGroup]="createForm" (ngSubmit)="onCreateGroup()">
     <div class="mb-4">
-      <label for="groupName" class="block text-gray-800 font-medium mb-1">Group Name:</label>
+      <label for="groupName" class="block text-gray-800 text-lg mb-1">Group Name:</label>
       <input type="text" id="groupName" formControlName="name" required placeholder="Trip to L.A"
         class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500">
     </div>

@@ -1,71 +1,124 @@
-<div class="bg-gray-100 min-h-screen py-10 px-4 flex flex-col items-center space-y-10">
+<div class="flex min-h-screen bg-gray-100 font-inter">
 
-  <!-- Invitations Card -->
-  <div *ngIf="invitations.length > 0" class="w-full max-w-xl bg-white rounded-xl shadow-lg p-6 space-y-4">
-    <h2 class="text-2xl font-bold text-blue-700 text-center">You've Got Invitations</h2>
-    <ul class="space-y-4">
-      <li *ngFor="let invitation of invitations" class="border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow transition">
-        <p class="text-gray-800 text-base">
-          <strong>{{ invitation.senderName }}</strong> invited you to join <span class="font-medium text-blue-600">"{{ invitation.groupName }}"</span>
-        </p>
-        <div class="flex justify-center mt-3 gap-4">
-          <button class="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white transition"
-                  (click)="acceptInvitation(invitation.id)">Accept</button>
-          <button class="px-4 py-2 rounded-md bg-red-500 hover:bg-red-600 text-white transition"
-                  (click)="declineInvitation(invitation.id)">Decline</button>
-        </div>
-      </li>
-    </ul>
-  </div>
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white shadow-xl p-6 space-y-8 border-r border-gray-200">
+    <nav class="space-y-3 text-sm font-medium">
+      <button
+        class="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-yellow-100 transition"
+        [ngClass]="{ 'bg-yellow-200 text-yellow-900 font-semibold': activeSection === 'unsettled' }"
+        (click)="activeSection = 'unsettled'"
+      >
+        Unsettled Groups
+      </button>
+      <button
+        class="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-100 transition"
+        [ngClass]="{ 'bg-green-200 text-green-900 font-semibold': activeSection === 'settled' }"
+        (click)="activeSection = 'settled'"
+      >
+        Settled Groups
+      </button>
+      <button
+        class="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition"
+        [ngClass]="{ 'bg-blue-200 text-blue-900 font-semibold': activeSection === 'invitations' }"
+        (click)="activeSection = 'invitations'"
+      >
+        Invitations
+      </button>
+      <button
+        class="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
+        [ngClass]="{ 'bg-gray-300 text-gray-900 font-semibold': activeSection === 'create' }"
+        (click)="activeSection = 'create'"
+      >
+        Create Group
+      </button>
+    </nav>
+  </aside>
 
-  <div class="w-full max-w-xl bg-white rounded-xl shadow-lg p-6 space-y-4" *ngIf="unsettledGroups.length">
-    <h2 class="text-xl font-bold text-yellow-700">Unsettled Groups</h2>
-    <ul class="space-y-2">
-      <li *ngFor="let group of unsettledGroups" class="p-3 border-b border-gray-200">
-        <a [routerLink]="['/group', group._id]" class="block text-lg text-gray-800 hover:text-yellow-600">
-          
-        {{ group.name }}
+  <!-- Main Content -->
+  <main class="flex-1 px-6 py-8 overflow-y-auto space-y-12">
+
+    <!-- Unsettled Groups -->
+    <section *ngIf="activeSection === 'unsettled'" [@slideInFromLeft] class="space-y-6">
+      <div class="text-3xl font-bold text-yellow-600 border-b pb-2">Unsettled Groups</div>
+      <div *ngIf="unsettledGroups.length > 0; else noGroups" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
-          class="text-sm mt-1"
-          [ngClass]="{
-            'text-green-600 font-medium': group.currentUserBalance > 0,
-            'text-red-600 font-medium': group.currentUserBalance < 0
-          }"
+          *ngFor="let group of unsettledGroups"
+          class="bg-white border border-yellow-100 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-yellow-400 transition-all"
         >
-          You {{ group.currentUserBalance > 0 ? 'are owed' : 'owe' }}
-          {{ getAbs(group.currentUserBalance)| currency:'USD' }}
+          <a [routerLink]="['/group', group._id]">
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">
+              {{ group.name }}
+            </h3>
+            <p
+              class="text-sm"
+              [ngClass]="{
+                'text-green-600 font-medium': group.currentUserBalance > 0,
+                'text-red-600 font-medium': group.currentUserBalance < 0
+              }"
+            >
+              You {{ group.currentUserBalance > 0 ? 'are owed' : 'owe' }}
+              {{ getAbs(group.currentUserBalance) | currency:'USD' }}
+            </p>
+          </a>
         </div>
-        </a>
-      </li>
-    </ul>
-  </div>
-  
-  
-  <div class="w-full max-w-xl bg-white rounded-xl shadow-lg p-6 space-y-4" *ngIf="settledGroups.length">
-    <h2 class="text-xl font-bold text-green-700">Settled Groups</h2>
-    <ul class="space-y-2">
-      <li *ngFor="let group of settledGroups" class="p-3 border-b border-gray-200">
-        <a [routerLink]="['/group', group._id]" class="block text-lg text-gray-800 hover:text-green-600">
-          {{ group.name }}
-        </a>
-      </li>
-    </ul>
-  </div>
+      </div>
+      <ng-template #noGroups>
+        <p class="text-center text-gray-500 mt-6">You have no unsettled groups at the moment.</p>
+      </ng-template>
+    </section>
 
-  <!-- Create Group Button -->
-  <button class="px-6 py-2 text-white bg-blue-500 rounded-full shadow hover:shadow-md transition"
-          (click)="toggleCreateGroup()">
-    Create Group
-  </button>
+    <!-- Settled Groups -->
+    <section *ngIf="activeSection === 'settled'" [@slideInFromLeft] class="space-y-6">
+      <div class="text-3xl font-bold text-green-600 border-b pb-2">Settled Groups</div>
+      <div *ngIf="settledGroups.length > 0; else noGroups" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          *ngFor="let group of settledGroups"
+          class="bg-white border border-green-100 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-green-400 transition-all"
+        >
+          <a [routerLink]="['/group', group._id]">
+            <h3 class="text-xl font-semibold text-gray-800">{{ group.name }}</h3>
+          </a>
+        </div>
+      </div>
+      <ng-template #noGroups>
+        <p class="text-center text-gray-500 mt-6">You have no settled groups at the moment.</p>
+      </ng-template>
+    </section>
 
-  <!-- Modal -->
-  <div class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm"
-       *ngIf="showCreateGroup">
-    <div class="rounded-lg shadow-xl w-full max-w-md relative animate-fadeIn">
-      <button class="absolute right-1 text-xl text-red-700 hover:text-red-500 transition"
-              (click)="toggleCreateGroup()">×</button>
+    <!-- Invitations -->
+    <section *ngIf="activeSection === 'invitations'" [@slideInFromLeft] class="space-y-6">
+      <div class="text-3xl font-bold text-blue-700 border-b pb-2">Invitations</div>
+      <div *ngIf="invitations.length > 0; else noInvites" class="space-y-4">
+        <div
+          *ngFor="let invitation of invitations"
+          class="bg-white border border-blue-100 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-blue-400 transition-all"
+        >
+          <p class="text-gray-700">
+            <strong>{{ invitation.senderName }}</strong> invited you to
+            <span class="text-blue-600 font-medium">"{{ invitation.groupName }}"</span>
+          </p>
+          <div class="mt-4 flex gap-4">
+            <button
+              class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+              (click)="acceptInvitation(invitation._id)"
+            >Accept</button>
+            <button
+              class="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition"
+              (click)="declineInvitation(invitation._id)"
+            >Decline</button>
+          </div>
+        </div>
+      </div>
+      <ng-template #noInvites>
+        <p class="text-center text-gray-500 mt-6">No invitations found.</p>
+      </ng-template>
+    </section>
+
+    <!-- Create Group -->
+    <section *ngIf="activeSection === 'create'" [@slideInFromLeft] class="space-y-6">
+      <div class="text-3xl font-bold text-gray-700 border-b pb-2">Create New Group</div>
       <app-create-group></app-create-group>
-    </div>
-  </div>
+    </section>
 
+  </main>
 </div>
