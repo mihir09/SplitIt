@@ -39,6 +39,7 @@ export class HomeComponent {
   settledGroups: any[] = [];
   unsettledGroups: any[] = [];
   activeSection = 'unsettled';
+  isSidebarExpanded = true;
 
   constructor(
     private usersService: UsersService,
