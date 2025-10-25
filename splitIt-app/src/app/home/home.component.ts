@@ -55,11 +55,9 @@ export class HomeComponent {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser()!;
-    console.log(this.currentUser)
     this.usersService.getUserInvitations(this.currentUser).subscribe({
       next: (invitations) => {
         this.invitations = invitations;
-        console.log(this.invitations)
       },
       error: (error) => {
         console.error('Error fetching invitations:', error);
@@ -125,7 +123,6 @@ export class HomeComponent {
   }
 
   acceptInvitation(invitationId: string) {
-    console.log(invitationId, this.currentUser)
     this.invitationsService.acceptInvitation(invitationId, this.currentUser).subscribe({
       next: (response) => {
         this.router.navigate(['group', response.groupId]);
