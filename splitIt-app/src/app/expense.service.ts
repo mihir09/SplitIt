@@ -21,8 +21,13 @@ export class ExpenseService {
     return this.http.get<any[]>(`${this.groupUrl}/${groupId}/expenses`);
   }
 
+  undoExpense(expenseId: string): Observable<any> {
+    const url = `${this.expensesUrl}/undo/${expenseId}`;
+    return this.http.post(url,{});
+  }
+
   deleteExpense(expenseId: string): Observable<any> {
-    const url = `${this.expensesUrl}/${expenseId}`;
+    const url = `${this.expensesUrl}${expenseId}`;
     return this.http.delete(url);
   }
 

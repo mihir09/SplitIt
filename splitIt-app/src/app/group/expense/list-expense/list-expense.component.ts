@@ -94,16 +94,16 @@ export class ListExpenseComponent implements OnInit {
     this.applyFilterExpense();
   }
 
-  deleteExpense(expense: any): void {
-    const confirmDelete = confirm('Are you sure you want to delete this expense?');
+  undoExpense(expense: any): void {
+    const confirmDelete = confirm('Are you sure you want to undo this expense?');
     if (confirmDelete) {
       this.loading = true;
-      this.expenseService.deleteExpense(expense._id).subscribe({
+      this.expenseService.undoExpense(expense._id).subscribe({
         next: (res) => {
           this.fetchExpenses();
         },
         error: (error) => {
-          console.error('Error deleting expense', error);
+          console.error('Error undoing expense', error);
         },
       });
     }

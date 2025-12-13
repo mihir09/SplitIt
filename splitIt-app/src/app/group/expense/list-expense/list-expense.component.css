@@ -1,0 +1,116 @@
+/* Glass Date Picker Styling */
+::ng-deep .glass-date-picker .mat-mdc-form-field {
+  font-family: inherit;
+}
+
+::ng-deep .glass-date-picker .mat-mdc-text-field-wrapper {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+::ng-deep .glass-date-picker .mat-mdc-form-field-focus-overlay {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+::ng-deep .glass-date-picker .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: transparent;
+}
+
+::ng-deep .glass-date-picker .mat-mdc-form-field-label,
+::ng-deep .glass-date-picker .mat-mdc-input-element,
+::ng-deep .glass-date-picker .mat-datepicker-toggle {
+  color: white !important;
+}
+
+::ng-deep .glass-date-picker .mat-mdc-form-field-label {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+::ng-deep .glass-date-picker .mat-mdc-input-element::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+::ng-deep .glass-date-picker .mat-icon {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+::ng-deep .glass-date-picker .mdc-line-ripple::before,
+::ng-deep .glass-date-picker .mdc-line-ripple::after {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Glass Table Styling */
+::ng-deep .glass-table {
+  background: transparent !important;
+}
+
+::ng-deep .glass-table th {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  font-weight: 600;
+  padding: 16px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+::ng-deep .glass-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+::ng-deep .glass-table .mat-mdc-row:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+::ng-deep .glass-table .mat-sort-header-arrow {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Glass Paginator Styling */
+::ng-deep .glass-paginator .mat-mdc-paginator {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: white;
+  padding: 12px;
+}
+
+::ng-deep .glass-paginator .mat-mdc-paginator-container {
+  color: white;
+}
+
+::ng-deep .glass-paginator .mat-mdc-icon-button {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+::ng-deep .glass-paginator .mat-mdc-icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+::ng-deep .glass-paginator .mat-mdc-icon-button[disabled] {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+::ng-deep .glass-paginator .mat-mdc-select-value,
+::ng-deep .glass-paginator .mat-mdc-select-arrow {
+  color: white;
+}
+
+::ng-deep .glass-paginator .mat-mdc-form-field-underline {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+  ::ng-deep .glass-table th,
+  ::ng-deep .glass-table td {
+    padding: 12px 8px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Hover effect for scale */
+.hover\:scale-102:hover {
+  transform: scale(1.02);
+}

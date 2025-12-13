@@ -1,54 +1,92 @@
-<div class="p-2 rounded-lg text-center flex-1">
-  <h2 class="text-2xl font-bold mb-4">Add New Member</h2>
-  <form [formGroup]="createForm" (ngSubmit)="onAddUser()">
-    <div class="mb-4">
-      <label for="userEmail" class="block text-gray-700">User Email:</label>
-      <input type="text" id="userEmail" formControlName="email" required
-        class="px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500">
-    </div>
-    <div class="text-red-600" *ngIf="errorMessage">
-      {{ errorMessage }}
-    </div>
-    <div *ngIf="showInviteButton">
-      <button 
-        (click)="onInvite(userEmailToInvite)"
-        class="px-4 py-2 mb-2 text-white bg-green-600 rounded hover:bg-green-800 focus:outline-none focus:bg-green-600">
-        Send Invitation
-      </button>
+<div class="min-h-screen relative overflow-hidden">
+  <!-- Professional Gradient Background -->
+  <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"></div>
+  
+  <!-- Mesh Gradient Overlays -->
+  <div class="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-transparent to-purple-500/20"></div>
+  <div class="absolute inset-0 bg-gradient-to-bl from-cyan-500/10 via-transparent to-pink-500/10"></div>
+  
+  <!-- Animated Professional Blobs -->
+  <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-400/30 to-purple-600/30 rounded-full blur-3xl animate-pulse"></div>
+  <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-cyan-400/20 to-blue-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1.5s;"></div>
+  <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-r from-purple-400/15 to-pink-400/15 rounded-full blur-3xl animate-pulse" style="animation-delay: 3s;"></div>
+  
+  <!-- Subtle Grid Pattern -->
+  <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.15) 1px, transparent 0); background-size: 40px 40px;"></div>
 
-
-    </div>
-    <div class="text-green-600 mb-2" *ngIf="successMessage">
-      {{ successMessage }}
-    </div>
-    <button type="submit"
-      class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
-      Add
-    </button>
-  </form>
-
-
-  <div class="p-4 rounded text-center flex-1">
-    <h2 class="text-lg font-semibold mb-4">Group Members</h2>
-
-    <ul>
-      <li *ngFor="let member of members" class="text-lg text-gray-700 mb-2 hover:text-blue-500">
-        <div class="flex flex-col justify-center items-center">
-          <div class="flex flex-row items-center space-x-2">
-            <svg class="w-[15px] h-[15px] fill-[#8e8e8e]" viewBox="0 0 448 512">
-              <path
-                d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z">
-              </path>
-            </svg>
-            <p class="text-lg font-semibold">{{ member.name }}</p>
+  <!-- Content -->
+  <div class="relative z-10 min-h-screen py-8 px-4 md:px-8 lg:px-12">
+    <div class="max-w-4xl mx-auto mt-4 space-y-6 md:space-y-8">
+      
+      <!-- Add New Member Card -->
+      <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 text-center hover:bg-white/15 transition-all duration-300">
+        <h2 class="text-2xl md:text-3xl text-white mb-6">Add New Member</h2>
+        
+        <form [formGroup]="createForm" (ngSubmit)="onAddUser()">
+          <div class="mb-6">
+            <label for="userEmail" class="block text-white text-lg mb-3 text-left">User Email:</label>
+            <input 
+              type="email" 
+              id="userEmail" 
+              formControlName="email" 
+              required
+              placeholder="user@example.com"
+              class="w-full px-4 py-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-white/50 focus:bg-white/25 transition-all">
+          </div>
+          
+          <div class="text-red-300 mb-4" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+          
+          <div class="text-green-300 mb-4" *ngIf="successMessage">
+            {{ successMessage }}
           </div>
 
-          <div>
-            <p class="text-gray-500">{{ member.email }}</p>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center" *ngIf="showInviteButton">
+            <button 
+              type="button"
+              (click)="onInvite(userEmailToInvite)"
+              class="px-6 py-3 bg-green-500/30 backdrop-blur-md border border-green-400/40 rounded-xl text-white hover:bg-green-500/40 hover:border-green-400/60 transition-all duration-300 hover:scale-105">
+              Send Invitation
+            </button>
           </div>
+
+          <div class="flex justify-center" *ngIf="!showInviteButton">
+            <button 
+              type="submit"
+              class="w-full sm:w-auto px-6 md:px-8 py-3 bg-blue-500/30 backdrop-blur-md border border-blue-400/40 rounded-xl text-white hover:bg-blue-500/40 hover:border-blue-400/60 transition-all duration-300 hover:scale-105">
+              Add Member
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Group Members Card -->
+      <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 text-center hover:bg-white/15 transition-all duration-300">
+        <h2 class="text-2xl md:text-3xl text-white mb-6">Group Members</h2>
+
+        <ul class="space-y-3">
+          <li *ngFor="let member of members" 
+              class="p-4 md:p-5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-102">
+            <div class="flex flex-col items-center gap-2">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center">
+                  <svg class="w-5 h-5 fill-white/80" viewBox="0 0 448 512">
+                    <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"></path>
+                  </svg>
+                </div>
+                <p class="text-lg md:text-xl text-white">{{ member.name }}</p>
+              </div>
+              <p class="text-sm md:text-base text-white/60">{{ member.email }}</p>
+            </div>
+          </li>
+        </ul>
+
+        <div *ngIf="!members || members.length === 0" class="py-8">
+          <p class="text-white/70 text-base md:text-lg">No members yet. Add the first member!</p>
         </div>
-      </li>
-    </ul>
-  </div>
+      </div>
 
+    </div>
+  </div>
 </div>

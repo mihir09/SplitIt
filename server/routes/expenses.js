@@ -198,6 +198,49 @@ async function handleExpenseDeletion(req, res) {
       return res.status(404).json({ message: 'Expense Payer not found' });
     }
 
+    // Remove expense from group
+    group.expenses = group.expenses.filter(expense => expense.toString() !== expenseId);
+
+    await group.save();
+
+
+    return res.status(200).json({ message: 'Expense deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+router.delete('/:expenseId', handleExpenseDeletion);
+
+// Undo Expense
+async function handleExpenseUndo(req, res) {
+  try {
+    const expenseId = req.params.expenseId;
+
+    // Find Expense
+    const expense = await findExpenseById(expenseId);
+    if (!expense) {
+      return res.status(404).json({ message: 'Expense not found' });
+    }
+
+    // Find Group
+    const group = await findGroupById(expense.groupId);
+    if (!expense.groupId || !group) {
+      return res.status(404).json({ message: "Expense Group couldn't be linked" });
+    }
+
+    // Group has expense or not
+    const groupIncludesExpense = group.expenses.includes(expenseId);
+    if (!groupIncludesExpense) {
+      return res.status(404).json({ message: "Expense not found in group" });
+    }
+
+    // Find Payer
+    const payerUser = await findUserById(expense.payer);
+    if (!expense.payer || !payerUser) {
+      return res.status(404).json({ message: 'Expense Payer not found' });
+    }
+
     const operation = 'delete';
 
     // Calculate and update balances
@@ -212,13 +255,13 @@ async function handleExpenseDeletion(req, res) {
     await group.save();
 
 
-    return res.status(200).json({ message: 'Expense deleted successfully' });
+    return res.status(200).json({ message: 'Expense Undone successfully' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
-router.delete('/:expenseId', handleExpenseDeletion);
+router.post('/undo/:expenseId', handleExpenseUndo);
 
 // Update Expense
 async function handleExpenseUpdate(req, res) {
