@@ -1,68 +1,35 @@
-<div class="flex min-h-screen bg-gray-100 font-inter">
+<div class="min-h-screen relative overflow-hidden">
+  <!-- Professional Gradient Background -->
+  <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"></div>
+  
+  <!-- Mesh Gradient Overlays -->
+  <div class="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-transparent to-purple-500/20"></div>
+  <div class="absolute inset-0 bg-gradient-to-bl from-cyan-500/10 via-transparent to-pink-500/10"></div>
+  
+  <!-- Animated Professional Blobs -->
+  <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-400/30 to-purple-600/30 rounded-full blur-3xl animate-pulse"></div>
+  <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-cyan-400/20 to-blue-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1.5s;"></div>
+  <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-r from-purple-400/15 to-pink-400/15 rounded-full blur-3xl animate-pulse" style="animation-delay: 3s;"></div>
+  
+  <!-- Subtle Grid Pattern -->
+  <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.15) 1px, transparent 0); background-size: 40px 40px;"></div>
 
-  <input type="hidden" #state value="unsettled" />
-
-  <aside class="hidden md:block md:w-40 lg:w-64 bg-white shadow-xl p-6 space-y-6 border-r border-gray-200">
-    <nav class="space-y-2 text-sm font-medium">
-      <button class="w-full px-4 py-2 rounded-lg transition hover:bg-yellow-100 text-left"
-        [ngClass]="{ 'bg-yellow-200 text-yellow-900 font-semibold': activeSection === 'unsettled' }"
-          (click)="activeSection = 'unsettled'">
-          Unsettled Groups</button>
-
-      <button class="w-full px-4 py-2 rounded-lg transition hover:bg-green-100 text-left"
-        [ngClass]="{ 'bg-green-200 text-green-900 font-semibold': activeSection === 'settled' }"
-          (click)="activeSection = 'settled'">
-          Settled Groups</button>
-
-      <button class="w-full px-4 py-2 rounded-lg transition hover:bg-blue-100 text-left"
-        [ngClass]="{ 'bg-blue-200 text-blue-900 font-semibold': activeSection === 'invitations' }"
-          (click)="activeSection = 'invitations'"> Invitations</button>
-
-      <button class="w-full px-4 py-2 rounded-lg transition hover:bg-gray-200 text-left"
-        [ngClass]="{ 'bg-gray-300 text-gray-900 font-semibold': activeSection === 'create' }" (click)="activeSection = 'create'" >Create
-        Group</button>
-    </nav>
-  </aside>
-
-  <main class="flex-1 px-6 py-8 overflow-y-auto space-y-12">
+  <!-- Content -->
+  <main class="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 md:p-8 pt-24 pb-32">
     
-    <div class="md:hidden bg-white border-b border-gray-200 shadow">
-      <nav class="flex flex-row gap-2 p-3 text-sm font-medium">
-        <button class="flex-1 px-3 py-2 rounded-lg transition hover:bg-yellow-100"
-          [ngClass]="{ 'bg-yellow-200 text-yellow-900 font-semibold': activeSection === 'unsettled' }"
-          (click)="activeSection = 'unsettled'">
-          Unsettled
-        </button>
-
-        <button class="flex-1 px-3 py-2 rounded-lg transition hover:bg-green-100"
-          [ngClass]="{ 'bg-green-200 text-green-900 font-semibold': activeSection === 'settled' }"
-          (click)="activeSection = 'settled'">
-          Settled
-        </button>
-
-        <button class="flex-1 px-3 py-2 rounded-lg transition hover:bg-blue-100"
-          [ngClass]="{ 'bg-blue-200 text-blue-900 font-semibold': activeSection === 'invitations' }"
-          (click)="activeSection = 'invitations'"> Invitations</button>
-
-        <button class="flex-1 px-3 py-2 rounded-lg transition hover:bg-gray-200"
-          [ngClass]="{ 'bg-gray-300 text-gray-900 font-semibold': activeSection === 'create' }"
-          (click)="activeSection = 'create'">Create</button>
-      </nav>
-    </div>
     <!-- Unsettled Groups -->
-    <section *ngIf="activeSection === 'unsettled'" [@slideInFromLeft] class="space-y-6">
-      <div class="text-3xl font-bold text-yellow-600 border-b pb-2">Unsettled Groups</div>
+    <section *ngIf="activeSection === 'unsettled'" [@fadeScale] class="w-full max-w-6xl">
+      <h1 class="text-3xl md:text-4xl lg:text-5xl text-white mb-8 md:mb-12 text-center">Unsettled Groups</h1>
+      
       <div *ngIf="unsettledGroups.length > 0; else noGroups"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <div *ngFor="let group of unsettledGroups"
-          class="bg-white border border-yellow-100 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-yellow-400 transition-all">
+          class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 md:p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 cursor-pointer">
           <a [routerLink]="['/group', group._id]">
-            <h3 class="text-xl font-semibold text-gray-800 mb-2">
-              {{ group.name }}
-            </h3>
+            <h3 class="text-white text-lg md:text-xl mb-2">{{ group.name }}</h3>
             <p class="text-sm" [ngClass]="{
-                'text-green-600 font-medium': group.currentUserBalance > 0,
-                'text-red-600 font-medium': group.currentUserBalance < 0
+                'text-green-300': group.currentUserBalance > 0,
+                'text-red-300': group.currentUserBalance < 0
               }">
               You {{ group.currentUserBalance > 0 ? 'are owed' : 'owe' }}
               {{ getAbs(group.currentUserBalance) | currency:'USD' }}
@@ -71,54 +38,106 @@
         </div>
       </div>
       <ng-template #noGroups>
-        <p class="text-center text-gray-500 mt-6">You have no unsettled groups at the moment.</p>
+        <p class="text-center text-white/70 mt-6 text-sm md:text-base">You have no unsettled groups at the moment.</p>
       </ng-template>
     </section>
 
     <!-- Settled Groups -->
-    <section *ngIf="activeSection === 'settled'" [@slideInFromLeft] class="space-y-6">
-      <div class="text-3xl font-bold text-green-600 border-b pb-2">Settled Groups</div>
-      <div *ngIf="settledGroups.length > 0; else noGroups" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section *ngIf="activeSection === 'settled'" [@fadeScale] class="w-full max-w-6xl">
+      <h1 class="text-3xl md:text-4xl lg:text-5xl text-white mb-8 md:mb-12 text-center">Settled Groups</h1>
+      
+      <div *ngIf="settledGroups.length > 0; else noGroups" 
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <div *ngFor="let group of settledGroups"
-          class="bg-white border border-green-100 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-green-400 transition-all">
+          class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 md:p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 cursor-pointer">
           <a [routerLink]="['/group', group._id]">
-            <h3 class="text-xl font-semibold text-gray-800">{{ group.name }}</h3>
+            <h3 class="text-white text-lg md:text-xl mb-2">{{ group.name }}</h3>
+            <p class="text-white/70 text-sm md:text-base">All balances settled</p>
           </a>
         </div>
       </div>
       <ng-template #noGroups>
-        <p class="text-center text-gray-500 mt-6">You have no settled groups at the moment.</p>
+        <p class="text-center text-white/70 mt-6 text-sm md:text-base">You have no settled groups at the moment.</p>
       </ng-template>
     </section>
 
     <!-- Invitations -->
-    <section *ngIf="activeSection === 'invitations'" [@slideInFromLeft] class="space-y-6">
-      <div class="text-3xl font-bold text-blue-700 border-b pb-2">Invitations</div>
-      <div *ngIf="invitations.length > 0; else noInvites" class="space-y-4">
+    <section *ngIf="activeSection === 'invitations'" [@fadeScale] class="w-full max-w-6xl">
+      <h1 class="text-3xl md:text-4xl lg:text-5xl text-white mb-8 md:mb-12 text-center">Invitations</h1>
+      
+      <div *ngIf="invitations.length > 0; else noInvites" 
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <div *ngFor="let invitation of invitations"
-          class="bg-white border border-blue-100 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-blue-400 transition-all">
-          <p class="text-gray-700">
-            <strong>{{ invitation.senderName }}</strong> invited you to
-            <span class="text-blue-600 font-medium">"{{ invitation.groupName }}"</span>
+          class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 md:p-6 hover:bg-white/15 transition-all duration-300">
+          <h3 class="text-white text-lg md:text-xl mb-2">{{ invitation.groupName }}</h3>
+          <p class="text-white/70 mb-4 text-sm md:text-base">
+            Invited by <strong>{{ invitation.senderName }}</strong>
           </p>
-          <div class="mt-4 flex gap-4">
-            <button class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
-              (click)="acceptInvitation(invitation.id)">Accept</button>
-            <button class="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition"
-              (click)="declineInvitation(invitation.id)">Decline</button>
+          <div class="flex gap-3">
+            <button 
+              class="flex-1 px-3 md:px-4 py-2 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white hover:bg-white/30 transition-all text-sm md:text-base"
+              (click)="acceptInvitation(invitation.id)">
+              Accept
+            </button>
+            <button 
+              class="flex-1 px-3 md:px-4 py-2 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white hover:bg-red-500/30 transition-all text-sm md:text-base"
+              (click)="declineInvitation(invitation.id)">
+              Decline
+            </button>
           </div>
         </div>
       </div>
       <ng-template #noInvites>
-        <p class="text-center text-gray-500 mt-6">No invitations found.</p>
+        <p class="text-center text-white/70 mt-6 text-sm md:text-base">No invitations found.</p>
       </ng-template>
     </section>
 
     <!-- Create Group -->
-    <section *ngIf="activeSection === 'create'" [@slideInFromLeft] class="space-y-6">
-      <div class="text-3xl font-bold text-gray-700 border-b pb-2">Create New Group</div>
-      <app-create-group></app-create-group>
+    <section *ngIf="activeSection === 'create'" [@fadeScale] class="w-full max-w-6xl">
+      <h1 class="text-3xl md:text-4xl lg:text-5xl text-white mb-8 md:mb-12 text-center">Create Group</h1>
+      <div class="w-full md:w-2/3 lg:w-1/2 xl:w-1/3 mx-auto">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8">
+          <app-create-group></app-create-group>
+        </div>
+      </div>
     </section>
 
   </main>
+
+  <!-- Bottom Button Group -->
+<div class="fixed bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20 w-full px-4 md:px-0 md:w-auto max-w-full overflow-x-auto">
+  <div class="flex flex-nowrap gap-2 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl p-2 min-w-min">
+    <button 
+      (click)="activeSection = 'unsettled'"
+      [class]="activeSection === 'unsettled' 
+        ? 'whitespace-nowrap px-3 md:px-4 lg:px-6 py-2 md:py-3 backdrop-blur-md border rounded-xl text-white transition-all duration-300 bg-white/30 border-white/40 shadow-lg text-xs md:text-sm' 
+        : 'whitespace-nowrap px-3 md:px-4 lg:px-6 py-2 md:py-3 backdrop-blur-md border rounded-xl text-white transition-all duration-300 bg-white/10 border-white/20 hover:bg-white/20 text-xs md:text-sm'">
+      <span class="hidden lg:inline">Unsettled Groups</span>
+      <span class="lg:hidden">Unsettled</span>
+    </button>
+    <button 
+      (click)="activeSection = 'settled'"
+      [class]="activeSection === 'settled' 
+        ? 'whitespace-nowrap px-3 md:px-4 lg:px-6 py-2 md:py-3 backdrop-blur-md border rounded-xl text-white transition-all duration-300 bg-white/30 border-white/40 shadow-lg text-xs md:text-sm' 
+        : 'whitespace-nowrap px-3 md:px-4 lg:px-6 py-2 md:py-3 backdrop-blur-md border rounded-xl text-white transition-all duration-300 bg-white/10 border-white/20 hover:bg-white/20 text-xs md:text-sm'">
+      <span class="hidden lg:inline">Settled Groups</span>
+      <span class="lg:hidden">Settled</span>
+    </button>
+    <button 
+      (click)="activeSection = 'invitations'"
+      [class]="activeSection === 'invitations' 
+        ? 'whitespace-nowrap px-3 md:px-4 lg:px-6 py-2 md:py-3 backdrop-blur-md border rounded-xl text-white transition-all duration-300 bg-white/30 border-white/40 shadow-lg text-xs md:text-sm' 
+        : 'whitespace-nowrap px-3 md:px-4 lg:px-6 py-2 md:py-3 backdrop-blur-md border rounded-xl text-white transition-all duration-300 bg-white/10 border-white/20 hover:bg-white/20 text-xs md:text-sm'">
+      Invitations
+    </button>
+    <button 
+      (click)="activeSection = 'create'"
+      [class]="activeSection === 'create' 
+        ? 'whitespace-nowrap px-3 md:px-4 lg:px-6 py-2 md:py-3 backdrop-blur-md border rounded-xl text-white transition-all duration-300 bg-white/30 border-white/40 shadow-lg text-xs md:text-sm' 
+        : 'whitespace-nowrap px-3 md:px-4 lg:px-6 py-2 md:py-3 backdrop-blur-md border rounded-xl text-white transition-all duration-300 bg-white/10 border-white/20 hover:bg-white/20 text-xs md:text-sm'">
+      Create
+    </button>
+  </div>
+</div>
+
 </div>

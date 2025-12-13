@@ -1,3 +1,47 @@
-.minWidth{
-    min-width: 300px;
+.minWidth {
+  min-width: 300px;
+}
+
+/* Ensure backdrop-blur works properly */
+@supports (backdrop-filter: blur(12px)) {
+  .backdrop-blur-md {
+    backdrop-filter: blur(12px);
+  }
+}
+
+/* Animation for pulse effect */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Make sure links within glass cards maintain proper styling */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Responsive adjustments for bottom navigation */
+@media (max-width: 768px) {
+  .fixed.bottom-8 > div {
+    max-width: calc(100vw - 2rem);
+    overflow-x: auto;
+  }
+  
+  .fixed.bottom-8 .flex {
+    flex-wrap: nowrap;
+  }
 }
