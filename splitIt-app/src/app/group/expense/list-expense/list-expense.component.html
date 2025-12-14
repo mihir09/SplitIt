@@ -1,21 +1,10 @@
 <div class="min-h-screen relative overflow-hidden">
-  <!-- Professional Gradient Background -->
-  <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"></div>
-  
-  <!-- Mesh Gradient Overlays -->
-  <div class="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-transparent to-purple-500/20"></div>
-  <div class="absolute inset-0 bg-gradient-to-bl from-cyan-500/10 via-transparent to-pink-500/10"></div>
-  
-  <!-- Animated Professional Blobs -->
-  <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-400/30 to-purple-600/30 rounded-full blur-3xl animate-pulse"></div>
-  <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-cyan-400/20 to-blue-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1.5s;"></div>
-  <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-r from-purple-400/15 to-pink-400/15 rounded-full blur-3xl animate-pulse" style="animation-delay: 3s;"></div>
   
   <!-- Subtle Grid Pattern -->
   <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.15) 1px, transparent 0); background-size: 40px 40px;"></div>
 
   <!-- Content -->
-  <div class="relative z-10 min-h-screen py-8 px-4 md:px-8 lg:px-12" *ngIf="!loading">
+  <div class="relative z-10 px-4 md:px-8 lg:px-12" *ngIf="!loading">
     <div class="max-w-7xl mx-auto mt-4">
       
       <!-- Main Card -->
@@ -56,8 +45,8 @@
         </div>
 
         <!-- Table Section -->
-        <div class="overflow-x-auto rounded-xl">
-          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+        <div class="overflow-x-auto w-full rounded-xl">
+          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 min-w-max">
             <table mat-table [dataSource]="expenseList" matSort class="w-full glass-table">
               
               <ng-container matColumnDef="expenseDate">
@@ -83,13 +72,13 @@
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef class="text-white/90">Actions</th>
                 <td mat-cell *matCellDef="let element">
-                  <div class="flex flex-row gap-1 justify-center">
+                  <div class="flex gap-1 justify-center">
                     <button 
                       mat-icon-button 
-                      (click)="undoExpense(element)" 
-                      matTooltip="Undo"
-                      class="hover:bg-red-500/20 transition-all duration-300">
-                      <mat-icon class="text-red-300">undo</mat-icon>
+                      (click)="showExpenseDetails(element)" 
+                      matTooltip="Show Details"
+                      class="hover:bg-purple-500/20 transition-all duration-300">
+                      <mat-icon class="text-purple-300">info</mat-icon>
                     </button>
                     <button 
                       mat-icon-button 
@@ -100,10 +89,17 @@
                     </button>
                     <button 
                       mat-icon-button 
-                      (click)="showExpenseDetails(element)" 
-                      matTooltip="Show Details"
-                      class="hover:bg-purple-500/20 transition-all duration-300">
-                      <mat-icon class="text-purple-300">info</mat-icon>
+                      (click)="undoExpense(element)" 
+                      matTooltip="Undo"
+                      class="hover:bg-red-500/20 transition-all duration-300">
+                      <mat-icon class="text-red-300">undo</mat-icon>
+                    </button>
+                    <button 
+                      mat-icon-button 
+                      (click)="deleteExpense(element)" 
+                      matTooltip="Delete"
+                      class="hover:bg-red-500/20 transition-all duration-300">
+                      <mat-icon class="text-red-300">delete</mat-icon>
                     </button>
                   </div>
                 </td>

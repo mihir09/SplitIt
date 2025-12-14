@@ -1,0 +1,91 @@
+/* Custom Date Input Styling */
+.custom-date-input {
+  color-scheme: dark;
+}
+
+.custom-date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(1);
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+
+.custom-date-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.custom-date-input::-webkit-datetime-edit-fields-wrapper {
+  color: white;
+}
+
+.custom-date-input::-webkit-datetime-edit {
+  color: white;
+}
+
+.custom-date-input::-webkit-datetime-edit-text {
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0 0.3em;
+}
+
+.custom-date-input::-webkit-datetime-edit-month-field,
+.custom-date-input::-webkit-datetime-edit-day-field,
+.custom-date-input::-webkit-datetime-edit-year-field {
+  color: white;
+}
+
+/* Select Dropdown Styling */
+.glass-select {
+  color-scheme: dark;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+.glass-select option {
+  background-color: rgba(30, 20, 50, 0.95);
+  color: white;
+  padding: 8px;
+}
+
+.glass-select optgroup {
+  background-color: rgba(30, 20, 50, 0.98);
+  color: rgba(167, 139, 250, 1);
+  font-weight: 600;
+}
+
+/* Number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.7;
+  filter: invert(1);
+}
+
+/* Animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .text-3xl {
+    font-size: 1.75rem;
+  }
+  
+  .text-4xl {
+    font-size: 2rem;
+  }
+}

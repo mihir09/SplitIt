@@ -8,6 +8,8 @@ const cors = require('cors');
 const User = require('./models/user');
 const OTP = require('./models/otp');
 const sgMail = require('@sendgrid/mail');
+const SibApiV3Sdk = require('@getbrevo/brevo');
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
 // Creating express app
 const app = express();
@@ -22,13 +24,11 @@ app.use((req, res, next) => {
     next();
 });
 
-// MongoDb database setup
-// mongoose.connect('mongodb://127.0.0.1:27017/SplitIt', {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-// });
+
 
 const uri = process.env.MONGODB_URI;
+let apiKey = apiInstance.authentications['apiKey'];
+apiKey.apiKey = process.env.BREVO_API_KEY;
 
 mongoose.connect(uri, {
   useNewUrlParser: true,
@@ -107,8 +107,6 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
 // Forgot Password
 app.post('/api/reset-password', async (req, res) => {
     try {
@@ -126,19 +124,22 @@ app.post('/api/reset-password', async (req, res) => {
         await OTP.create({ email, otp, expiration });
         
         const resetLink = `https://splititapp.netlify.app/reset-password?email=${email}&otp=${otp}`;
-        const msg = {
-            to: email,
-            from: 'splititmail@gmail.com',
-            subject: 'Password Reset OTP',
-            text: `Your OTP is: ${otp}`,
-            html: `<p>Your OTP is: <strong>${otp}</strong></p><a href="${resetLink}">Reset Link</a>`
-        };
-
-        await sgMail.send(msg);
+        
+        const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+        
+        sendSmtpEmail.subject = 'Password Reset OTP';
+        sendSmtpEmail.sender = { email: 'splititemail@gmail.com' };
+        sendSmtpEmail.to = [{ email: email }];
+        
+        sendSmtpEmail.textContent = `Your OTP is: ${otp}`;
+        sendSmtpEmail.htmlContent = `<p>Your OTP is: <strong>${otp}</strong></p><a href="${resetLink}">Reset Link</a>`;
+        
+        await apiInstance.sendTransacEmail(sendSmtpEmail);
         
         return res.status(200).json({ message: 'Reset OTP sent successfully.' });
     } catch (error) {
-        return res.status(500).json({ message: 'Internal server error' });
+        console.error('Password Reset Error:', error.response ? error.response.text : error);
+        return res.status(500).json({ message: 'Internal server error. Check server logs for details.' });
     }
 });
 
@@ -168,39 +169,6 @@ app.post('/api/reset-password/verify', async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
-
-// Forget Password
-// app.post('/api/reset-password', async (req, res) => {
-//     try {
-//         const { email } = req.body;
-
-//         if (!email) {
-//             return res.status(400).json({ message: 'Please enter the email.' });
-//         }
-
-//         const existingUser = await User.findOne({ email });
-
-//         if (!existingUser) {
-//             return res.status(400).json({ message: 'Email not in our system. Please register to continue or check email entered is correct.' });
-//         }
-
-//         const hashedPassword = await bcrypt.hash(password, 10);
-
-//         const user = new User({ username, email, password: hashedPassword });
-//         await user.save();
-
-//         const currentUser = await User.findOne({ email });
-
-//         const token = jwt.sign({ userId: currentUser._id }, process.env.ACCESS_TOKEN_SECRET, {
-//             expiresIn: '1h',
-//         });
-
-//         return res.status(200).json({ token: token, message: 'Password changed successfully' });
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({ message: 'Internal server error' });
-//     }
-// });
 
 const groupsRouter = require('./routes/groups');
 app.use('/api/groups', groupsRouter);

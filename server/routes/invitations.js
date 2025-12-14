@@ -6,8 +6,11 @@ const Group = require('../models/group');
 const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
 const cors = require('cors');
+const SibApiV3Sdk = require('@getbrevo/brevo');
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const apiKey = apiInstance.authentications['apiKey'];
+apiKey.apiKey = process.env.BREVO_API_KEY;
 
 router.use(cors());
 router.use((req, res, next) => {
@@ -19,21 +22,23 @@ router.use((req, res, next) => {
 
 // Function to send invitation email
 const sendInviteEmail = async (senderName, recipientEmail) => {
-    const msg = {
-        to: recipientEmail,
-        from: 'splititmail@gmail.com',
-        templateId: process.env.SENDGRID_TEMPLATE_ID,
-        dynamicTemplateData: {
-            sender_name: senderName,
-        }
+    
+    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+    
+    sendSmtpEmail.templateId = process.env.BREVO_INVITE_TEMPLATE_ID;
+    sendSmtpEmail.sender = { email: 'splititemail@gmail.com' };
+    sendSmtpEmail.to = [{ email: recipientEmail }];
+    
+    sendSmtpEmail.params = {
+        sender_name: senderName
     };
 
     try {
-        await sgMail.send(msg);
+        await apiInstance.sendTransacEmail(sendSmtpEmail);
         console.log(`Invitation email sent to ${recipientEmail}`);
         return true;
     } catch (error) {
-        console.error(`Failed to send invitation email to ${recipientEmail}:`, error);
+        console.error(`Failed to send invitation email to ${recipientEmail}:`, error.response ? error.response.text : error);
         return false;
     }
 };

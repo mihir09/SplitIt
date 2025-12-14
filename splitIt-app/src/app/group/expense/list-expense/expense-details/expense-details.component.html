@@ -1,30 +1,83 @@
-<div class="p-2 rounded-lg text-center flex-1" *ngIf="expense">
-  <button mat-button (click)="onCloseClick()" class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-    </svg>
-  </button>
+<!-- Full Screen Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4" *ngIf="expense">
+  <!-- Dark Backdrop with Blur -->
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="onCloseClick()"></div>
+  
+  <!-- Modal Content -->
+  <div class="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto z-10">
+    <!-- Close Button -->
+    <button 
+      mat-button 
+      (click)="onCloseClick()" 
+      class="absolute top-4 right-4 bg-red-500/80 hover:bg-red-600 backdrop-blur-sm border border-white/20 text-white p-2 rounded-xl transition-all duration-300 hover:scale-110 shadow-lg z-10">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
 
-  <h2 class="text-2xl font-semibold mb-4 text-center">Expense Details</h2>
-  <div class="mb-6">
-    <p class="mb-2"><strong class="text-blue-500">Expense Name:</strong> {{ expense.expenseName }}</p>
-    <p class="mb-2"><strong class="text-blue-500">Expense Date:</strong> {{ expense.expenseDate | date }}</p>
-    <p class="mb-2"><strong class="text-blue-500">Payer Name:</strong> {{ expense.payerName }}</p>
-    <p class="mb-2"><strong class="text-blue-500">Amount Paid:</strong> {{ expense.amount }}</p>
-
-    <div *ngIf="participantsArray">
-      <p class="mb-2"><strong class="text-blue-500">Participants:</strong></p>
-      <ul class="pl-6">
-        <li *ngFor="let participant of participantsArray" class="mb-1 text-lg">
-          {{ participant.name }}'s share is {{ participant.amount }}
-        </li>
-      </ul>
+    <!-- Header -->
+    <div class="text-center mb-6 md:mb-8">
+      <h2 class="text-2xl md:text-3xl text-white">Expense Details</h2>
     </div>
 
-    <p class="mb-2"><strong class="text-blue-500">Split Type:</strong> {{ expense.splitType }}</p>
-    <p class="mb-2"><strong class="text-blue-500">Expense Category:</strong> {{ expense.category }}</p>
+    <!-- Expense Details Grid -->
+    <div class="space-y-4">
+      <!-- Expense Name -->
+      <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+        <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Expense Name</p>
+        <p class="text-white text-lg">{{ expense.expenseName }}</p>
+      </div>
 
-    <p class="mb-2" *ngIf="expense.description"><strong class="text-blue-500">Expense Description:</strong> {{ expense.description }}</p>
+      <!-- Two Column Layout for Date and Amount -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+          <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Date</p>
+          <p class="text-white text-lg">{{ expense.expenseDate | date }}</p>
+        </div>
+
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+          <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Amount Paid</p>
+          <p class="text-white text-lg">{{ expense.amount }}</p>
+        </div>
+      </div>
+
+      <!-- Payer Name -->
+      <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+        <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Paid By</p>
+        <p class="text-white text-lg">{{ expense.payerName }}</p>
+      </div>
+
+      <!-- Participants -->
+      <div *ngIf="participantsArray" class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+        <p class="text-white/60 text-xs uppercase tracking-wider mb-3">Participants</p>
+        <div class="space-y-2">
+          <div 
+            *ngFor="let participant of participantsArray" 
+            class="flex justify-between items-center bg-white/5 border border-white/10 rounded-lg p-3 hover:bg-white/10 transition-all duration-200">
+            <span class="text-white">{{ participant.name }}</span>
+            <span class="text-purple-300">{{ participant.amount }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two Column Layout for Split Type and Category -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+          <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Split Type</p>
+          <p class="text-white text-lg">{{ expense.splitType }}</p>
+        </div>
+
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+          <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Category</p>
+          <p class="text-white text-lg">{{ expense.category }}</p>
+        </div>
+      </div>
+
+      <!-- Description (if exists) -->
+      <div *ngIf="expense.description" class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+        <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Description</p>
+        <p class="text-white text-lg">{{ expense.description }}</p>
+      </div>
+    </div>
   </div>
-
 </div>

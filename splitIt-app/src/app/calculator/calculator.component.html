@@ -1,29 +1,44 @@
-<div class="calculator">
-    <div class="display">{{ display }}</div>
-    <div *ngIf="operator && operator!=='='">{{operator}}</div>
-    <div *ngIf="operator=='=' && lastOperation">{{lastOperation}}</div>
-    <div *ngIf="!operator">enter value</div>
-  
-    <div class="buttons">
-        <button (click)="onClearClick()">C</button>
-        <button (click)="onClearEntryClick()">CE</button>
-        <button (click)="onOperatorClick('%')">%</button>
-        <button (click)="onOperatorClick('/')">/</button>
-        <button (click)="onDigitClick('7')">7</button>
-        <button (click)="onDigitClick('8')">8</button>
-        <button (click)="onDigitClick('9')">9</button>
-        <button (click)="onOperatorClick('*')">*</button>
-        <button (click)="onDigitClick('4')">4</button>
-        <button (click)="onDigitClick('5')">5</button>
-        <button (click)="onDigitClick('6')">6</button>
-        <button (click)="onOperatorClick('-')">-</button>
-        <button (click)="onDigitClick('1')">1</button>
-        <button (click)="onDigitClick('2')">2</button>
-        <button (click)="onDigitClick('3')">3</button>
-        <button (click)="onOperatorClick('+')">+</button>
-        <button (click)="onDigitClick('00')">00</button>
-        <button (click)="onDigitClick('0')">0</button>
-        <button (click)="onDigitClick('.')">.</button>
-        <button (click)="onEqualClick()">=</button>
+<div class="glass-calculator">
+  <!-- Display Section -->
+  <div class="calculator-display">
+    <div class="display-value">{{ display }}</div>
+    <div class="display-operation">
+      <span *ngIf="operator && operator!==''" class="text-purple-300">{{ operator }}</span>
+      <span *ngIf="operator=='=' && lastOperation" class="text-green-300">{{ lastOperation }}</span>
+      <span *ngIf="!operator" class="text-white/50 text-sm">Enter value</span>
     </div>
+  </div>
+
+  <!-- Buttons Grid -->
+  <div class="calculator-buttons">
+    <!-- Row 1 - Function Buttons -->
+    <button class="btn-function" (click)="onClearClick()">C</button>
+    <button class="btn-function" (click)="onClearEntryClick()">CE</button>
+    <button class="btn-operator" (click)="onOperatorClick('%')">%</button>
+    <button class="btn-operator" (click)="onOperatorClick('/')">/</button>
+    
+    <!-- Row 2 -->
+    <button class="btn-number" (click)="onDigitClick('7')">7</button>
+    <button class="btn-number" (click)="onDigitClick('8')">8</button>
+    <button class="btn-number" (click)="onDigitClick('9')">9</button>
+    <button class="btn-operator" (click)="onOperatorClick('*')">×</button>
+    
+    <!-- Row 3 -->
+    <button class="btn-number" (click)="onDigitClick('4')">4</button>
+    <button class="btn-number" (click)="onDigitClick('5')">5</button>
+    <button class="btn-number" (click)="onDigitClick('6')">6</button>
+    <button class="btn-operator" (click)="onOperatorClick('-')">−</button>
+    
+    <!-- Row 4 -->
+    <button class="btn-number" (click)="onDigitClick('1')">1</button>
+    <button class="btn-number" (click)="onDigitClick('2')">2</button>
+    <button class="btn-number" (click)="onDigitClick('3')">3</button>
+    <button class="btn-operator" (click)="onOperatorClick('+')">+</button>
+    
+    <!-- Row 5 -->
+    <button class="btn-number" (click)="onDigitClick('00')">00</button>
+    <button class="btn-number" (click)="onDigitClick('0')">0</button>
+    <button class="btn-number" (click)="onDigitClick('.')">.</button>
+    <button class="btn-equals" (click)="onEqualClick()">=</button>
+  </div>
 </div>

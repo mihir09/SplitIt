@@ -95,8 +95,8 @@ export class ListExpenseComponent implements OnInit {
   }
 
   undoExpense(expense: any): void {
-    const confirmDelete = confirm('Are you sure you want to undo this expense?');
-    if (confirmDelete) {
+    const confirmUndo = confirm('Are you sure you want to undo this expense?');
+    if (confirmUndo) {
       this.loading = true;
       this.expenseService.undoExpense(expense._id).subscribe({
         next: (res) => {
@@ -104,6 +104,21 @@ export class ListExpenseComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error undoing expense', error);
+        },
+      });
+    }
+  }
+
+  deleteExpense(expense: any): void {
+    const confirmDelete = confirm('Are you sure you want to delete this expense?');
+    if (confirmDelete) {
+      this.loading = true;
+      this.expenseService.deleteExpense(expense._id).subscribe({
+        next: (res) => {
+          this.fetchExpenses();
+        },
+        error: (error) => {
+          console.error('Error deleting expense', error);
         },
       });
     }

@@ -1,17 +1,56 @@
-<div
-    class="items-center flex flex-col justify-center min-h-full p-6  dark:bg-gray-800 dark:border-gray-800 dark:hover:bg-gray-700">
-    <p class="font-normal text-gray-700 opacity-40">
-        {{ spinnerMessage }}</p>
-    <div role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2">
-        <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-            viewBox="0 0 100 101" fill="none">
+<!-- Loading Spinner Component - Glassmorphism Style -->
+<div class="fixed inset-0 flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900/50 via-purple-900/50 to-slate-900/50 backdrop-blur-sm z-50">
+  <!-- Spinner Container -->
+  <div class="relative">
+    <!-- Glow Effect -->
+    <div class="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-blue-500/30 rounded-3xl blur-2xl animate-pulse"></div>
+    
+    <!-- Glass Card -->
+    <div class="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 md:p-12 shadow-2xl max-w-md mx-4">
+      <!-- Spinner -->
+      <div class="flex justify-center mb-6">
+        <div class="relative">
+          <!-- Outer Ring -->
+          <svg aria-hidden="true" class="w-16 h-16 md:w-20 md:h-20 animate-spin" viewBox="0 0 100 101" fill="none">
             <path
-                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                fill="currentColor" />
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+              class="text-white/20" />
             <path
-                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                fill="currentFill" />
-        </svg>
-        <span class="sr-only">Loading...</span>
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="url(#spinner-gradient)" />
+            <defs>
+              <linearGradient id="spinner-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#ec4899;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          </svg>
+          
+          <!-- Inner Pulse -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Text -->
+      <div class="text-center space-y-3">
+        <h3 class="text-xl md:text-2xl text-white bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
+          Loading...
+        </h3>
+        <p class="text-white/70 text-sm md:text-base leading-relaxed">
+          {{ spinnerMessage }}
+        </p>
+      </div>
+
+      <!-- Decorative Dots -->
+      <div class="flex gap-2 justify-center mt-6">
+        <div class="w-2 h-2 rounded-full bg-purple-400/60 animate-pulse"></div>
+        <div class="w-2 h-2 rounded-full bg-pink-400/60 animate-pulse" style="animation-delay: 0.2s;"></div>
+        <div class="w-2 h-2 rounded-full bg-blue-400/60 animate-pulse" style="animation-delay: 0.4s;"></div>
+      </div>
     </div>
+  </div>
 </div>

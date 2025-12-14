@@ -12,13 +12,50 @@ export class LoginComponent {
   errorMessage: string = '';
   errorType: string = '';
   isLoggingIn = false;
-  spinnerMessage = "Loggin In....";
+  spinnerMessage = "Logging you in to splitit.";
+  emailTouched: boolean = false;
+  passwordTouched: boolean = false;
+  
+  isUnlocking: boolean = false;
+  wasDisabled: boolean = true;
 
   constructor(private authService: AuthService, private router: Router) {}
 
+  get isEmailValid(): boolean {
+    const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}/;
+    return emailPattern.test(this.formData.email);
+  }
+
+  get isFormValid(): boolean {
+    return !!(this.formData.email && this.formData.password && this.isEmailValid);
+  }
+
+  // Watch for form validation changes to trigger unlock animation
+  ngDoCheck(): void {
+    if (this.wasDisabled && this.isFormValid) {
+      this.isUnlocking = true;
+      setTimeout(() => {
+        this.isUnlocking = false;
+      }, 600);
+    }
+    this.wasDisabled = !this.isFormValid;
+  }
+
+  onEmailBlur(): void {
+    this.emailTouched = true;
+  }
+
+  onPasswordBlur(): void {
+    this.passwordTouched = true;
+  }
+
   onSubmit() {
+    if (!this.isFormValid) {
+      return;
+    }
+
     this.isLoggingIn = true;
-    this.spinnerMessage = 'Using free server🥲.... This may take up to a minute or two ⏳';
+    this.spinnerMessage = 'Please wait... '+ this.spinnerMessage;
 
     this.authService.login(this.formData).subscribe({
       next : (response: any)=> { 
@@ -45,6 +82,6 @@ export class LoginComponent {
         
         console.error('Login failed:', error.error.message);
       }
-  });
+    });
   }
 }

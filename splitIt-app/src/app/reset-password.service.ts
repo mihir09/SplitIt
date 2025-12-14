@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ResetPasswordService {
-  private apiUrl = 'https://split-it-server.onrender.com/api';
+  private apiUrl = 'http://localhost:3000/api';
+  // private apiUrl = 'https://split-it-server.onrender.com/api';
 
   constructor(private http: HttpClient) { }
 

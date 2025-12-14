@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 })
 export class NavbarComponent implements OnInit {
   _userDetails: any = null;
+  mobileMenuOpen = false;
 
   constructor(
     public authService: AuthService,
@@ -34,7 +35,12 @@ export class NavbarComponent implements OnInit {
     });
   }
 
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
   onLogout() {
     this.authService.logout();
+    this.mobileMenuOpen = false;
   }
 }

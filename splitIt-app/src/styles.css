@@ -4,3 +4,172 @@
 @tailwind utilities;
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: rgb(243 244 246);}
+
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: white;
+  transition: background-color 5000s ease-in-out 0s;
+  box-shadow: inset 0 0 20px 20px rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Pulse animations for empty state */
+@keyframes borderPulse {
+  0%, 100% {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+  }
+  50% {
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 0 15px 2px rgba(168, 85, 247, 0.3);
+  }
+}
+
+@keyframes iconGlow {
+  0%, 100% {
+    opacity: 0.5;
+    filter: drop-shadow(0 0 0px rgba(168, 85, 247, 0));
+  }
+  50% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.6));
+  }
+}
+
+@keyframes placeholderBreath {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.pulse-border {
+  animation: borderPulse 2s ease-in-out infinite;
+}
+
+.pulse-icon {
+  animation: iconGlow 2s ease-in-out infinite;
+}
+
+.pulse-placeholder::placeholder {
+  animation: placeholderBreath 2s ease-in-out infinite;
+}
+
+/* Chain/Lock animations for disabled button */
+@keyframes chainShake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+@keyframes chainGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes breakChain {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3) rotate(20deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(0.5) rotate(45deg) translateY(-30px);
+    opacity: 0;
+  }
+}
+
+@keyframes unlockAnimation {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  30% {
+    transform: translateY(-5px) rotate(-10deg);
+  }
+  60% {
+    transform: translateY(-10px) rotate(10deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-30px) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+@keyframes sparkle {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes borderPulse {
+  0%, 100% {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+  }
+  50% {
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 0 15px 2px rgba(168, 85, 247, 0.3);
+  }
+}
+
+@keyframes iconGlow {
+  0%, 100% {
+    opacity: 0.5;
+    filter: drop-shadow(0 0 0px rgba(168, 85, 247, 0));
+  }
+  50% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.6));
+  }
+}
+
+@keyframes placeholderBreath {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.pulse-border {
+  animation: borderPulse 2s ease-in-out infinite;
+}
+
+.pulse-icon {
+  animation: iconGlow 2s ease-in-out infinite;
+}
+
+.pulse-placeholder::placeholder {
+  animation: placeholderBreath 2s ease-in-out infinite;
+}
+
