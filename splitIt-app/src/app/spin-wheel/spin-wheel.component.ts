@@ -9,6 +9,11 @@ type Participant = { id: string; name: string };
 })
 export class SpinWheelComponent implements AfterViewInit {
   @ViewChild('wheelCanvas', { static: true }) wheelCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('nameInput') set focusInput(element: ElementRef) {
+    if (element) {
+      element.nativeElement.focus();
+    }
+  }
 
   participants: { id: string; name: string }[] = [];
 
@@ -140,6 +145,7 @@ export class SpinWheelComponent implements AfterViewInit {
 
   closeWinner() {
     this.showWinner = false;
+    this.showConfetti = false;
   }
 
   private triggerConfetti() {

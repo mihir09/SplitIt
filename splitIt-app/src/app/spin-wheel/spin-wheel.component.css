@@ -335,6 +335,23 @@
   box-shadow: 0 16px 40px rgba(16, 185, 129, 0.42);
 }
 
+.close-button {
+  flex: 1; /* Takes up 1/3 of space */
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
 .button-content {
   display: inline-flex;
   align-items: center;
