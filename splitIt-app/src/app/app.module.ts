@@ -42,6 +42,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 
 import { LottieModule } from 'ngx-lottie';
 import player from 'lottie-web';
+import { SpinWheelComponent } from './spin-wheel/spin-wheel.component';
 
 export function playerFactory() {
   return player;
@@ -67,6 +68,7 @@ export function playerFactory() {
     LoadingSpinnerComponent,
     CalculatorComponent,
     ResetPasswordComponent,
+    SpinWheelComponent,
   ],
   imports: [
     MatCardModule,

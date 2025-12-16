@@ -1,0 +1,200 @@
+<div class="spin-wheel-wrapper">
+  <!-- Background Layers -->
+  <div class="bg-layer bg-gradient-base"></div>
+  <div class="bg-layer bg-gradient-overlay-1"></div>
+  <div class="bg-layer bg-gradient-overlay-2"></div>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="grid-pattern"></div>
+  <div class="bg-overlay"></div>
+
+  <div class="spin-container">
+    <!-- Header -->
+    <div class="header-card-wrapper">
+      <div class="card-glow"></div>
+      <div class="header-card">
+        <div class="header-content">
+          <div class="header-icon"><span class="header-emoji">🙂</span></div>
+          <div class="header-text">
+            <div class="header-title">Pick a Winner</div>
+            <div class="header-subtitle">Wheel or Race — same participants, different vibes.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Card -->
+    <div class="wheel-card-wrapper">
+      <div class="card-glow wheel-glow"></div>
+      <div class="wheel-card">
+        <div class="wheel-container">
+
+          <div class="mode-toggle">
+            <button class="mode-btn" [class.active]="mode==='race'" (click)="setMode('race')">🏁 Race</button>
+            <button class="mode-btn" [class.active]="mode==='wheel'" (click)="setMode('wheel')">🎡 Wheel</button>
+          </div>
+
+          <!-- RACE -->
+          <div class="race-shell" *ngIf="mode === 'race'">
+            <div class="race-track">
+              <div class="finish-line" aria-hidden="true"></div>
+
+              <div class="lane" *ngFor="let r of raceRacers; let i = index">
+                <div class="lane-bg"></div>
+
+                <div
+                  class="kart"
+                  [class.bump]="r.wobble"
+                  [class.trip]="r.tripped"
+                  [style.left.%]="r.progress * 92"
+                >
+                  <div class="kart-emoji">{{ r.emoji }}</div>
+                  <div class="kart-name">{{ r.name }}</div>
+                </div>
+              </div>
+
+              <div class="race-empty" *ngIf="participants.length < 2">
+                Add at least 2 participants to race
+              </div>
+            </div>
+          </div>
+
+          <!-- WHEEL -->
+          <div class="wheel-shell" *ngIf="mode === 'wheel'">
+            <div class="wheel-border"></div>
+            <canvas #wheelCanvas class="wheel-canvas"></canvas>
+
+            <div class="wheel-center">
+              <div class="center-dot">✦</div>
+            </div>
+          </div>
+
+          <div class="participants-info">
+            <span class="pill-icon">👥</span>
+            <span>{{ participants.length }} / {{ maxParticipants }} Participants</span>
+          </div>
+
+          <div class="button-container">
+            <div class="spin-button-wrapper">
+              <button
+                class="spin-button"
+                (click)="spin()"
+                [disabled]="spinning || participants.length < 2"
+              >
+                <span class="button-content" [class.button-content-hidden]="spinning">
+                  <span class="button-icon">{{ mode === 'race' ? '🏁' : '▶' }}</span>
+                  <span>{{ mode === 'race' ? 'Start Race' : 'Spin the Wheel' }}</span>
+                </span>
+
+                <span class="spinner" *ngIf="spinning"></span>
+              </button>
+
+              <!-- lock overlay -->
+              <div class="chain-overlay" *ngIf="participants.length < 2">
+                <svg class="lock-icon" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="static-msg" *ngIf="participants.length < 2">
+              Add at least 2 participants to spin
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Participants Card -->
+    <div class="users-card-wrapper">
+      <div class="card-glow"></div>
+      <div class="users-card">
+        <div class="users-header">
+          <div class="users-title">Participants</div>
+          <button class="add-user-button" (click)="showAdd = !showAdd">
+            <span class="icon">+</span>
+            Add User
+          </button>
+        </div>
+
+        <div class="add-user-form" *ngIf="showAdd">
+          <input
+            class="user-input"
+            [(ngModel)]="newName"
+            placeholder="Name"
+            (keydown.enter)="addParticipant()"
+          />
+
+          <button class="add-button" (click)="addParticipant()" [disabled]="!newName.trim()">
+            <span class="icon">✓</span>
+            Add
+          </button>
+
+          <button class="cancel-button" (click)="showAdd = false">Cancel</button>
+        </div>
+
+        <div class="max-error" *ngIf="maxError">{{ maxError }}</div>
+
+        <div class="users-list" *ngIf="participants.length > 0; else emptyState">
+          <div class="user-item" *ngFor="let p of participants; trackBy: trackById">
+            <div class="user-avatar">{{ p.name.slice(0,1).toUpperCase() }}</div>
+            <div class="user-name">{{ p.name }}</div>
+            <button
+              class="remove-button"
+              (click)="removeParticipant(p.id)"
+              [disabled]="spinning"
+              title="Remove"
+            >
+              🗑
+            </button>
+          </div>
+        </div>
+
+        <ng-template #emptyState>
+          <div class="empty-state">
+            <div class="empty-icon">👤</div>
+            <div class="empty-text">No participants yet</div>
+            <div class="empty-subtext">Click “Add User” to start.</div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Winner Modal -->
+  <div class="overlay" *ngIf="showWinner" (click)="closeWinner()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="winner-icon-wrapper">✨</div>
+      <div class="winner-title">🎉 Winner! 🎉</div>
+      <div class="winner-name">{{ winnerName }}</div>
+      <div class="winner-subtitle">Congratulations!</div>
+
+      <div class="winner-actions">
+        <button class="reset-button" (click)="spinAgain()">
+          <svg class="button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+            </path>
+          </svg>
+          <span>Spin Again</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confetti -->
+  <div class="confetti-container" *ngIf="showConfetti">
+    <div
+      class="confetti"
+      *ngFor="let c of confettiPieces; let i = index"
+      [style.left.%]="c.left"
+      [style.animationDelay.s]="c.delay"
+      [style.background]="c.color"
+    ></div>
+  </div>
+</div>

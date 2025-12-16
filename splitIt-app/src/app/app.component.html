@@ -3,25 +3,78 @@
   <div>
     <router-outlet></router-outlet>
   </div>
-  <button
-  class="fixed bottom-4 right-4 bg-blue-300 hover:bg-blue-700 text-white py-2 px-4 rounded scroll-to-top-button"
-  (click)="scrollToTop()"
-  #scrollToTopButton
->
-  <svg
-    class="w-2 h-3"
-    aria-hidden="true"
-    fill="none"
-    viewBox="0 0 10 14"
+
+  <!-- FAB Container - Bottom Right -->
+  <div class="fab-container">
+    
+    <!-- Scroll to Top Button (appears when scrolled) -->
+    <button
+      class="fab-button scroll-to-top-fab"
+      (click)="scrollToTop()"
+      #scrollToTopButton
+      [class.show]="showScrollButton"
+    >
+      <svg class="fab-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      </svg>
+      <span class="fab-tooltip fab-tooltip-left">Back to Top</span>
+    </button>
+
+    <!-- Spin the Wheel FAB (always visible) -->
+    <button
+      class="fab-button spin-wheel-fab"
+      (click)="toggleSpinWheelModal()"
+      [class.active]="isSpinWheelModalOpen"
+    >
+      <!-- Wheel Icon -->
+      <svg class="fab-icon wheel-icon" viewBox="0 0 100 100" fill="none">
+        <!-- Outer Circle -->
+        <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3" fill="none" opacity="0.3"/>
+        
+        <!-- Segments (8 segments) -->
+        <g class="segments">
+          <path d="M 50 50 L 50 5 A 45 45 0 0 1 81.82 18.18 Z" fill="currentColor" opacity="0.6"/>
+          <path d="M 50 50 L 81.82 18.18 A 45 45 0 0 1 95 50 Z" fill="currentColor" opacity="0.3"/>
+          <path d="M 50 50 L 95 50 A 45 45 0 0 1 81.82 81.82 Z" fill="currentColor" opacity="0.6"/>
+          <path d="M 50 50 L 81.82 81.82 A 45 45 0 0 1 50 95 Z" fill="currentColor" opacity="0.3"/>
+          <path d="M 50 50 L 50 95 A 45 45 0 0 1 18.18 81.82 Z" fill="currentColor" opacity="0.6"/>
+          <path d="M 50 50 L 18.18 81.82 A 45 45 0 0 1 5 50 Z" fill="currentColor" opacity="0.3"/>
+          <path d="M 50 50 L 5 50 A 45 45 0 0 1 18.18 18.18 Z" fill="currentColor" opacity="0.6"/>
+          <path d="M 50 50 L 18.18 18.18 A 45 45 0 0 1 50 5 Z" fill="currentColor" opacity="0.3"/>
+        </g>
+        
+        <!-- Center Circle -->
+        <circle cx="50" cy="50" r="12" fill="currentColor" opacity="0.8"/>
+        
+        <!-- Center Icon (Lightning) -->
+        <path d="M 54 35 L 46 50 L 52 50 L 46 65 L 58 48 L 52 48 Z" fill="white" opacity="0.9"/>
+        
+        <!-- Pointer at top -->
+        <path d="M 50 2 L 46 10 L 54 10 Z" fill="currentColor" opacity="0.9"/>
+      </svg>
+      <span class="fab-tooltip fab-tooltip-left">Spin the Wheel</span>
+    </button>
+
+  </div>
+
+  <!-- Spin Wheel Modal -->
+  <div 
+    *ngIf="isSpinWheelModalOpen" 
+    class="spin-wheel-modal-overlay"
+    (click)="closeSpinWheelModal()"
+    [@fadeIn]
   >
-    <path
-      stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
-      d="M5 13V1m0 0L1 5m4-4 4 4"
-    />
-  </svg>
-</button>
+    <div class="spin-wheel-modal-container" (click)="$event.stopPropagation()">
+      <!-- Close Button -->
+      <button class="modal-close-btn" (click)="closeSpinWheelModal()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Spin Wheel Component -->
+      <app-spin-wheel></app-spin-wheel>
+    </div>
+  </div>
 
 </div>
