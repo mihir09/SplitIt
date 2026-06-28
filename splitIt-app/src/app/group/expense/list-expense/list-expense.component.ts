@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ExpenseService } from 'src/app/expense.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -22,15 +22,15 @@ export class ListExpenseComponent implements OnInit {
   endDate!: Date | null;
   loading: boolean = true;
   selectedExpense: any | undefined;
-  
+
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   displayedColumns: string[] = ['expenseDate', 'expenseName', 'payerName', 'amount', 'actions'];
   expenseList = new MatTableDataSource<any>([]);
 
-  constructor(private expenseService: ExpenseService, 
-    private route: ActivatedRoute, 
+  constructor(private expenseService: ExpenseService,
+    private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog) { }
 
@@ -41,7 +41,7 @@ export class ListExpenseComponent implements OnInit {
     });
   }
 
- 
+
   fetchExpenses() {
     this.expenseService.getExpensesOfGroup(this.groupId).subscribe({
       next: (expenses) => {
@@ -52,6 +52,7 @@ export class ListExpenseComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
+        this.loading = false;
         console.error('Error fetching expenses', error);
       },
     });
@@ -59,7 +60,7 @@ export class ListExpenseComponent implements OnInit {
 
   applyFilterExpense(): void {
     const filterValue = this.searchTerm.toLowerCase();
-    const filterObj: any = {searchTerm : filterValue, startDate: this.startDate, endDate:this.endDate};
+    const filterObj: any = { searchTerm: filterValue, startDate: this.startDate, endDate: this.endDate };
     this.expenseList.filter = filterObj;
   }
 
@@ -76,7 +77,7 @@ export class ListExpenseComponent implements OnInit {
         dateCheck = true
       }
 
-      return (filter? (isExpenseNameMatch || isPayerNameMatch || isAmountMatch) : true) && (dateCheck? isDateInRange : true);
+      return (filter ? (isExpenseNameMatch || isPayerNameMatch || isAmountMatch) : true) && (dateCheck ? isDateInRange : true);
     };
 
     return filterFunction;
@@ -88,41 +89,54 @@ export class ListExpenseComponent implements OnInit {
     return (!startDate || date >= startDate) && (!endDate || date <= endDate);
   }
 
-  clearDateRange(){
+  clearDateRange() {
     this.startDate = null;
     this.endDate = null;
     this.applyFilterExpense();
   }
 
+  confirmState = {
+    open: false,
+    title: '', message: '', confirmLabel: 'Confirm',
+    tone: 'primary' as 'primary' | 'danger',
+    action: () => { },
+  };
+
+  private ask(opts: Partial<typeof this.confirmState> & { action: () => void }) {
+    this.confirmState = { ...this.confirmState, open: true, ...opts };
+  }
+  onConfirmYes() { this.confirmState.open = false; this.confirmState.action(); }
+  onConfirmNo() { this.confirmState.open = false; }
+
   undoExpense(expense: any): void {
-    const confirmUndo = confirm('Are you sure you want to undo this expense?');
-    if (confirmUndo) {
-      this.loading = true;
-      this.expenseService.undoExpense(expense._id).subscribe({
-        next: (res) => {
-          this.fetchExpenses();
-        },
-        error: (error) => {
-          console.error('Error undoing expense', error);
-        },
-      });
-    }
+    this.ask({
+      title: 'Undo this expense?',
+      message: 'It will be removed and balances recalculated.',
+      confirmLabel: 'Undo', tone: 'danger',
+      action: () => {
+        this.loading = true;
+        this.expenseService.undoExpense(expense._id).subscribe({
+          next: () => this.fetchExpenses(),
+          error: (e) => console.error('Error undoing expense', e),
+        });
+      },
+    });
   }
 
   deleteExpense(expense: any): void {
-    const confirmDelete = confirm('Are you sure you want to delete this expense?');
-    if (confirmDelete) {
+  this.ask({
+    title: 'Delete this expense?',
+    message: `"${expense.expenseName}" will be permanently removed.`,
+    confirmLabel: 'Delete', tone: 'danger',
+    action: () => {
       this.loading = true;
       this.expenseService.deleteExpense(expense._id).subscribe({
-        next: (res) => {
-          this.fetchExpenses();
-        },
-        error: (error) => {
-          console.error('Error deleting expense', error);
-        },
+        next: () => this.fetchExpenses(),
+        error: (e) => { this.loading = false; console.error('Error deleting expense', e); },
       });
-    }
-  }
+    },
+  });
+}
 
   editExpense(expense: any) {
     const expenseString = JSON.stringify(expense);

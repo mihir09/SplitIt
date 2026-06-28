@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CreateGroupComponent } from './create-group/create-group.component';
 import { GroupComponent } from './group/group.component';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 import { NavbarComponent } from './navbar/navbar.component';
 import { ExpenseFilterPipe } from './expense-filter.pipe';
@@ -28,7 +29,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AddExpenseComponent } from './group/expense/add-expense/add-expense.component';
+import { AddExpenseComponent, BubbleDragDirective } from './group/expense/add-expense/add-expense.component';
 import { ListExpenseComponent } from './group/expense/list-expense/list-expense.component';
 import { ExpenseDetailsComponent } from './group/expense/list-expense/expense-details/expense-details.component';
 
@@ -44,6 +45,7 @@ import { LottieModule } from 'ngx-lottie';
 import player from 'lottie-web';
 import { SpinWheelComponent } from './spin-wheel/spin-wheel.component';
 
+
 export function playerFactory() {
   return player;
 }
@@ -57,6 +59,7 @@ export function playerFactory() {
     HomeComponent,
     CreateGroupComponent,
     GroupComponent,
+    ConfirmDialogComponent,
     NavbarComponent,
     ExpenseFilterPipe,
     AddExpenseComponent,
@@ -69,6 +72,7 @@ export function playerFactory() {
     CalculatorComponent,
     ResetPasswordComponent,
     SpinWheelComponent,
+    BubbleDragDirective
   ],
   imports: [
     MatCardModule,

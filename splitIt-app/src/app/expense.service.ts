@@ -27,7 +27,7 @@ export class ExpenseService {
   }
 
   deleteExpense(expenseId: string): Observable<any> {
-    const url = `${this.expensesUrl}${expenseId}`;
+    const url = `${this.expensesUrl}/${expenseId}`;
     return this.http.delete(url);
   }
 

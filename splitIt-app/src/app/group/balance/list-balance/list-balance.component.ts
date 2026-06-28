@@ -35,7 +35,7 @@ export class ListBalanceComponent {
       this.fetchGroupDetails()
     });
   }
-  
+
   private fetchGroupDetails() {
     this.groupService.getGroupDetailsWithMembers(this.groupId).subscribe({
       next: (groupDetails) => {
@@ -47,8 +47,8 @@ export class ListBalanceComponent {
             this.currentUser.balance = member.balance;
           }
         })
-        this.loading = false; 
-                
+        this.loading = false;
+
       },
       error: (error) => {
         console.error('Error fetching group details', error);
@@ -56,13 +56,27 @@ export class ListBalanceComponent {
     });
   }
 
+  confirmState = {
+    open: false,
+    title: '', message: '', confirmLabel: 'Confirm',
+    tone: 'primary' as 'primary' | 'danger',
+    action: () => { },
+  };
+
+  private ask(opts: Partial<typeof this.confirmState> & { action: () => void }) {
+    this.confirmState = { ...this.confirmState, open: true, ...opts };
+  }
+  onConfirmYes() { this.confirmState.open = false; this.confirmState.action(); }
+  onConfirmNo() { this.confirmState.open = false; }
+
 
   confirmSettleBalance(index: number): void {
-    const confirmed = window.confirm('Are you sure you want to settle this balance?');
-    if (confirmed) {
-      this.loading = true;
-      this.settleSelectedBalance(index);
-    }
+    this.ask({
+      title: 'Settle this balance?',
+      message: 'This marks the amount as paid and updates everyone\'s totals.',
+      confirmLabel: 'Settle', tone: 'primary',
+      action: () => { this.loading = true; this.settleSelectedBalance(index); },
+    });
   }
 
   settleSelectedBalance(index: any) {

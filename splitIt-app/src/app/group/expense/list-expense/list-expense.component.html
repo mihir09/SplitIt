@@ -1,26 +1,25 @@
 <div class="min-h-screen relative overflow-hidden">
-  
+
   <!-- Subtle Grid Pattern -->
-  <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.15) 1px, transparent 0); background-size: 40px 40px;"></div>
+  <div class="absolute inset-0 opacity-10"
+    style="background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.15) 1px, transparent 0); background-size: 40px 40px;">
+  </div>
 
   <!-- Content -->
   <div class="relative z-10 px-4 md:px-8 lg:px-12" *ngIf="!loading">
     <div class="max-w-7xl mx-auto mt-4">
-      
+
       <!-- Main Card -->
-      <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 hover:bg-white/15 transition-all duration-300">
-        
+      <div
+        class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 hover:bg-white/15 transition-all duration-300">
+
         <h2 class="text-2xl md:text-3xl text-white mb-6 text-center">Expenses</h2>
 
         <!-- Search and Filter Section -->
         <div class="flex flex-col md:flex-row gap-4 mb-6 items-center justify-center">
           <!-- Search Input -->
           <div class="w-full md:w-auto">
-            <input 
-              type="text" 
-              id="search"
-              [(ngModel)]="searchTerm" 
-              (keyup)="applyFilterExpense()" 
+            <input type="text" id="search" [(ngModel)]="searchTerm" (keyup)="applyFilterExpense()"
               placeholder="Search Expense"
               class="w-full md:w-64 px-4 py-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-white/50 focus:bg-white/25 transition-all">
           </div>
@@ -48,7 +47,7 @@
         <div class="overflow-x-auto w-full rounded-xl">
           <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 min-w-max">
             <table mat-table [dataSource]="expenseList" matSort class="w-full glass-table">
-              
+
               <ng-container matColumnDef="expenseDate">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-white/90">Expense Date</th>
                 <td mat-cell *matCellDef="let element" class="text-white/80">{{ element.expenseDate | date }}</td>
@@ -73,31 +72,19 @@
                 <th mat-header-cell *matHeaderCellDef class="text-white/90">Actions</th>
                 <td mat-cell *matCellDef="let element">
                   <div class="flex gap-1 justify-center">
-                    <button 
-                      mat-icon-button 
-                      (click)="showExpenseDetails(element)" 
-                      matTooltip="Show Details"
+                    <button mat-icon-button (click)="showExpenseDetails(element)" matTooltip="Show Details"
                       class="hover:bg-purple-500/20 transition-all duration-300">
                       <mat-icon class="text-purple-300">info</mat-icon>
                     </button>
-                    <button 
-                      mat-icon-button 
-                      (click)="editExpense(element)" 
-                      matTooltip="Edit"
+                    <button mat-icon-button (click)="editExpense(element)" matTooltip="Edit"
                       class="hover:bg-blue-500/20 transition-all duration-300">
                       <mat-icon class="text-blue-300">create</mat-icon>
                     </button>
-                    <button 
-                      mat-icon-button 
-                      (click)="undoExpense(element)" 
-                      matTooltip="Undo"
+                    <button mat-icon-button (click)="undoExpense(element)" matTooltip="Undo"
                       class="hover:bg-red-500/20 transition-all duration-300">
                       <mat-icon class="text-red-300">undo</mat-icon>
                     </button>
-                    <button 
-                      mat-icon-button 
-                      (click)="deleteExpense(element)" 
-                      matTooltip="Delete"
+                    <button mat-icon-button (click)="deleteExpense(element)" matTooltip="Delete"
                       class="hover:bg-red-500/20 transition-all duration-300">
                       <mat-icon class="text-red-300">delete</mat-icon>
                     </button>
@@ -106,7 +93,8 @@
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-white/5 transition-all duration-200"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                class="hover:bg-white/5 transition-all duration-200"></tr>
             </table>
           </div>
         </div>
@@ -120,6 +108,10 @@
 
     </div>
   </div>
+  <app-confirm-dialog [open]="confirmState.open" [title]="confirmState.title" [message]="confirmState.message"
+    [confirmLabel]="confirmState.confirmLabel" [tone]="confirmState.tone" (confirmed)="onConfirmYes()"
+    (cancelled)="onConfirmNo()">
+  </app-confirm-dialog>
 
   <app-loading-spinner *ngIf="loading"></app-loading-spinner>
 </div>

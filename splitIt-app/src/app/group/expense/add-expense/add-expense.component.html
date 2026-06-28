@@ -1,256 +1,274 @@
-<div class="min-h-screen relative overflow-hidden">
-  
-  <!-- Subtle Grid Pattern -->
-  <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.15) 1px, transparent 0); background-size: 40px 40px;"></div>
+<div class="screen">
+  <div class="dotgrid"></div>
 
-  <!-- Content -->
-  <div class="relative z-10 min-h-screen px-4 md:px-8" *ngIf="!loading && !showAnimation">
-    <div class="max-w-3xl mx-auto mt-4">
-      
-      <!-- Main Form Card -->
-      <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 hover:bg-white/15 transition-all duration-300">
-        
-        <h2 class="text-3xl md:text-4xl text-white mb-8 text-center">
-          {{ mode === 'add' ? 'Add Expense' : 'Edit Expense' }}
-        </h2>
+  <div class="wrap" *ngIf="!loading && !showAnimation">
 
-        <form [formGroup]="expenseForm" (ngSubmit)="onAddOrUpdateExpense()" class="space-y-6">
-          
-          <!-- Expense Name -->
-          <div>
-            <label for="expenseName" class="block text-lg text-white mb-2">📝 Expense Name</label>
-            <input 
-              type="text" 
-              id="expenseName" 
-              formControlName="expenseName" 
-              placeholder="Dinner at Chili's"
-              class="w-full px-4 py-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-white/50 focus:bg-white/25 transition-all"
-              required>
-            <div *ngIf="expenseForm.get('expenseName')?.touched && expenseForm.get('expenseName')?.hasError('required')"
-              class="text-sm text-red-300 mt-2">Expense Name is required.</div>
-          </div>
+    <!-- progress rail -->
+    <div class="rail">
+      <div class="seg" *ngFor="let s of [0,1,2,3,4,5]"
+           [class.done]="s < step" [class.active]="s === step"
+           [class.tappable]="s <= maxReached"
+           (click)="goTo(s)"><i></i></div>
+    </div>
 
-          <!-- Payer -->
-          <div>
-            <label for="payer" class="block text-lg text-white mb-2">💳 Payer</label>
-            <select 
-              id="payer" 
-              formControlName="payer"
-              class="w-full px-4 py-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white focus:outline-none focus:border-white/50 focus:bg-white/25 transition-all glass-select">
-              <option value="" disabled selected>Select Payer</option>
-              <option *ngFor="let member of members" [value]="member.id">{{ member.email }}</option>
-            </select>
-            <div *ngIf="expenseForm.get('payer')?.touched && expenseForm.get('payer')?.hasError('required')"
-              class="text-sm text-red-300 mt-2">Payer is required.</div>
-          </div>
+    <div class="card">
 
-          <!-- Amount -->
-          <div>
-            <label for="amount" class="block text-lg text-white mb-2">💰 Amount</label>
-            <input 
-              type="number" 
-              id="amount" 
-              formControlName="amount" 
-              placeholder="65.50" 
-              min="0" 
-              appDecimalInput
-              class="w-full px-4 py-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-white/50 focus:bg-white/25 transition-all"
-              required>
-            <div *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.errors"
-              class="text-sm text-red-300 mt-2">
-              <div *ngIf="expenseForm.get('amount')?.hasError('required')">Amount is required.</div>
-              <div *ngIf="expenseForm.get('amount')?.hasError('min')">Must be ≥ 0.</div>
-              <div *ngIf="expenseForm.get('amount')?.hasError('invalidDecimal')">Only 2 decimal places allowed.</div>
+      <!-- ===== 1 · NAME ===== -->
+      <section class="step" *ngIf="step === 0" [formGroup]="expenseForm">
+        <p class="eyebrow">Step 1</p>
+        <h2 class="q">{{ mode === 'add' ? "What's the expense?" : 'Rename the expense' }}</h2>
+        <p class="sub">Give it a name you'll recognise later.</p>
+
+        <input class="field" formControlName="expenseName" placeholder="Dinner at Chili's" autocomplete="off" />
+        <div class="chips">
+          <button type="button" class="chip" *ngFor="let idea of nameIdeas" (click)="pickName(idea)">{{ idea }}</button>
+        </div>
+        <div class="err" *ngIf="expenseForm.get('expenseName')?.touched && expenseForm.get('expenseName')?.invalid">
+          Give the expense a name to continue.
+        </div>
+
+        <div class="nav"><button type="button" class="btn primary" (click)="goNext()">Next →</button></div>
+      </section>
+
+      <!-- ===== 2 · AMOUNT ===== -->
+      <section class="step" *ngIf="step === 1" [formGroup]="expenseForm">
+        <p class="eyebrow">Step 2</p>
+        <h2 class="q">How much was it?</h2>
+        <p class="sub">Tap the total — we'll do the maths.</p>
+
+        <div class="amt">
+          <span class="cur">$</span>
+          <input formControlName="amount" inputmode="decimal" placeholder="0" appDecimalInput />
+        </div>
+        <div class="padgrid">
+          <button type="button" *ngFor="let k of pad" (click)="padPress(k)">
+            <ng-container *ngIf="k !== 'back'">{{ k }}</ng-container>
+            <ng-container *ngIf="k === 'back'">⌫</ng-container>
+          </button>
+        </div>
+        <div class="err" *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.invalid">
+          <span *ngIf="expenseForm.get('amount')?.hasError('invalidDecimal')">Use at most 2 decimal places.</span>
+          <span *ngIf="!expenseForm.get('amount')?.hasError('invalidDecimal')">Enter an amount above 0.</span>
+        </div>
+
+        <div class="nav">
+          <button type="button" class="btn ghost-b" (click)="goBack()">←</button>
+          <button type="button" class="btn primary" (click)="goNext()">Next →</button>
+        </div>
+      </section>
+
+      <!-- ===== 3 · PAYER ===== -->
+      <section class="step" *ngIf="step === 2">
+        <p class="eyebrow">Step 3</p>
+        <h2 class="q">Who paid?</h2>
+        <p class="sub">Tap the person who covered it. <span class="hl-pay">They get the 💳.</span></p>
+
+        <div class="ring">
+          <div class="bubble tap" *ngFor="let m of members"
+               [class.sel]="payerId === m.id" (click)="selectPayer(m.id)">
+            <div class="disc" [style.background]="discStyle(m.email)">
+              {{ initials(m.email) }}
+              <span class="badge" *ngIf="payerId === m.id">💳</span>
             </div>
+            <span class="name">{{ shortName(m.email) }}</span>
           </div>
+        </div>
+        <div class="err" *ngIf="expenseForm.get('payer')?.touched && !payerId">Pick who paid to continue.</div>
 
-          <!-- Split Type -->
+        <div class="nav">
+          <button type="button" class="btn ghost-b" (click)="goBack()">←</button>
+          <button type="button" class="btn primary" (click)="goNext()">Next →</button>
+        </div>
+      </section>
+
+      <!-- ===== 4 · SPLIT ===== -->
+      <section class="step" *ngIf="step === 3">
+        <div class="split-head">
           <div>
-            <p class="text-lg text-white mb-3">🧾 Split Type</p>
-            <div class="flex flex-wrap gap-3 justify-center">
-              <button 
-                type="button"
-                (click)="toggleSplitType('equal')"
-                class="px-6 py-2 backdrop-blur-md border rounded-xl transition-all duration-300 hover:scale-105"
-                [ngClass]="{
-                  'bg-purple-500/40 border-purple-400/60 text-white shadow-lg': selectedSplitType === 'equal',
-                  'bg-white/10 border-white/20 text-white/80 hover:bg-white/20': selectedSplitType !== 'equal'
-                }">
-                Equal Split
-              </button>
-            
-              <button 
-                type="button"
-                (click)="toggleSplitType('unequal')"
-                class="px-6 py-2 backdrop-blur-md border rounded-xl transition-all duration-300 hover:scale-105"
-                [ngClass]="{
-                  'bg-purple-500/40 border-purple-400/60 text-white shadow-lg': selectedSplitType === 'unequal',
-                  'bg-white/10 border-white/20 text-white/80 hover:bg-white/20': selectedSplitType !== 'unequal'
-                }">
-                Unequal
-              </button>
-            
-              <button 
-                type="button"
-                (click)="toggleSplitType('shares')"
-                class="px-6 py-2 backdrop-blur-md border rounded-xl transition-all duration-300 hover:scale-105"
-                [ngClass]="{
-                  'bg-purple-500/40 border-purple-400/60 text-white shadow-lg': selectedSplitType === 'shares',
-                  'bg-white/10 border-white/20 text-white/80 hover:bg-white/20': selectedSplitType !== 'shares'
-                }">
-                By Shares
-              </button>
-            
-              <button 
-                type="button"
-                (click)="toggleSplitType('percentages')"
-                class="px-6 py-2 backdrop-blur-md border rounded-xl transition-all duration-300 hover:scale-105"
-                [ngClass]="{
-                  'bg-purple-500/40 border-purple-400/60 text-white shadow-lg': selectedSplitType === 'percentages',
-                  'bg-white/10 border-white/20 text-white/80 hover:bg-white/20': selectedSplitType !== 'percentages'
-                }">
-                By Percentages
-              </button>
-            </div>
+            <p class="eyebrow">Step 4</p>
+            <h2 class="q">Split between…</h2>
           </div>
+          <button type="button" class="calc-btn" title="Open calculator" (click)="toggleCalculator()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm0 2h8v2H6V4zm0 4h2v2H6V8zm4 0h2v2h-2V8zm4 0h-2v2h2V8zM6 12h2v2H6v-2zm4 0h2v2h-2v-2zm4 0h-2v2h2v-2z"/>
+            </svg>
+          </button>
+        </div>
+        <p class="sub">Drag people in or out of the pot, then choose how to split.</p>
 
-          <!-- Participants -->
-          <div>
-            <div class="flex justify-between items-center mb-3">
-              <label class="block text-lg text-white">👥 Participants</label>
-              <button 
-                type="button"
-                (click)="toggleCalculator()" 
-                title="Open Calculator" 
-                class="p-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white/80 hover:bg-white/20 hover:text-white transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm0 2h8v2H6V4zm0 4h2v2H6V8zm4 0h2v2h-2V8zm4 0h-2v2h2V8zM6 12h2v2H6v-2zm4 0h2v2h-2v-2zm4 0h-2v2h2v-2z" />
-                </svg>
-              </button>
+        <div class="calc-drop" *ngIf="openClose === 'open'"><app-calculator></app-calculator></div>
+
+        <!-- the pot (drop zone) -->
+        <div class="pot" #pot>
+          <div class="pot-hint" *ngIf="participants.length === 0">Drag a bubble up here 👆</div>
+          <div class="potgrid">
+            <ng-container *ngFor="let m of members">
+              <div class="bubble included" *ngIf="isParticipantSelected(m.id)"
+                   appBubbleDrag [dropZone]="pot"
+                   (droppedOutside)="excludeParticipant(m.id)"
+                   (tapped)="toggleParticipant(m.id)">
+                <div class="disc" [style.background]="discStyle(m.email)">
+                  {{ initials(m.email) }}
+                  <span class="badge" *ngIf="payerId === m.id">💳</span>
+                </div>
+                <span class="name">{{ shortName(m.email) }}</span>
+
+                <span class="perhead" *ngIf="selectedSplitType === 'equal'">{{ perPerson | currency }}</span>
+
+                <div class="valwrap" *ngIf="selectedSplitType === 'unequal'">
+                  <span>$</span>
+                  <input type="number" inputmode="decimal" placeholder="0"
+                         [value]="participantAmounts[m.id] || ''"
+                         (input)="updateParticipantAmount(m.id, $event)" />
+                </div>
+                <div class="valwrap" *ngIf="selectedSplitType === 'shares'">
+                  <span>×</span>
+                  <input type="number" inputmode="numeric" placeholder="0"
+                         [value]="participantShares[m.id] || ''"
+                         (input)="updateParticipantShares(m.id, $event)" />
+                </div>
+                <div class="valwrap" *ngIf="selectedSplitType === 'percentages'">
+                  <span>%</span>
+                  <input type="number" inputmode="decimal" placeholder="0"
+                         [value]="participantPercentages[m.id] || ''"
+                         (input)="updateParticipantAmount(m.id, $event)" />
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- tray of excluded members -->
+        <div class="tray-label">Not splitting</div>
+        <div class="tray" [class.empty]="participants.length === members.length">
+          <ng-container *ngFor="let m of members">
+            <div class="bubble" *ngIf="!isParticipantSelected(m.id)"
+                 appBubbleDrag [dropZone]="pot"
+                 (droppedInside)="includeParticipant(m.id)"
+                 (tapped)="toggleParticipant(m.id)">
+              <div class="disc" [style.background]="discStyle(m.email)">
+                {{ initials(m.email) }}
+                <span class="badge" *ngIf="payerId === m.id">💳</span>
+              </div>
+              <span class="name">{{ shortName(m.email) }}</span>
             </div>
+          </ng-container>
+        </div>
 
-            <!-- Calculator Dropdown -->
-            <div class="relative mb-4" *ngIf="openClose === 'open'">
-              <div>
-                <app-calculator></app-calculator>
+        <!-- split type -->
+        <div class="tray-label mt">How to split</div>
+        <div class="seg-row">
+          <button type="button" class="seg-btn" [class.on]="selectedSplitType === 'equal'" (click)="toggleSplitType('equal')">⚖️ Equal</button>
+          <button type="button" class="seg-btn" [class.on]="selectedSplitType === 'unequal'" (click)="toggleSplitType('unequal')">🔢 Unequal</button>
+          <button type="button" class="seg-btn" [class.on]="selectedSplitType === 'shares'" (click)="toggleSplitType('shares')">🍰 Shares</button>
+          <button type="button" class="seg-btn" [class.on]="selectedSplitType === 'percentages'" (click)="toggleSplitType('percentages')">％ Percent</button>
+        </div>
+
+        <!-- live meter -->
+        <div class="meter" [class.ok]="canAddExpense() && (selectedSplitType === 'equal' || isTotalAmountValid())"
+                           [class.bad]="!(canAddExpense() && (selectedSplitType === 'equal' || isTotalAmountValid()))">
+          <div>
+            <span class="big" *ngIf="selectedSplitType === 'equal'">{{ perPerson | currency }}</span>
+            <span class="big" *ngIf="selectedSplitType === 'unequal'">{{ allocated | currency }}</span>
+            <span class="big" *ngIf="selectedSplitType === 'shares'">{{ allocated }}×</span>
+            <span class="big" *ngIf="selectedSplitType === 'percentages'">{{ allocated }}%</span>
+            <small>{{ selectedSplitType === 'equal' ? 'per person' : selectedSplitType === 'shares' ? 'total shares' : 'allocated' }}</small>
+          </div>
+          <div class="right">
+            <span class="big" *ngIf="selectedSplitType === 'unequal'">{{ remaining | currency }}</span>
+            <span class="big" *ngIf="selectedSplitType === 'percentages'">{{ remaining }}%</span>
+            <span class="big" *ngIf="selectedSplitType === 'equal' || selectedSplitType === 'shares'">✓</span>
+            <small>remaining</small>
+          </div>
+        </div>
+
+        <div class="err" *ngIf="!canAddExpense()">Include at least one person other than the payer.</div>
+        <div class="err" *ngIf="canAddExpense() && selectedSplitType === 'unequal' && !isTotalAmountValid()">Amounts must each be &gt; 0 and add up to the total.</div>
+        <div class="err" *ngIf="canAddExpense() && selectedSplitType === 'shares' && !isTotalAmountValid()">Give everyone a whole-number share above 0.</div>
+        <div class="err" *ngIf="canAddExpense() && selectedSplitType === 'percentages' && !isTotalAmountValid()">Percentages must be &gt; 0 and total 100%.</div>
+
+        <div class="nav">
+          <button type="button" class="btn ghost-b" (click)="goBack()">←</button>
+          <button type="button" class="btn primary" (click)="goNext()">Next →</button>
+        </div>
+      </section>
+
+      <!-- ===== 5 · DETAILS ===== -->
+      <section class="step" *ngIf="step === 4" [formGroup]="expenseForm">
+        <p class="eyebrow">Step 5</p>
+        <h2 class="q">Almost there.</h2>
+        <p class="sub">The essentials are done. Add extras only if you want.</p>
+
+        <span class="lbl">📅 Date</span>
+        <input type="date" class="field custom-date-input" formControlName="expenseDate" />
+
+        <button type="button" class="acc-toggle" [class.open]="openClose === 'open'" (click)="toggleCalculator()">
+          <span>➕ Add category &amp; a note</span><span class="ar">▾</span>
+        </button>
+        <div class="acc-body" [class.open]="openClose === 'open'">
+          <span class="lbl">📂 Category</span>
+          <select class="field glass-select" formControlName="category">
+            <ng-container *ngFor="let category of categories">
+              <optgroup [label]="category.title">
+                <option *ngFor="let sub of category.categories" [value]="sub">{{ sub }}</option>
+              </optgroup>
+            </ng-container>
+          </select>
+          <span class="lbl">📝 Description</span>
+          <textarea class="field" rows="3" formControlName="description" placeholder="Optional notes…"></textarea>
+        </div>
+
+        <div class="nav">
+          <button type="button" class="btn ghost-b" (click)="goBack()">←</button>
+          <button type="button" class="btn primary" (click)="goNext()">Review →</button>
+        </div>
+      </section>
+
+      <!-- ===== 6 · REVIEW ===== -->
+      <section class="step" *ngIf="step === 5">
+        <p class="eyebrow">Last look</p>
+        <h2 class="q">{{ expenseForm.get('expenseName')?.value || 'Expense' }}</h2>
+        <p class="sub">Tap a step in the bar above to fix anything.</p>
+
+        <div class="summary">
+          <div class="srow"><span class="k">Amount</span><span class="v">{{ amount | currency }}</span></div>
+          <div class="srow"><span class="k">Paid by</span><span class="v">💳 {{ payerName }}</span></div>
+          <div class="srow"><span class="k">Split</span><span class="v">{{ selectedSplitType | titlecase }} · {{ participants.length }} people</span></div>
+          <div class="srow"><span class="k">Category</span><span class="v">{{ categoryValue }}</span></div>
+          <div class="srow"><span class="k">Date</span><span class="v">{{ dateValue }}</span></div>
+          <div class="srow col">
+            <span class="k">Who owes what</span>
+            <div class="breakdown">
+              <div class="brow" *ngFor="let r of reviewBreakdown()">
+                <span class="mini" [style.background]="discStyle(r.member.email)">{{ initials(r.member.email) }}</span>
+                {{ shortName(r.member.email) }}<span class="pp" *ngIf="r.isPayer">paid</span>
+                <span class="ow">{{ r.owes | currency }}</span>
               </div>
             </div>
-
-            <div class="flex flex-wrap gap-3 justify-center">
-              <ng-container *ngFor="let member of members">
-                <div class="flex flex-col items-center gap-2">
-                  <button 
-                    type="button" 
-                    (click)="toggleParticipant(member.id)"
-                    class="px-4 py-2 backdrop-blur-md border rounded-xl transition-all duration-300 hover:scale-105"
-                    [ngClass]="{
-                      'bg-blue-500/40 border-blue-400/60 text-white shadow-lg': isParticipantSelected(member.id),
-                      'bg-white/10 border-white/20 text-white/80 hover:bg-white/20': !isParticipantSelected(member.id)
-                    }">
-                    {{ member.email }}
-                  </button>
-                  
-                  <input 
-                    *ngIf="isParticipantSelected(member.id) && selectedSplitType === 'unequal'" 
-                    type="number"
-                    placeholder="Amount" 
-                    [value]="participantAmounts[member.id] || 0"
-                    (input)="updateParticipantAmount(member.id, $event)"
-                    class="w-24 px-3 py-2 text-sm bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/50 transition-all" />
-                  
-                  <input 
-                    *ngIf="isParticipantSelected(member.id) && selectedSplitType === 'shares'" 
-                    type="number"
-                    placeholder="Share" 
-                    [value]="participantShares[member.id] || 0"
-                    (input)="updateParticipantShares(member.id, $event)"
-                    class="w-24 px-3 py-2 text-sm bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/50 transition-all" />
-                  
-                  <input 
-                    *ngIf="isParticipantSelected(member.id) && selectedSplitType === 'percentages'" 
-                    type="number"
-                    placeholder="%" 
-                    [value]="participantPercentages[member.id] || 0"
-                    (input)="updateParticipantAmount(member.id, $event)"
-                    class="w-24 px-3 py-2 text-sm bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/50 transition-all" />
-                </div>
-              </ng-container>
-            </div>
-
-            <div *ngIf="!canAddExpense()" class="text-sm text-red-300 mt-3 text-center">
-              Select at least one participant (not payer).
-            </div>
-            <div *ngIf="selectedSplitType == 'unequal' && !isTotalAmountValid()" class="text-sm text-red-300 mt-2 text-center">
-              Ensure values add up correctly.
-            </div>
-            <div *ngIf="selectedSplitType == 'shares' && !isTotalAmountValid()" class="text-sm text-red-300 mt-2 text-center">
-              All member's shares cannot be 0.
-            </div>
-            <div *ngIf="selectedSplitType == 'percentages' && !isTotalAmountValid()" class="text-sm text-red-300 mt-2 text-center">
-              Total should be 100%.
-            </div>
           </div>
+        </div>
 
-          <!-- Category -->
-          <div>
-            <label for="category" class="block text-lg text-white mb-2">📂 Category</label>
-            <select 
-              id="category" 
-              formControlName="category"
-              class="w-full px-4 py-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white focus:outline-none focus:border-white/50 focus:bg-white/25 transition-all glass-select">
-              <ng-container *ngFor="let category of categories">
-                <optgroup [label]="category.title">
-                  <option *ngFor="let sub of category.categories" [value]="sub">{{ sub }}</option>
-                </optgroup>
-              </ng-container>
-            </select>
-          </div>
+        <div class="nav">
+          <button type="button" class="btn ghost-b" (click)="goBack()">←</button>
+          <button type="button" class="btn primary"
+                  [disabled]="expenseForm.invalid || !canAddExpense() || (selectedSplitType !== 'equal' && !isTotalAmountValid())"
+                  (click)="onAddOrUpdateExpense()">
+            {{ mode === 'add' ? '🎉 Add Expense' : '💾 Save Changes' }}
+          </button>
+        </div>
+      </section>
 
-          <!-- Date -->
-          <div>
-            <label for="expenseDate" class="block text-lg text-white mb-2">📅 Date</label>
-            <input 
-              type="date" 
-              id="expenseDate" 
-              formControlName="expenseDate"
-              class="w-full px-4 py-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white focus:outline-none focus:border-white/50 focus:bg-white/25 transition-all custom-date-input" />
-          </div>
-
-          <!-- Description -->
-          <div>
-            <label for="description" class="block text-lg text-white mb-2">📝 Description</label>
-            <input 
-              type="text" 
-              id="description" 
-              formControlName="description" 
-              placeholder="Optional notes..."
-              class="w-full px-4 py-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-white/50 focus:bg-white/25 transition-all" />
-          </div>
-
-          <!-- Submit Button -->
-          <div class="flex justify-center pt-4">
-            <button 
-              type="submit"
-              [disabled]="expenseForm.invalid || !canAddExpense() || (selectedSplitType !== 'equal' && !isTotalAmountValid())"
-              class="px-8 py-3 bg-purple-500/40 backdrop-blur-md border border-purple-400/60 rounded-xl text-white hover:bg-purple-500/50 hover:border-purple-400/80 transition-all duration-300 hover:scale-105 disabled:bg-white/10 disabled:border-white/20 disabled:text-white/40 disabled:cursor-not-allowed disabled:hover:scale-100">
-              {{ mode === 'add' ? 'Add Expense' : 'Save Changes' }}
-            </button>
-          </div>
-        </form>
-
-      </div>
     </div>
   </div>
 
-  <!-- Loader -->
+  <!-- loader -->
   <app-loading-spinner *ngIf="loading"></app-loading-spinner>
 
-  <!-- Animation Overlay -->
-  <div *ngIf="showAnimation"
-    class="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/60 z-50">
-    <div class="text-center text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
-      <ng-lottie [options]="animationOptions" style="width: 300px; height: 300px;"></ng-lottie>
-      <p class="mt-4 text-lg">Processing your request...</p>
+  <!-- processing overlay -->
+  <div class="overlay" *ngIf="showAnimation">
+    <div class="overlay-card">
+      <ng-lottie [options]="animationOptions" style="width:300px;height:300px;"></ng-lottie>
+      <p>Processing your request…</p>
     </div>
   </div>
 </div>

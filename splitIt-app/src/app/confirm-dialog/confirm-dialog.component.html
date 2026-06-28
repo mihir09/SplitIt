@@ -1,0 +1,11 @@
+<div class="cd-overlay" *ngIf="open" (click)="onCancel()">
+  <div class="cd-card" (click)="$event.stopPropagation()">
+    <h3 class="cd-title">{{ title }}</h3>
+    <p class="cd-msg" *ngIf="message">{{ message }}</p>
+    <div class="cd-actions">
+      <button type="button" class="cd-btn ghost" (click)="onCancel()">{{ cancelLabel }}</button>
+      <button type="button" class="cd-btn" [class.danger]="tone === 'danger'"
+              [class.primary]="tone === 'primary'" (click)="onConfirm()">{{ confirmLabel }}</button>
+    </div>
+  </div>
+</div>

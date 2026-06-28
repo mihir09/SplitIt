@@ -20,18 +20,18 @@
       <span class="fab-tooltip fab-tooltip-left">Back to Top</span>
     </button>
 
-    <!-- Spin the Wheel FAB (always visible) -->
+    <!-- Spin the Wheel FAB (always visible) 
     <button
       class="fab-button spin-wheel-fab"
       (click)="toggleSpinWheelModal()"
       [class.active]="isSpinWheelModalOpen"
     >
-      <!-- Wheel Icon -->
+      
       <svg class="fab-icon wheel-icon" viewBox="0 0 100 100" fill="none">
-        <!-- Outer Circle -->
+       
         <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3" fill="none" opacity="0.3"/>
         
-        <!-- Segments (8 segments) -->
+        
         <g class="segments">
           <path d="M 50 50 L 50 5 A 45 45 0 0 1 81.82 18.18 Z" fill="currentColor" opacity="0.6"/>
           <path d="M 50 50 L 81.82 18.18 A 45 45 0 0 1 95 50 Z" fill="currentColor" opacity="0.3"/>
@@ -43,21 +43,19 @@
           <path d="M 50 50 L 18.18 18.18 A 45 45 0 0 1 50 5 Z" fill="currentColor" opacity="0.3"/>
         </g>
         
-        <!-- Center Circle -->
         <circle cx="50" cy="50" r="12" fill="currentColor" opacity="0.8"/>
         
-        <!-- Center Icon (Lightning) -->
         <path d="M 54 35 L 46 50 L 52 50 L 46 65 L 58 48 L 52 48 Z" fill="white" opacity="0.9"/>
         
-        <!-- Pointer at top -->
         <path d="M 50 2 L 46 10 L 54 10 Z" fill="currentColor" opacity="0.9"/>
       </svg>
       <span class="fab-tooltip fab-tooltip-left">Spin the Wheel</span>
     </button>
+    -->
 
   </div>
 
-  <!-- Spin Wheel Modal -->
+  <!-- Spin Wheel Modal
   <div 
     *ngIf="isSpinWheelModalOpen" 
     class="spin-wheel-modal-overlay"
@@ -65,16 +63,16 @@
     [@fadeIn]
   >
     <div class="spin-wheel-modal-container" (click)="$event.stopPropagation()">
-      <!-- Close Button -->
+      
       <button class="modal-close-btn" (click)="closeSpinWheelModal()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
 
-      <!-- Spin Wheel Component -->
+      
       <app-spin-wheel></app-spin-wheel>
     </div>
-  </div>
+  </div> -->
 
 </div>

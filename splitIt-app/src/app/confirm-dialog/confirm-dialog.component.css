@@ -1,0 +1,29 @@
+.cd-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  background: rgba(10, 4, 25, .6); backdrop-filter: blur(6px);
+  animation: cd-fade .2s ease-out;
+}
+.cd-card {
+  width: min(420px, 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
+  border: 1px solid rgba(255,255,255,.22); border-radius: 22px;
+  padding: 26px 24px 22px; color: #fff; text-align: center;
+  box-shadow: 0 30px 70px -20px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.18);
+  animation: cd-pop .28s cubic-bezier(.2,1.3,.4,1);
+}
+.cd-title { font-size: 1.35rem; font-weight: 700; margin: 0 0 8px; }
+.cd-msg { color: rgba(255,255,255,.7); margin: 0 0 22px; font-size: .95rem; line-height: 1.5; }
+.cd-actions { display: flex; gap: 12px; }
+.cd-btn {
+  flex: 1; padding: 13px 18px; border-radius: 14px; font-size: 1rem; font-weight: 600;
+  cursor: pointer; color: #fff; border: 1px solid rgba(255,255,255,.22); transition: filter .2s, background .2s, transform .1s;
+}
+.cd-btn:active { transform: scale(.97); }
+.cd-btn.ghost { background: rgba(255,255,255,.08); }
+.cd-btn.ghost:hover { background: rgba(255,255,255,.16); }
+.cd-btn.primary { background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-color: rgba(167,139,250,.7); }
+.cd-btn.danger  { background: linear-gradient(135deg, #f43f5e, #e11d48); border-color: rgba(251,113,133,.7); }
+.cd-btn.primary:hover, .cd-btn.danger:hover { filter: brightness(1.08); }
+@keyframes cd-fade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes cd-pop  { from { opacity: 0; transform: translateY(14px) scale(.96) } to { opacity: 1; transform: none } }
