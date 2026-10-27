@@ -1,3 +1,4 @@
+import { API_BASE_URL } from './api.config';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -8,7 +9,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'https://split-it-server.onrender.com/api';
+  private baseUrl = API_BASE_URL;
 
   private currentUserEmailSubject = new BehaviorSubject<string | null>(localStorage.getItem('userEmail'));
   public currentUserEmail$ = this.currentUserEmailSubject.asObservable();

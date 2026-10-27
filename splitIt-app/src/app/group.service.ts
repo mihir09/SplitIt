@@ -1,3 +1,4 @@
+import { API_BASE_URL } from './api.config';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, forkJoin, map, switchMap, tap } from 'rxjs';
@@ -9,7 +10,7 @@ import { UsersService } from './users.service';
   providedIn: 'root',
 })
 export class GroupService {
-  private groupUrl = 'https://split-it-server.onrender.com/api/groups';
+  private groupUrl = `${API_BASE_URL}/groups`;
 
   constructor(private http: HttpClient, private authService: AuthService, private usersService: UsersService) { }
 

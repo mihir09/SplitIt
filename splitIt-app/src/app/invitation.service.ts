@@ -1,3 +1,4 @@
+import { API_BASE_URL } from './api.config';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -6,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class InvitationService {
-  private apiUrl = 'https://split-it-server.onrender.com/api/invitations';
+  private apiUrl = `${API_BASE_URL}/invitations`;
 
   constructor(private http: HttpClient) { }
 

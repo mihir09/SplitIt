@@ -1,3 +1,4 @@
+import { API_BASE_URL } from './api.config';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -7,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class UsersService {
 
-  private baseUrl = 'https://split-it-server.onrender.com/api/users';
+  private baseUrl = `${API_BASE_URL}/users`;
 
   constructor(private http: HttpClient) { }
 

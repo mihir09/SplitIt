@@ -1,3 +1,4 @@
+import { API_BASE_URL } from './api.config';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, tap } from 'rxjs';
@@ -7,8 +8,8 @@ import { GroupService } from './group.service';
   providedIn: 'root',
 })
 export class ExpenseService {
-  private expensesUrl = 'https://split-it-server.onrender.com/api/expenses';
-  private groupUrl = 'https://split-it-server.onrender.com/api/groups';
+  private expensesUrl = `${API_BASE_URL}/expenses`;
+  private groupUrl = `${API_BASE_URL}/groups`;
   private _refreshRequired = new Subject<void>();
 
   constructor(private http: HttpClient, private groupService: GroupService) { }

@@ -30,9 +30,40 @@ const uri = process.env.MONGODB_URI;
 let apiKey = apiInstance.authentications['apiKey'];
 apiKey.apiKey = process.env.BREVO_API_KEY;
 
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+// Reuse the connection across warm invocations and concurrent requests.
+let connectionPromise;
+async function connectDatabase() {
+    if (mongoose.connection.readyState === 1) return;
+    if (!uri) throw new Error('MONGODB_URI is required');
+    if (!connectionPromise) {
+        connectionPromise = mongoose.connect(uri, {
+            serverSelectionTimeoutMS: 10000,
+        }).catch(error => {
+            connectionPromise = undefined;
+            throw error;
+        });
+    }
+    await connectionPromise;
+}
+
+app.get('/api/health', async (req, res) => {
+    try {
+        await connectDatabase();
+        res.json({ status: 'ok' });
+    } catch (error) {
+        res.status(503).json({ status: 'unavailable' });
+    }
+});
+
+// Wait for MongoDB instead of buffering queries during a cold start.
+app.use('/api', async (req, res, next) => {
+    try {
+        await connectDatabase();
+        next();
+    } catch (error) {
+        console.error('Database connection failed:', error.message);
+        res.status(503).json({ message: 'Service temporarily unavailable. Please try again.' });
+    }
 });
 
 app.use((req, res, next) => {
@@ -182,8 +213,11 @@ app.use('/api/users', usersRouter);
 const expensesRouter = require('./routes/expenses');
 app.use('/api/expenses', expensesRouter);
 
-// Listening on port 3000
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// Vercel imports the app; node server.js still works locally and on Render.
+module.exports = app;
+if (require.main === module) {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
