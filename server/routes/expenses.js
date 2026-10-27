@@ -1,325 +1,66 @@
 const express = require('express');
-const router = express.Router();
+const mongoose = require('mongoose');
 const Expense = require('../models/expense');
-const Group = require('../models/group');
-const User = require('../models/user');
-
-// Find group by ID
-async function findGroupById(groupId) {
-  const group = await Group.findById(groupId);
-  return group;
+const { requireGroup } = require('../middleware/access');
+const { route, fail, transaction } = require('../lib/http');
+const { validateExpense, applyExpense, rebuildBalances } = require('../lib/balances');
+const router = express.Router();
+const fields = ['expenseName','payer','expenseDate','description','amount','payerName','participants','splitType','category'];
+function expenseInput(body) {
+  return Object.fromEntries(fields.filter(key => Object.prototype.hasOwnProperty.call(body,key)).map(key => [key,body[key]]));
 }
-
-// Find user by ID
-async function findUserById(userId) {
-  const user = await User.findOne({ _id: userId });
-  return user;
+async function linkedExpense(id, userId, session) {
+  if (!mongoose.isValidObjectId(id)) fail(400, 'Invalid expense.');
+  const expense = await Expense.findById(id).session(session);
+  if (!expense) fail(404, 'Expense not found.');
+  const group = await requireGroup(expense.groupId, userId, session);
+  if (!group.expenses.some(e => String(e) === String(id))) fail(404, 'Expense not found in group.');
+  return {expense, group};
 }
-
-// Find expense by ID
-async function findExpenseById(expenseId) {
-  const expense = await Expense.findById(expenseId);
-  return expense;
-}
-
-// Create and save expense
-async function createExpense(expenseData) {
-  const expense = new Expense(expenseData);
-  await expense.save();
-  return expense;
-}
-
-// Helper: does this group reference this expense? (handles ObjectId vs string)
-function groupHasExpense(group, expenseId) {
-  return group.expenses.some(id => id.toString() === expenseId.toString());
-}
-
-// Calculate and update participant amounts
-async function calculateAndUpdateBalances(group, expense, operation) {
-  const payer = group.members.find(member => member.memberId.toString() == expense.payer.toString());
-  const participantsList = expense.participants instanceof Map
-    ? expense.participants
-    : new Map(Object.entries(expense.participants));
-
-  // Update participants balance
-  for (const [participantId, participantAmount] of participantsList.entries()) {
-    const member = group.members.find(member => member.memberId == participantId);
-
-    if (!member) {
-      throw new Error("Participant " + participantId + " missing in the group");
-    }
-
-    const unroundedResult = operation === 'add' ? member.memberBalance - participantAmount : member.memberBalance + participantAmount;
-    const roundedResult = parseFloat(unroundedResult.toFixed(2));
-    member.memberBalance = roundedResult;
-  }
-
-  // Update Payer balance
-  const unroundedResult = operation === 'add' ? payer.memberBalance + expense.amount : payer.memberBalance - expense.amount;
-  const roundedResult = parseFloat(unroundedResult.toFixed(2));
-  payer.memberBalance = roundedResult;
-  expense.participants = participantsList;
-  await expense.save();
-  return group;
-}
-
-// Settle debts within the group
-function settleGroupDebts(group, operation) {
-  const membersDetails = JSON.parse(JSON.stringify(group.members));
-  const [groupBalance, debtors, creditors] = settleDebts(membersDetails);
-
-  while (debtors.length > 0) {
-    let debtor = debtors[0];
-    let debtorMember = group.members.find(member => member._id == debtor._id);
-    debtorMember.memberBalance = operation === 'add' ? debtorMember.memberBalance + debtor.memberBalance : debtorMember.memberBalance - debtor.memberBalance;
-    debtorMember.memberBalance = Number(debtorMember.memberBalance.toFixed(2));
-    debtors.shift();
-  }
-
-  while (creditors.length > 0) {
-    let creditor = creditors[0];
-    let creditorMember = group.members.find(member => member._id == creditor._id);
-    creditorMember.memberBalance = operation === 'add' ? creditorMember.memberBalance - creditor.memberBalance : creditorMember.memberBalance + creditor.memberBalance;
-    creditorMember.memberBalance = Number(creditorMember.memberBalance.toFixed(2));
-    creditors.shift();
-  }
-
-  group.balance = groupBalance.map(balance => ({ ...balance }));
-  return group;
-}
-
-// Settle debts logic
-function settleDebts(members) {
-  const debtors = members.filter(member => member.memberBalance < 0).sort((a, b) => a.memberBalance - b.memberBalance);
-  const creditors = members.filter(member => member.memberBalance > 0).sort((a, b) => b.memberBalance - a.memberBalance);
-
-  const remainingBalance = [];
-
-  while (debtors.length > 0 && creditors.length > 0) {
-    const debtor = debtors[0];
-    const creditor = creditors[0];
-    const balance = Math.min(Math.abs(debtor.memberBalance), creditor.memberBalance);
-    const absoluteBalance = parseFloat(balance.toFixed(2));
-    remainingBalance.push({ from: debtor.memberId, to: creditor.memberId, balance: absoluteBalance });
-
-    debtor.memberBalance = parseFloat((debtor.memberBalance + absoluteBalance).toFixed(2));
-    creditor.memberBalance = parseFloat((creditor.memberBalance - absoluteBalance).toFixed(2));
-
-    if (debtor.memberBalance === 0) debtors.shift();
-    if (creditor.memberBalance === 0) creditors.shift();
-  }
-
-  return [remainingBalance, debtors, creditors];
-}
-
-// Create a new expense
-async function handleExpenseCreation(req, res) {
-  try {
-    const { expenseName, payer, expenseDate, description, amount, groupId, payerName, participants, splitType, category } = req.body;
-
-    // Find Group
-    const group = await findGroupById(groupId);
-    if (!groupId || !group) {
-      return res.status(404).json({ message: "Group couldn't be linked" });
-    }
-
-    // Find Payer
-    const payerUser = await findUserById(payer);
-    if (!payer || !payerUser) {
-      return res.status(404).json({ message: 'Payer not found' });
-    }
-
-    // Create and Save Expense
-    const expenseData = {
-      expenseName, payer, expenseDate, description, amount,
-      groupId, payerName, participants, splitType, category,
-    };
-
-    const expense = await createExpense(expenseData);
-
-    // Link Expense to Group
+router.post('/', route(async (req,res) => {
+  const expense = await transaction(async session => {
+    const group = await requireGroup(req.body.groupId, req.user._id, session);
+    const data = {...expenseInput(req.body), groupId:String(group._id)};
+    validateExpense(data,group);
+    const expense = new Expense(data);
+    await expense.save({session});
     group.expenses.push(expense._id);
-
-    const operation = 'add';
-
-    // Calculate and update balances
-    await calculateAndUpdateBalances(group, expense, operation);
-
-    // Settle group debts
-    settleGroupDebts(group, operation);
-
-    await group.save();
-
-    return res.status(201).json(expense);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
+    applyExpense(group,expense,1);
+    rebuildBalances(group);
+    await group.save({session});
+    return expense;
+  });
+  res.status(201).json(expense);
+}));
+async function remove(req,res,undo) {
+  await transaction(async session => {
+    const {expense,group} = await linkedExpense(req.params.expenseId, req.user._id, session);
+    applyExpense(group,expense,-1);
+    group.expenses = group.expenses.filter(id=>String(id)!==String(expense._id));
+    rebuildBalances(group);
+    await group.save({session});
+    await Expense.deleteOne({_id:expense._id},{session});
+  });
+  res.json({message:undo?'Expense undone successfully':'Expense deleted successfully'});
 }
-router.post('/', handleExpenseCreation);
-
-// Delete Expense
-async function handleExpenseDeletion(req, res) {
-  try {
-    const expenseId = req.params.expenseId;
-
-    // Find Expense
-    const expense = await findExpenseById(expenseId);
-    if (!expense) {
-      return res.status(404).json({ message: 'Expense not found' });
-    }
-
-    // Find Group
-    const group = await findGroupById(expense.groupId);
-    if (!expense.groupId || !group) {
-      return res.status(404).json({ message: "Expense Group couldn't be linked" });
-    }
-
-    // Group has expense or not
-    if (!groupHasExpense(group, expenseId)) {
-      return res.status(404).json({ message: "Expense not found in group" });
-    }
-
-    // Find Payer
-    const payerUser = await findUserById(expense.payer);
-    if (!expense.payer || !payerUser) {
-      return res.status(404).json({ message: 'Expense Payer not found' });
-    }
-
-    // Reverse this expense's effect on balances
-    await calculateAndUpdateBalances(group, expense, 'delete');
-    settleGroupDebts(group, 'delete');
-
-    // Drop the reference and the document itself
-    group.expenses = group.expenses.filter(e => e.toString() !== expenseId);
-    await group.save();
-    await Expense.findByIdAndDelete(expenseId);
-
-    return res.status(200).json({ message: 'Expense deleted successfully' });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
-}
-router.delete('/:expenseId', handleExpenseDeletion);
-
-// Undo Expense
-async function handleExpenseUndo(req, res) {
-  try {
-    const expenseId = req.params.expenseId;
-
-    // Find Expense
-    const expense = await findExpenseById(expenseId);
-    if (!expense) {
-      return res.status(404).json({ message: 'Expense not found' });
-    }
-
-    // Find Group
-    const group = await findGroupById(expense.groupId);
-    if (!expense.groupId || !group) {
-      return res.status(404).json({ message: "Expense Group couldn't be linked" });
-    }
-
-    // Group has expense or not
-    if (!groupHasExpense(group, expenseId)) {
-      return res.status(404).json({ message: "Expense not found in group" });
-    }
-
-    // Find Payer
-    const payerUser = await findUserById(expense.payer);
-    if (!expense.payer || !payerUser) {
-      return res.status(404).json({ message: 'Expense Payer not found' });
-    }
-
-    const operation = 'delete';
-
-    // Calculate and update balances
-    await calculateAndUpdateBalances(group, expense, operation);
-
-    // Settle group debts
-    settleGroupDebts(group, operation);
-
-    // Remove expense from group
-    group.expenses = group.expenses.filter(e => e.toString() !== expenseId);
-
-    await group.save();
-
-    return res.status(200).json({ message: 'Expense Undone successfully' });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
-}
-router.post('/undo/:expenseId', handleExpenseUndo);
-
-// Update Expense
-async function handleExpenseUpdate(req, res) {
-  try {
-    const expenseId = req.params.expenseId;
-
-    const expense = await findExpenseById(expenseId);
-    if (!expenseId || !expense) {
-      return res.status(404).json({ message: 'Expense not found' });
-    }
-
-    // Find Group
-    const group = await findGroupById(expense.groupId);
-    if (!expense.groupId || !group) {
-      return res.status(404).json({ message: "Expense Group couldn't be linked" });
-    }
-
-    // Group has expense or not
-    if (!groupHasExpense(group, expenseId)) {
-      return res.status(404).json({ message: "Expense not found in group" });
-    }
-
-    // Validate previous expense payer (sent by client)
-    const oldExpense = req.body.oldExpenseData;
-    const payerUser = await findUserById(oldExpense.payer);
-    if (!oldExpense.payer || !payerUser) {
-      return res.status(404).json({ message: 'Previous Expense Payer not found' });
-    }
-
-    let operation = 'delete';
-
-    // Reverse the OLD expense (using the current DB doc)
-    await calculateAndUpdateBalances(group, expense, operation);
-    settleGroupDebts(group, operation);
-
-    // Update Expense
-    const updatedExpense = await Expense.findByIdAndUpdate(
-      expenseId,
-      { $set: req.body.expenseData },
-      { new: true },
-    );
-
-    // Validate new expense payer
-    const newExpense = req.body.expenseData;
-    const newPayerUser = await findUserById(newExpense.payer);
-    if (!newExpense.payer || !newPayerUser) {
-      return res.status(404).json({ message: 'New Expense Payer not found' });
-    }
-
-    operation = 'add';
-
-    // Apply the NEW expense
-    await calculateAndUpdateBalances(group, updatedExpense, operation);
-    settleGroupDebts(group, operation);
-
-    // Update expense reference in group
-    const index = group.expenses.findIndex(e => e.equals(updatedExpense._id));
-    if (index !== -1) {
-      group.expenses[index] = updatedExpense._id;
-    }
-
-    await group.save();
-
-    return res.status(200).json({ message: 'Expense updated successfully', updatedExpense });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
-}
-router.put('/:expenseId', handleExpenseUpdate);
-
+router.delete('/:expenseId',route((req,res)=>remove(req,res,false)));
+router.post('/undo/:expenseId',route((req,res)=>remove(req,res,true)));
+router.put('/:expenseId',route(async (req,res)=>{
+  const updatedExpense = await transaction(async session=>{
+    const {expense,group} = await linkedExpense(req.params.expenseId,req.user._id,session);
+    const input = req.body.expenseData;
+    if (!input || typeof input !== 'object') fail(400,'Expense details are required.');
+    if (input.groupId && String(input.groupId)!==String(group._id)) fail(400,'An expense cannot be moved to another group.');
+    const data = {...expense.toObject(),...expenseInput(input)};
+    validateExpense(data,group);
+    applyExpense(group,expense,-1);
+    expense.set(expenseInput(data));
+    await expense.save({session});
+    applyExpense(group,expense,1);
+    rebuildBalances(group);
+    await group.save({session});
+    return expense;
+  });
+  res.json({message:'Expense updated successfully',updatedExpense});
+}));
 module.exports = router;

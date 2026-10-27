@@ -1,95 +1,31 @@
 const express = require('express');
-const router = express.Router();
+const mongoose = require('mongoose');
 const User = require('../models/user');
 const Group = require('../models/group');
-
-// Get all groups of a user by user Email
-router.get('/:userEmail/groups', async (req, res) => {
-    try {
-        const { userEmail } = req.params;
-
-        const user = await User.findOne({ email: userEmail }).populate({
-            path: 'groups',
-            populate: [
-              { path: 'members.memberId', model: 'User' },
-            ]
-          });
-        
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        const populatedGroups = await Promise.all(
-            user.groups.map(async (groupRef) => {
-              const fullGroup = await Group.findById(groupRef.groupId._id || groupRef._id);
-              return fullGroup;
-            })
-          );
-        
-          res.status(200).json(populatedGroups);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
-    }
-});
-
-// Get user details by user Id
-router.get('/:userId', async (req, res) => {
-    try {
-        
-        const { userId } = req.params;
-        const user = await User.findOne({ _id: userId });
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        const userDetails = {name: user.username, email: user.email, id: user._id};
-        return res.status(200).json(userDetails);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
-    }
-});
-
-// Get user details by user Email
-router.get('/email/:userEmail', async (req, res) => {
-    try {
-        const { userEmail } = req.params;
-
-        const user = await User.findOne({ email: userEmail })
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        const userDetails = {name: user.username, email: user.email, id: user._id};
-        return res.status(200).json(userDetails);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
-    }
-});
-
-// Get user Invitations by user email
-router.get('/invitations/:userEmail', async (req, res) => {
-    try {
-        const { userEmail } = req.params;
-
-        const user = await User.findOne({ email: userEmail }).populate('invitations')
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        const userInvitations = []
-
-       for (const invitation of user.invitations) {
-            const sender = await User.findById(invitation.senderId);
-            userInvitations.push({ id: invitation._id, senderName: sender.username, groupName: invitation.groupName });
-        }
-
-        return res.status(200).json(userInvitations);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
-    }
-});
-
+const { route, fail } = require('../lib/http');
+const { requireSelf } = require('../middleware/access');
+const router = express.Router();
+router.get('/:userEmail/groups',route(async(req,res)=>{
+  requireSelf(req.params.userEmail,req.user);
+  res.json(await Group.find({'members.memberId':req.user._id}));
+}));
+router.get('/email/:userEmail',route(async(req,res)=>{
+  requireSelf(req.params.userEmail,req.user);
+  res.json({name:req.user.username,email:req.user.email,id:req.user._id});
+}));
+router.get('/invitations/:userEmail',route(async(req,res)=>{
+  requireSelf(req.params.userEmail,req.user);
+  await req.user.populate({path:'invitations',match:{status:'pending'},populate:{path:'senderId',select:'username'}});
+  res.json(req.user.invitations.map(i=>({id:i._id,senderName:i.senderId?.username || 'Former member',groupName:i.groupName})));
+}));
+router.get('/:userId',route(async(req,res)=>{
+  if (!mongoose.isValidObjectId(req.params.userId)) fail(400,'Invalid user.');
+  if (String(req.user._id)!==req.params.userId) {
+    const shared = await Group.exists({'members.memberId':{$all:[req.user._id,new mongoose.Types.ObjectId(req.params.userId)]}});
+    if (!shared) fail(403,'You do not have access to this user.');
+  }
+  const user = await User.findById(req.params.userId).select('username email');
+  if (!user) fail(404,'User not found.');
+  res.json({name:user.username,email:user.email,id:user._id});
+}));
 module.exports = router;

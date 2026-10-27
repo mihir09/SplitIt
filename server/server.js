@@ -76,6 +76,7 @@ app.use((req, res, next) => {
 // User registration
 app.post('/api/register', async (req, res) => {
     try {
+        if (!(typeof req.body?.username === 'string' && req.body.username.trim() && typeof req.body?.email === 'string' && req.body.email.trim() && typeof req.body?.password === 'string' && req.body.password.trim())) return res.status(400).json({message: 'Please provide valid text values for all required fields.'});
         const { username, email, password } = req.body;
 
         if (!username || !email || !password) {
@@ -109,6 +110,7 @@ app.post('/api/register', async (req, res) => {
 // User login
 app.post('/api/login', async (req, res) => {
     try {
+        if (!(typeof req.body?.email === 'string' && req.body.email.trim() && typeof req.body?.password === 'string' && req.body.password.trim())) return res.status(400).json({message: 'Please provide valid text values for all required fields.'});
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
@@ -141,6 +143,7 @@ app.post('/api/login', async (req, res) => {
 // Forgot Password
 app.post('/api/reset-password', async (req, res) => {
     try {
+        if (!(typeof req.body?.email === 'string' && req.body.email.trim())) return res.status(400).json({message: 'Please provide valid text values for all required fields.'});
         const { email } = req.body;
         
         const existingUser = await User.findOne({ email });
@@ -148,7 +151,7 @@ app.post('/api/reset-password', async (req, res) => {
             return res.status(400).json({ message: 'Email not in our system.' });
         }
 
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otp = require('crypto').randomInt(100000, 1000000).toString();
         const expiration = new Date();
         expiration.setMinutes(expiration.getMinutes() + 10);
 
@@ -177,6 +180,7 @@ app.post('/api/reset-password', async (req, res) => {
 // Validate OTP and reset password
 app.post('/api/reset-password/verify', async (req, res) => {
     try {
+        if (!(typeof req.body?.email === 'string' && req.body.email.trim() && typeof req.body?.otp === 'string' && req.body.otp.trim() && typeof req.body?.newPassword === 'string' && req.body.newPassword.trim())) return res.status(400).json({message: 'Please provide valid text values for all required fields.'});
         const { email, otp, newPassword } = req.body;
 
         if (!email || !otp || !newPassword) {
@@ -201,6 +205,11 @@ app.post('/api/reset-password/verify', async (req, res) => {
     }
 });
 
+const { authenticate } = require('./middleware/access');
+for (const path of ['/api/groups', '/api/invitations', '/api/users', '/api/expenses']) {
+    app.use(path, authenticate);
+}
+
 const groupsRouter = require('./routes/groups');
 app.use('/api/groups', groupsRouter);
 
@@ -212,6 +221,12 @@ app.use('/api/users', usersRouter);
 
 const expensesRouter = require('./routes/expenses');
 app.use('/api/expenses', expensesRouter);
+
+app.use((error, req, res, next) => {
+    const status = error.status || (error.code === 11000 ? 409 : ['CastError','ValidationError'].includes(error.name) ? 400 : 500);
+    if (status === 500) console.error('Request failed:', error.message);
+    res.status(status).json({ message: status === 500 ? 'Something went wrong. Please try again.' : error.code === 11000 ? 'This name is already in use.' : error.message, ...(error.type ? {type:error.type} : {}) });
+});
 
 // Vercel imports the app; node server.js still works locally and on Render.
 module.exports = app;

@@ -1,139 +1,52 @@
-
 const express = require('express');
-const router = express.Router();
 const Group = require('../models/group');
 const User = require('../models/user');
-
-const expenseRouter = require('./expenses');
-router.use('/expenses', expenseRouter);
-
-// Create a new group
-router.post('/', async (req, res) => {
-  try {
-    const { name } = req.body;
-
-    const existingGroup = await Group.findOne({ name });
-    if (existingGroup) {
-      return res.status(400).json({ message: 'Group name is already in use. Please choose a different name.' });
-    }
-
-    const group = new Group({ name });
-    await group.save();
-
-    return res.status(201).json(group);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Add user to a group by email
-router.post('/:groupId/addUserByEmail', async (req, res) => {
-  try {
-    const { groupId } = req.params;
-    const { userEmail } = req.body;
-
-    const group = await Group.findById(groupId);
-
-    if (!group) {
-      return res.status(404).json({ message: 'Group not found' });
-    }
-
-    const user = await User.findOne({ email: userEmail });
-
-    if (user) {
-      if (!group.members.some((member) => member.memberId.equals(user._id))) {
-        group.members.push({memberId:user._id, memberBalance: 0});
-        user.groups.push({groupId:group._id, groupName: group.name});
-        await user.save();
-      }
-      else{
-        return res.status(404).json({ message: 'User already present in group.'})
-      }
-    } else {
-      return res.status(404).json({ message: 'User not found. Please re-check the email' })
-    }
-
-    await group.save();
-
-    return res.status(200).json({ message: 'Users added to the group successfully' });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Fetch group details
-router.get('/:groupId', async (req, res) => {
-  try {
-    const { groupId } = req.params;
-
-    const group = await Group.findById(groupId);
-
-    if (!group) {
-      return res.status(404).json({ message: 'Group not found' });
-    }
-
-    return res.status(201).json(group);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Fetch expenses in group
-router.get('/:groupId/expenses', async (req, res) => {
-  try {
-    const { groupId } = req.params;
-
-    const group = await Group.findById(groupId).populate('expenses');
-    if (!group) {
-      return res.status(404).json({ message: 'Group not found' });
-    }
-
-    const expenses = group.expenses
-    return res.status(201).json(expenses);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Settle transaction
-router.post('/:groupId/transaction/:transactionId', async (req, res) => {
-  try {
-    const { groupId, transactionId } = req.params;
-    const group = await Group.findById(groupId)
-    const transactionIndex = group.balance.findIndex(
-      (transaction) => transaction._id.toString() === transactionId
-    );
-
-    if (transactionIndex === -1) {
-      return res.status(404).json({ message: 'Transaction not found' });
-    }
-    // console.log(group.balance[transactionIndex])
-
-
-    // console.log('debtor', group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].from))
-    debtor = group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].from)
-    debtor.memberBalance += group.balance[transactionIndex].balance;
-    debtor.memberBalance = Number(debtor.memberBalance).toFixed(2);
-    // console.log(debtor.memberBalance)
-
-    // console.log('creditor', group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].to))
-    creditor = group.members.find(member => member.memberId.toString() == group.balance[transactionIndex].to)
-    creditor.memberBalance -= group.balance[transactionIndex].balance;
-    creditor.memberBalance = Number(creditor.memberBalance).toFixed(2);
-    // console.log(creditor.memberBalance)
-
-    group.balance.splice(transactionIndex, 1);
-    await group.save()
-    
-    return res.status(200).json({ message: 'Transaction settled' });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
+const { requireGroup } = require('../middleware/access');
+const { route, fail, transaction } = require('../lib/http');
+const { cents } = require('../lib/balances');
+const router = express.Router();
+router.use('/expenses',require('./expenses'));
+router.post('/',route(async(req,res)=>{
+  if (typeof req.body.name !== 'string' || !req.body.name.trim()) fail(400,'Group name is required.');
+  const group = await transaction(async session=>{
+    const group = new Group({name:req.body.name.trim(),members:[{memberId:req.user._id,memberBalance:0}]});
+    await group.save({session});
+    await User.updateOne({_id:req.user._id},{$push:{groups:{groupId:group._id,groupName:group.name}}},{session});
+    return group;
+  });
+  res.status(201).json(group);
+}));
+router.post('/:groupId/addUserByEmail',route(async(req,res)=>{
+  await requireGroup(req.params.groupId,req.user._id);
+  // Membership is granted through an invitation accepted by its recipient.
+  if (req.body.userEmail !== req.user.email) fail(403,'Send a group invitation to add another member.');
+  res.json({message:'You are already a member of this group.'});
+}));
+router.get('/:groupId',route(async(req,res)=>{
+  const group = await requireGroup(req.params.groupId,req.user._id);
+  res.json(group);
+}));
+router.get('/:groupId/expenses',route(async(req,res)=>{
+  const group = await requireGroup(req.params.groupId,req.user._id);
+  await group.populate('expenses');
+  res.json(group.expenses);
+}));
+router.post('/:groupId/transaction/:transactionId',route(async(req,res)=>{
+  await transaction(async session=>{
+    const group = await requireGroup(req.params.groupId,req.user._id,session);
+    const payment = group.balance.find(t=>String(t._id)===req.params.transactionId);
+    if (!payment) fail(404,'Payment not found or already recorded. Refresh the balances.');
+    const debtor = group.members.find(m=>String(m.memberId)===String(payment.from));
+    const creditor = group.members.find(m=>String(m.memberId)===String(payment.to));
+    if (!debtor || !creditor) fail(409,'Payment members are missing.');
+    const value = cents(payment.balance);
+    if (value<=0 || value > -cents(debtor.memberBalance) || value > cents(creditor.memberBalance)) fail(409,'This payment is out of date. Refresh the balances.');
+    debtor.memberBalance = (cents(debtor.memberBalance)+value)/100;
+    creditor.memberBalance = (cents(creditor.memberBalance)-value)/100;
+    // Preserve IDs of other displayed payments so concurrent stale requests fail safely.
+    group.balance = group.balance.filter(t=>String(t._id)!==String(payment._id));
+    await group.save({session});
+  });
+  res.json({message:'Payment recorded'});
+}));
 module.exports = router;
