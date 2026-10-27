@@ -1,8 +1,8 @@
-.member-panel { max-width:720px; margin:0 auto 20px; background:#2c2340; border:1px solid #685877; border-radius:18px; padding:24px; color:#fff; }
+.member-panel { max-width:720px; margin:0 auto 20px; background:linear-gradient(135deg,#ffffff24,#ffffff0e); backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px); box-shadow:0 12px 36px #140b3526,inset 0 1px 0 #ffffff20; border:1px solid #ffffff55; border-radius:18px; padding:24px; color:#fff; }
 h2 { font-size:24px; font-weight:600; margin:0 0 12px; } h2 span { color:#cdbce3; font-size:18px; }
 .member-help { color:#e1d6ee; margin-bottom:24px; }
 label { display:block; font-weight:500; margin-bottom:8px; }
-input { display:block; width:100%; min-height:48px; background:#1d172e; border:1px solid #857297; border-radius:10px; padding:12px; font-size:16px; color:#fff; }
+input { display:block; width:100%; min-height:48px; background:#20133644; border:1px solid #857297; border-radius:10px; padding:12px; font-size:16px; color:#fff; }
 input::placeholder { color:#c5b9d6; }
 .invite-primary { min-height:48px; padding:12px 20px; border-radius:10px; margin-top:18px; background:#e2d4ff; color:#27163e; font-weight:600; }
 .invite-primary:disabled { opacity:.7; cursor:wait; }

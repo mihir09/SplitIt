@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Expense } from 'src/app/expense.model';
 import { ExpenseService } from 'src/app/expense.service';
 import { GroupService } from 'src/app/group.service';
-import { catchError, finalize, of, switchMap, tap } from 'rxjs';
+import { catchError, finalize, of, switchMap, tap, Subscription } from 'rxjs';
 import { AnimationOptions } from 'ngx-lottie';
 
 type SplitType = 'equal' | 'unequal' | 'shares' | 'percentages';
@@ -17,7 +17,8 @@ type SplitType = 'equal' | 'unequal' | 'shares' | 'percentages';
   templateUrl: './add-expense.component.html',
   styleUrls: ['./add-expense.component.css'],
 })
-export class AddExpenseComponent {
+export class AddExpenseComponent implements OnDestroy {
+  private routeSubscription?: Subscription;
   // ----- card flow -----
   /** 0 Name · 1 Amount · 2 Payer · 3 Split · 4 Details · 5 Review */
   step = 0;
@@ -38,6 +39,10 @@ export class AddExpenseComponent {
   participantPercentages: { [key: string]: number } = {};
 
   loading = true;
+  previewOpen = false;
+  submitted = false;
+  saveError = '';
+  loadError = '';
   selectedSplitType: SplitType = 'equal';
   openClose: 'open' | 'closed' = 'closed';
 
@@ -79,12 +84,15 @@ export class AddExpenseComponent {
   }
 
   ngOnInit(): void {
-    this.route.queryParams
+    this.loading = true;
+    this.loadError = '';
+    this.routeSubscription?.unsubscribe();
+    this.routeSubscription = this.route.queryParams
       .pipe(
         switchMap((params) => {
           this.groupId = params['groupId'];
           return this.fetchMembers().pipe(
-            catchError((error) => { console.error('Error fetching members:', error); return of([]); }),
+            catchError(() => { this.loadError = 'Could not load group members. Please try again.'; return of([]); }),
             finalize(() => {
               this.participants.forEach((p) => {
                 this.participantAmounts[p.id] = 0;
@@ -104,6 +112,8 @@ export class AddExpenseComponent {
       )
       .subscribe();
   }
+
+  ngOnDestroy(): void { this.routeSubscription?.unsubscribe(); }
 
   // ===== CARD NAVIGATION =====
   goNext(): void {
@@ -160,13 +170,24 @@ export class AddExpenseComponent {
   fetchMembers() {
     if (this.groupId) {
       return this.groupService.getMembers(this.groupId).pipe(
-        tap((members) => { this.members = members; this.participants = members; }),
+        tap((members) => { this.members = members; this.participants = [...members];
+          if (!this.payerId) this.selectPayer((members.find(m => m.email === localStorage.getItem('userEmail')) || members[0])?.id || ''); }),
       );
     }
     return of([]);
   }
 
-  toggleSplitType(splitType: SplitType): void { this.selectedSplitType = splitType; }
+  toggleSplitType(splitType: SplitType): void {
+    this.selectedSplitType = splitType;
+    const equal = allocateCents(this.amount, this.participants.map(() => 1));
+    const percent = allocateCents(100, this.participants.map(() => 1));
+    this.participants.forEach((p,i) => {
+      if (!this.participantAmounts[p.id]) this.participantAmounts[p.id] = equal[i];
+      if (!this.participantShares[p.id]) this.participantShares[p.id] = 1;
+      if (!this.participantPercentages[p.id]) this.participantPercentages[p.id] = percent[i];
+    });
+  }
+  shareFor(id: string): number { return this.computeParticipantsMap()[id] || 0; }
 
   isParticipantSelected(participantId: string): boolean {
     return !!this.participants.find((p) => p.id === participantId);
@@ -190,7 +211,7 @@ export class AddExpenseComponent {
       const member = this.members.find((m) => m.id === participantId);
       this.participants.push(member);
       this.participantAmounts[participantId] = 0;
-      this.participantShares[participantId] = 0;
+      this.participantShares[participantId] = 1;
       this.participantPercentages[participantId] = 0;
     }
   }
@@ -275,7 +296,10 @@ export class AddExpenseComponent {
 
   // ===== SUBMIT =====
   onAddOrUpdateExpense(): void {
-    if (this.isProcessing || !(this.expenseForm.valid && this.canAddExpense() && this.isTotalAmountValid())) return;
+    this.submitted = true;
+    this.expenseForm.markAllAsTouched();
+    if (this.isProcessing || !(this.expenseForm.valid && this.amount > 0 && this.canAddExpense() && this.isTotalAmountValid())) return;
+    this.saveError = '';
 
     const expenseData: any = { ...this.expenseForm.value, groupId: this.groupId };
     const payer = this.members.find((m) => m.id === expenseData.payer);
@@ -297,7 +321,7 @@ export class AddExpenseComponent {
         this.showAnimation = false; this.isProcessing = false;
         this.router.navigate(['group', this.groupId, 'list-balance'], { queryParams: { groupId: this.groupId } });
       },
-      (error) => { console.error('Error adding expense:', error); this.showAnimation = false; this.isProcessing = false; },
+      (error) => { this.saveError = error.error?.message || 'Could not save expense. Please try again.'; this.showAnimation = false; this.isProcessing = false; },
     );
   }
 
@@ -309,7 +333,7 @@ export class AddExpenseComponent {
         this.showAnimation = false; this.isProcessing = false;
         this.router.navigate(['group', this.groupId, 'list-balance'], { queryParams: { groupId: this.groupId } });
       },
-      (error) => { console.error('Error editing expense:', error); this.showAnimation = false; this.isProcessing = false; },
+      (error) => { this.saveError = error.error?.message || 'Could not update expense. Please try again.'; this.showAnimation = false; this.isProcessing = false; },
     );
   }
 
@@ -320,7 +344,7 @@ export class AddExpenseComponent {
       const memberDetails = this.members.find((m) => m.id === participantId);
       participants.push(memberDetails);
       this.participantAmounts[participantId] = expense.participants[participantId];
-      this.participantShares[participantId] = 0;
+      this.participantShares[participantId] = Math.round(expense.participants[participantId] * 100);
       this.participantPercentages[participantId] = parseFloat(((expense.participants[participantId] * 100) / expense.amount).toFixed(2));
     });
     this.expenseForm.setValue({

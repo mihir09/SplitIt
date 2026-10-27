@@ -1,20 +1,20 @@
 :host { display:block; min-width:0; }
-.expense-panel { background:#2c2340; border:1px solid #685877; border-radius:18px; padding:24px; color:#fff; }
+.expense-panel { background:linear-gradient(135deg,#ffffff24,#ffffff0e); backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px); box-shadow:0 12px 36px #140b3526,inset 0 1px 0 #ffffff20; border:1px solid #ffffff55; border-radius:18px; padding:24px; color:#fff; }
 .expense-heading { display:flex; gap:20px; justify-content:space-between; align-items:center; margin-bottom:20px; }
 h2 { font-size:24px; font-weight:600; margin:0; }
 .expense-heading label { display:flex; flex-direction:column; gap:6px; font-size:14px; color:#eee6fa; }
-input { width:100%; background:#1d172e; border:1px solid #857297; border-radius:10px; padding:12px; color:#fff; font-size:16px; }
+input { width:100%; background:#20133644; border:1px solid #857297; border-radius:10px; padding:12px; color:#fff; font-size:16px; }
 input::placeholder { color:#c5b9d6; }
 .desktop-table { overflow:auto; }
 .glass-table { width:100%; background:transparent; }
 .glass-table th,.glass-table td { color:#f6f1ff; border-bottom:1px solid #665676; padding:16px 10px; }
 .glass-table th { color:#d8c7f4; }
 .expense-actions { display:flex; flex-wrap:wrap; gap:6px; }
-.expense-actions button,.expense-error button { min-height:44px; padding:8px 12px; border:1px solid #857297; border-radius:9px; background:#3e3056; color:#fff; font-size:14px; }
+.expense-actions button,.expense-error button { min-height:44px; padding:8px 12px; border:1px solid #857297; border-radius:9px; background:#ffffff18; color:#fff; font-size:14px; }
 .expense-actions .danger { color:#ffc6d2; border-color:#ad7183; }
 .expense-actions button:hover { background:#55406f; }
 .mobile-expenses { display:none; }
-.expense-card { padding:16px; background:#211a32; border:1px solid #6b587e; border-radius:12px; margin-bottom:12px; }
+.expense-card { padding:16px; background:#ffffff0e; border:1px solid #6b587e; border-radius:12px; margin-bottom:12px; }
 .expense-card-title { display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
 h3 { font-size:18px; margin:0; overflow-wrap:anywhere; }
 strong { white-space:nowrap; font-variant-numeric:tabular-nums; }

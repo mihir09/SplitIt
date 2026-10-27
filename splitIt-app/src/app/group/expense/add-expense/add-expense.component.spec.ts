@@ -69,4 +69,21 @@ describe('AddExpenseComponent', () => {
     component.participantAmounts = { m1: 50, m2: 30, m3: 20 };
     expect(component.isTotalAmountValid()).toBeTrue();
   });
+  it('keeps quick entry collapsed on mobile and includes the desktop split preview', () => {
+    expect(component.previewOpen).toBeFalse();
+    expect(fixture.nativeElement.querySelector('#expense-split-preview')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('input[formControlName="expenseName"]')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('input[formControlName="amount"]')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('select[formControlName="payer"]')).toBeTruthy();
+  });
+  it('allocates every cent in the preview and initializes advanced split options', () => {
+    component.expenseForm.patchValue({expenseName:'Dinner', amount:10, payer:'m1'});
+    expect(component.reviewBreakdown().map(row=>row.owes)).toEqual([3.34,3.33,3.33]);
+    component.toggleSplitType('shares');expect(component.isTotalAmountValid()).toBeTrue();
+    component.toggleSplitType('percentages');expect(component.isTotalAmountValid()).toBeTrue();
+  });
+  it('does not save an empty or zero-value expense', () => {
+    const save=spyOn(component,'onAddExpense');component.onAddOrUpdateExpense();expect(save).not.toHaveBeenCalled();
+    component.expenseForm.patchValue({expenseName:'Dinner',amount:0,payer:'m1'});component.onAddOrUpdateExpense();expect(save).not.toHaveBeenCalled();
+  });
 });
