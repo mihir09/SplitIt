@@ -1,3 +1,4 @@
+import { finalize } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { GroupService } from '../../../group.service';
@@ -16,6 +17,8 @@ export class AddMemberComponent implements OnInit {
   successMessage: string = '';
   groupId: string = '';
   members: any = [];
+  loadingMembers = true;
+  isSending = false;
   showInviteButton: boolean = false;
   userEmailToInvite: string = '';
 
@@ -26,7 +29,7 @@ export class AddMemberComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router) {
     this.createForm = this.fb.group({
-      email: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 
@@ -35,24 +38,28 @@ export class AddMemberComponent implements OnInit {
       this.groupId = params['groupId'];
       this.errorMessage = '';
       this.successMessage = '';
-      this.groupService.getMembers(this.groupId).subscribe({
+      this.loadingMembers = true;
+      this.groupService.getMembers(this.groupId).pipe(finalize(() => this.loadingMembers = false)).subscribe({
         next: (response) => {
           this.members = response
         },
         error: (error) => {
-          console.log(error)
+          this.errorMessage = 'Could not load members. Please refresh and try again.';
         }
       })
     });
 
   }
   onAddUser() {
+    if (this.isSending) return;
+    this.createForm.markAllAsTouched();
     if (this.createForm.valid) {
+      this.isSending = true;
       this.errorMessage = '';
       this.successMessage = '';
       const userEmail = this.createForm.value.email;
       const senderEmail = this.authService.getCurrentUser();
-      this.invitationService.sendInvitation(senderEmail!, userEmail, this.groupId).subscribe({
+      this.invitationService.sendInvitation(senderEmail!, userEmail, this.groupId).pipe(finalize(() => this.isSending = false)).subscribe({
         next: (response) => {
           this.successMessage = 'Invitation sent successfully to ' + userEmail;
           this.errorMessage = '';
@@ -62,23 +69,23 @@ export class AddMemberComponent implements OnInit {
           this.showInviteButton = false;
           switch (error.error.type) {
             case 'user_not_found':
-              this.errorMessage = error.error.message + " " + error.error.suggestion;
+              this.errorMessage = error.error.message + " " + (error.error.suggestion || '');
               this.showInviteButton = true;
               this.userEmailToInvite = userEmail;
               break;
             case 'user_already_present':
-              this.errorMessage = error.error.message + " " + error.error.suggestion;
+              this.errorMessage = error.error.message + " " + (error.error.suggestion || '');
               break;
             case 'user_already_invited':
-              this.errorMessage = error.error.message + " " + error.error.suggestion;
+              this.errorMessage = error.error.message + " " + (error.error.suggestion || '');
               break;
 
             case 'group_not_found':
-              this.errorMessage = error.error.message + " " + error.error.suggestion;
+              this.errorMessage = error.error.message + " " + (error.error.suggestion || '');
               break;
 
             case 'sender_not_found':
-              this.errorMessage = error.error.message + " You will be logged out in 10 seconds. " + error.error.suggestion;
+              this.errorMessage = error.error.message + " You will be logged out in 10 seconds. " + (error.error.suggestion || '');
               setTimeout(() => {
                 this.authService.logout();
                 this.router.navigate(['/login']);
@@ -94,11 +101,13 @@ export class AddMemberComponent implements OnInit {
   }
 
   onInvite(userEmail: string) {
+    if (this.isSending) return;
+    this.isSending = true;
     this.errorMessage = '';
     this.successMessage = '';
     const senderEmail = this.authService.getCurrentUser();
     this.showInviteButton = false;
-    this.invitationService.inviteNewUser(senderEmail!, userEmail).subscribe({
+    this.invitationService.inviteNewUser(senderEmail!, userEmail).pipe(finalize(() => this.isSending = false)).subscribe({
       next: (response) => {
         this.successMessage = 'Invitation sent successfully to ' + userEmail;
       },

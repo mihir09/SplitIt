@@ -1,4 +1,4 @@
-<div class="min-h-screen relative overflow-hidden">
+<div class="min-h-0 relative overflow-hidden">
 
     <!-- Subtle Grid Pattern -->
     <div class="absolute inset-0 opacity-10"
@@ -10,7 +10,7 @@
       <button class="underline ml-4" (click)="fetchGroupDetails()">Refresh balances</button>
     </div>
     <!-- Content -->
-    <div class="relative z-10 min-h-screen px-4 md:px-8 lg:px-12" *ngIf="!loading && groupDetails && currentUser">
+    <div class="relative z-10 min-h-0 px-4 md:px-8 lg:px-12" *ngIf="!loading && groupDetails && currentUser">
         <div class="max-w-7xl mx-auto mt-4 flex flex-col lg:flex-row justify-center gap-4 md:gap-6 lg:gap-8">
 
             <!-- Group Balance Card -->

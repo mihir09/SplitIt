@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { asyncScheduler, observeOn } from 'rxjs';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ExpenseService } from 'src/app/expense.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -13,7 +14,7 @@ import { ExpenseDetailsComponent } from './expense-details/expense-details.compo
   templateUrl: './list-expense.component.html',
   styleUrls: ['./list-expense.component.css']
 })
-export class ListExpenseComponent implements OnInit {
+export class ListExpenseComponent implements OnInit, OnDestroy {
   members: any[] = [];
   groupId!: string;
   expenses: any[] = [];
@@ -23,16 +24,20 @@ export class ListExpenseComponent implements OnInit {
   loading: boolean = true;
   selectedExpense: any | undefined;
 
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) set sort(value: MatSort) { this.expenseList.sort = value; }
+  @ViewChild(MatPaginator) set paginator(value: MatPaginator) { this.expenseList.paginator = value; }
 
   displayedColumns: string[] = ['expenseDate', 'expenseName', 'payerName', 'amount', 'actions'];
   expenseList = new MatTableDataSource<any>([]);
+  visibleExpenses = this.expenseList.connect().pipe(observeOn(asyncScheduler));
+  errorMessage = '';
 
   constructor(private expenseService: ExpenseService,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog) { }
+
+  ngOnDestroy(): void { this.expenseList.disconnect(); }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -43,17 +48,17 @@ export class ListExpenseComponent implements OnInit {
 
 
   fetchExpenses() {
+    this.loading = true;
+    this.errorMessage = '';
     this.expenseService.getExpensesOfGroup(this.groupId).subscribe({
       next: (expenses) => {
-        this.expenseList = new MatTableDataSource(expenses)
-        this.expenseList.paginator = this.paginator;
-        this.expenseList.sort = this.sort;
+        this.expenseList.data = expenses;
         this.expenseList.filterPredicate = this.expenseFilter();
         this.loading = false;
       },
       error: (error) => {
         this.loading = false;
-        console.error('Error fetching expenses', error);
+        this.errorMessage = 'Could not load expenses. Please try again.';
       },
     });
   }
@@ -61,26 +66,17 @@ export class ListExpenseComponent implements OnInit {
   applyFilterExpense(): void {
     const filterValue = this.searchTerm.toLowerCase();
     const filterObj: any = { searchTerm: filterValue, startDate: this.startDate, endDate: this.endDate };
-    this.expenseList.filter = filterObj;
+    this.expenseList.filter = JSON.stringify(filterObj);
+    this.expenseList.paginator?.firstPage();
   }
 
-  expenseFilter(): (data: any, filter: any) => boolean {
-    const filterFunction = (data: any, filter: any): boolean => {
-      const searchText = filter.searchTerm;
-      const isExpenseNameMatch = data.expenseName.toLowerCase().includes(searchText);
-      const isPayerNameMatch = data.payerName.toLowerCase().includes(searchText);
-      const isAmountMatch = data.amount.toString().includes(searchText);
-      var dateCheck = false;
-      var isDateInRange = false
-      if (filter.startDate && filter.endDate) {
-        isDateInRange = this.isDateInRange(data.expenseDate, filter.startDate, filter.endDate);
-        dateCheck = true
-      }
-
-      return (filter ? (isExpenseNameMatch || isPayerNameMatch || isAmountMatch) : true) && (dateCheck ? isDateInRange : true);
+  expenseFilter(): (data: any, filter: string) => boolean {
+    return (data, serialized) => {
+      const filter = JSON.parse(serialized || '{}');
+      const term = filter.searchTerm || '';
+      const matches = [data.expenseName, data.payerName, data.amount].some(value => String(value ?? '').toLowerCase().includes(term));
+      return matches && (!(filter.startDate && filter.endDate) || this.isDateInRange(data.expenseDate, new Date(filter.startDate), new Date(filter.endDate)));
     };
-
-    return filterFunction;
   }
 
   isDateInRange(date: Date, startDate: Date, endDate: Date): boolean {
@@ -117,7 +113,7 @@ export class ListExpenseComponent implements OnInit {
         this.loading = true;
         this.expenseService.undoExpense(expense._id).subscribe({
           next: () => this.fetchExpenses(),
-          error: (e) => console.error('Error undoing expense', e),
+          error: () => { this.loading = false; this.errorMessage = 'Could not undo expense. Please try again.'; },
         });
       },
     });
@@ -132,7 +128,7 @@ export class ListExpenseComponent implements OnInit {
       this.loading = true;
       this.expenseService.deleteExpense(expense._id).subscribe({
         next: () => this.fetchExpenses(),
-        error: (e) => { this.loading = false; console.error('Error deleting expense', e); },
+        error: () => { this.loading = false; this.errorMessage = 'Could not delete expense. Please try again.'; },
       });
     },
   });

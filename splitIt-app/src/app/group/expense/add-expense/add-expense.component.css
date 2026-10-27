@@ -1,7 +1,7 @@
 :host {
   --glass: rgba(255, 255, 255, .10);
   --line: rgba(255, 255, 255, .22);
-  --muted: rgba(255, 255, 255, .62);
+  --muted: rgba(255, 255, 255, .86);
   --accent: #a78bfa;
   --accent-deep: #8b5cf6;
   --pay: #fbbf24;
@@ -64,7 +64,7 @@
   background: rgba(255, 255, 255, .12); border: 1.5px solid var(--line); border-radius: 14px;
   padding: 13px 16px; outline: none; transition: border-color .2s, background .2s, box-shadow .2s;
 }
-.field::placeholder { color: rgba(255, 255, 255, .45); }
+.field::placeholder { color: rgba(255, 255, 255, .75); }
 .field:focus { border-color: var(--accent); background: rgba(255, 255, 255, .17); box-shadow: 0 0 0 4px rgba(167, 139, 250, .18); }
 textarea.field { resize: none; }
 

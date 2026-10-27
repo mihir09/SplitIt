@@ -5,7 +5,7 @@
 
     <!-- progress rail -->
     <div class="rail">
-      <div class="seg" *ngFor="let s of [0,1,2,3,4,5]"
+      <div role="button" tabindex="0" [attr.aria-label]="'Go to step ' + (s + 1)" (keydown.enter)="goTo(s)" (keydown.space)="$event.preventDefault(); goTo(s)" class="seg" *ngFor="let s of [0,1,2,3,4,5]"
            [class.done]="s < step" [class.active]="s === step"
            [class.tappable]="s <= maxReached"
            (click)="goTo(s)"><i></i></div>
@@ -19,7 +19,7 @@
         <h2 class="q">{{ mode === 'add' ? "What's the expense?" : 'Rename the expense' }}</h2>
         <p class="sub">Give it a name you'll recognise later.</p>
 
-        <input class="field" formControlName="expenseName" placeholder="Dinner at Chili's" autocomplete="off" />
+        <input class="field" aria-label="Expense name" formControlName="expenseName" placeholder="Dinner at Chili's" autocomplete="off" />
         <div class="chips">
           <button type="button" class="chip" *ngFor="let idea of nameIdeas" (click)="pickName(idea)">{{ idea }}</button>
         </div>
@@ -38,7 +38,7 @@
 
         <div class="amt">
           <span class="cur">$</span>
-          <input formControlName="amount" inputmode="decimal" placeholder="0" appDecimalInput />
+          <input aria-label="Total amount in dollars" formControlName="amount" inputmode="decimal" placeholder="0" appDecimalInput />
         </div>
         <div class="padgrid">
           <button type="button" *ngFor="let k of pad" (click)="padPress(k)">
@@ -52,7 +52,7 @@
         </div>
 
         <div class="nav">
-          <button type="button" class="btn ghost-b" (click)="goBack()">←</button>
+          <button type="button" class="btn ghost-b" aria-label="Previous step" (click)="goBack()">←</button>
           <button type="button" class="btn primary" (click)="goNext()">Next →</button>
         </div>
       </section>
@@ -64,19 +64,19 @@
         <p class="sub">Tap the person who covered it. <span class="hl-pay">They get the 💳.</span></p>
 
         <div class="ring">
-          <div class="bubble tap" *ngFor="let m of members"
+          <button type="button" [attr.aria-label]="'Paid by ' + m.name" [attr.aria-pressed]="payerId === m.id" class="bubble tap" *ngFor="let m of members"
                [class.sel]="payerId === m.id" (click)="selectPayer(m.id)">
             <div class="disc" [style.background]="discStyle(m.email)">
               {{ initials(m.email) }}
               <span class="badge" *ngIf="payerId === m.id">💳</span>
             </div>
             <span class="name">{{ shortName(m.email) }}</span>
-          </div>
+          </button>
         </div>
         <div class="err" *ngIf="expenseForm.get('payer')?.touched && !payerId">Pick who paid to continue.</div>
 
         <div class="nav">
-          <button type="button" class="btn ghost-b" (click)="goBack()">←</button>
+          <button type="button" class="btn ghost-b" aria-label="Previous step" (click)="goBack()">←</button>
           <button type="button" class="btn primary" (click)="goNext()">Next →</button>
         </div>
       </section>
@@ -88,7 +88,7 @@
             <p class="eyebrow">Step 4</p>
             <h2 class="q">Split between…</h2>
           </div>
-          <button type="button" class="calc-btn" title="Open calculator" (click)="toggleCalculator()">
+          <button type="button" class="calc-btn" aria-label="Open calculator" (click)="toggleCalculator()">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
               <path d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm0 2h8v2H6V4zm0 4h2v2H6V8zm4 0h2v2h-2V8zm4 0h-2v2h2V8zM6 12h2v2H6v-2zm4 0h2v2h-2v-2zm4 0h-2v2h2v-2z"/>
             </svg>
@@ -118,19 +118,19 @@
                 <div class="valwrap" *ngIf="selectedSplitType === 'unequal'">
                   <span>$</span>
                   <input type="number" inputmode="decimal" placeholder="0"
-                         [value]="participantAmounts[m.id] || ''"
+                         [attr.aria-label]="'Amount owed by ' + m.name" [value]="participantAmounts[m.id] || ''"
                          (input)="updateParticipantAmount(m.id, $event)" />
                 </div>
                 <div class="valwrap" *ngIf="selectedSplitType === 'shares'">
                   <span>×</span>
                   <input type="number" inputmode="numeric" placeholder="0"
-                         [value]="participantShares[m.id] || ''"
+                         [attr.aria-label]="'Shares for ' + m.name" [value]="participantShares[m.id] || ''"
                          (input)="updateParticipantShares(m.id, $event)" />
                 </div>
                 <div class="valwrap" *ngIf="selectedSplitType === 'percentages'">
                   <span>%</span>
                   <input type="number" inputmode="decimal" placeholder="0"
-                         [value]="participantPercentages[m.id] || ''"
+                         [attr.aria-label]="'Percentage owed by ' + m.name" [value]="participantPercentages[m.id] || ''"
                          (input)="updateParticipantAmount(m.id, $event)" />
                 </div>
               </div>
@@ -188,7 +188,7 @@
         <div class="err" *ngIf="canAddExpense() && selectedSplitType === 'percentages' && !isTotalAmountValid()">Percentages must be &gt; 0 and total 100%.</div>
 
         <div class="nav">
-          <button type="button" class="btn ghost-b" (click)="goBack()">←</button>
+          <button type="button" class="btn ghost-b" aria-label="Previous step" (click)="goBack()">←</button>
           <button type="button" class="btn primary" (click)="goNext()">Next →</button>
         </div>
       </section>
@@ -200,14 +200,14 @@
         <p class="sub">The essentials are done. Add extras only if you want.</p>
 
         <span class="lbl">📅 Date</span>
-        <input type="date" class="field custom-date-input" formControlName="expenseDate" />
+        <input type="date" class="field custom-date-input" aria-label="Expense date" formControlName="expenseDate" />
 
         <button type="button" class="acc-toggle" [class.open]="openClose === 'open'" (click)="toggleCalculator()">
           <span>➕ Add category &amp; a note</span><span class="ar">▾</span>
         </button>
         <div class="acc-body" [class.open]="openClose === 'open'">
           <span class="lbl">📂 Category</span>
-          <select class="field glass-select" formControlName="category">
+          <select class="field glass-select" aria-label="Expense category" formControlName="category">
             <ng-container *ngFor="let category of categories">
               <optgroup [label]="category.title">
                 <option *ngFor="let sub of category.categories" [value]="sub">{{ sub }}</option>
@@ -215,11 +215,11 @@
             </ng-container>
           </select>
           <span class="lbl">📝 Description</span>
-          <textarea class="field" rows="3" formControlName="description" placeholder="Optional notes…"></textarea>
+          <textarea class="field" rows="3" aria-label="Expense notes" formControlName="description" placeholder="Optional notes…"></textarea>
         </div>
 
         <div class="nav">
-          <button type="button" class="btn ghost-b" (click)="goBack()">←</button>
+          <button type="button" class="btn ghost-b" aria-label="Previous step" (click)="goBack()">←</button>
           <button type="button" class="btn primary" (click)="goNext()">Review →</button>
         </div>
       </section>
@@ -249,7 +249,7 @@
         </div>
 
         <div class="nav">
-          <button type="button" class="btn ghost-b" (click)="goBack()">←</button>
+          <button type="button" class="btn ghost-b" aria-label="Previous step" (click)="goBack()">←</button>
           <button type="button" class="btn primary"
                   [disabled]="expenseForm.invalid || !canAddExpense() || (selectedSplitType !== 'equal' && !isTotalAmountValid())"
                   (click)="onAddOrUpdateExpense()">

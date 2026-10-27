@@ -1,0 +1,13 @@
+.member-panel { max-width:720px; margin:0 auto 20px; background:#2c2340; border:1px solid #685877; border-radius:18px; padding:24px; color:#fff; }
+h2 { font-size:24px; font-weight:600; margin:0 0 12px; } h2 span { color:#cdbce3; font-size:18px; }
+.member-help { color:#e1d6ee; margin-bottom:24px; }
+label { display:block; font-weight:500; margin-bottom:8px; }
+input { display:block; width:100%; min-height:48px; background:#1d172e; border:1px solid #857297; border-radius:10px; padding:12px; font-size:16px; color:#fff; }
+input::placeholder { color:#c5b9d6; }
+.invite-primary { min-height:48px; padding:12px 20px; border-radius:10px; margin-top:18px; background:#e2d4ff; color:#27163e; font-weight:600; }
+.invite-primary:disabled { opacity:.7; cursor:wait; }
+.member-error,#email-error { color:#ffc6d2; margin-top:12px; }.member-success { color:#a7efd0; margin-top:12px; }
+.member-list { margin:0; padding:0; list-style:none; }.member-list li { display:flex; align-items:center; gap:14px; padding:16px 0; border-bottom:1px solid #645373; }.member-list li:last-child { border-bottom:0; }
+.member-avatar { flex-shrink:0; width:44px; height:44px; display:grid; place-items:center; border-radius:50%; background:#4b3869; color:#fff; font-weight:600; }
+.member-list strong { font-weight:500; }.member-list div { min-width:0; overflow-wrap:anywhere; }.member-list p { color:#d9cde8; margin:4px 0 0; }
+@media(max-width:480px) { .member-panel { padding:18px; }.invite-primary { width:100%; } }

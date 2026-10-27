@@ -173,3 +173,8 @@ input:-webkit-autofill:active {
   animation: placeholderBreath 2s ease-in-out infinite;
 }
 
+
+/* Group pages keep secondary text readable on the purple surfaces. */
+.group-shell [class~="text-white/60"], .group-shell [class~="text-white/70"], .group-shell [class~="text-white/80"] { color:#e4dced; }
+.group-shell button:focus-visible, .group-shell a:focus-visible, .group-shell input:focus-visible, .group-shell select:focus-visible, .group-shell textarea:focus-visible { outline:3px solid #eadbff; outline-offset:3px; }
+@media(prefers-reduced-motion:reduce) { .group-shell *, .group-shell *::before, .group-shell *::after { animation:none!important; transition:none!important; } }
