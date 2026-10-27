@@ -1,3 +1,4 @@
+import { allocateCents } from '../../../split-money';
 import {
   Component, Directive, ElementRef, EventEmitter, Input, Output, OnDestroy,
 } from '@angular/core';
@@ -264,21 +265,17 @@ export class AddExpenseComponent {
     const out: { [key: string]: number } = {};
     if (this.selectedSplitType === 'unequal') {
       this.participants.forEach((p) => (out[p.id] = this.participantAmounts[p.id]));
-    } else if (this.selectedSplitType === 'shares') {
-      const totalShares = this.participants.reduce((s, p) => s + (this.participantShares[p.id] || 0), 0);
-      this.participants.forEach((p) => (out[p.id] = parseFloat(((amount * this.participantShares[p.id]) / totalShares).toFixed(2))));
-    } else if (this.selectedSplitType === 'percentages') {
-      this.participants.forEach((p) => (out[p.id] = parseFloat(((amount * this.participantPercentages[p.id]) / 100).toFixed(2))));
     } else {
-      const splitAmount = parseFloat((amount / this.participants.length).toFixed(2));
-      this.participants.forEach((p) => (out[p.id] = splitAmount));
+      const weights = this.participants.map(p => this.selectedSplitType === 'shares' ? this.participantShares[p.id] : this.selectedSplitType === 'percentages' ? this.participantPercentages[p.id] : 1);
+      const shares = allocateCents(amount, weights);
+      this.participants.forEach((p,index) => out[p.id] = shares[index]);
     }
     return out;
   }
 
   // ===== SUBMIT =====
   onAddOrUpdateExpense(): void {
-    if (!(this.expenseForm.valid && this.canAddExpense())) return;
+    if (this.isProcessing || !(this.expenseForm.valid && this.canAddExpense() && this.isTotalAmountValid())) return;
 
     const expenseData: any = { ...this.expenseForm.value, groupId: this.groupId };
     const payer = this.members.find((m) => m.id === expenseData.payer);

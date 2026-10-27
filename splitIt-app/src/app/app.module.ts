@@ -8,7 +8,8 @@ import { LoginComponent } from './login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './home/home.component';
 import { AuthService } from './auth.service';
-import { HttpClientModule } from '@angular/common/http';
+import { AuthInterceptor } from './auth.interceptor';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { CreateGroupComponent } from './create-group/create-group.component';
 import { GroupComponent } from './group/group.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
@@ -95,7 +96,7 @@ export function playerFactory() {
     BrowserAnimationsModule,
     LottieModule.forRoot({ player: playerFactory })
   ],
-  providers: [AuthService],
+  providers: [AuthService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

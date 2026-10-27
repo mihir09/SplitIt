@@ -70,6 +70,8 @@ export class GroupService {
     const memberDetailsMap = new Map(members.map((member) => [member.id, member.name]));
 
     return balanceItems.map((balanceItem: any) => ({
+      fromId: balanceItem.from,
+      toId: balanceItem.to,
       from: memberDetailsMap.get(balanceItem.from) || balanceItem.from,
       to: memberDetailsMap.get(balanceItem.to) || balanceItem.to,
       balance: balanceItem.balance,
