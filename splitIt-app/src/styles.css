@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: rgb(243 244 246);}
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background: var(--app-background); color:var(--text-primary);}
 
 
 input:-webkit-autofill,
@@ -178,3 +178,59 @@ input:-webkit-autofill:active {
 .group-shell [class~="text-white/60"], .group-shell [class~="text-white/70"], .group-shell [class~="text-white/80"] { color:#e4dced; }
 .group-shell button:focus-visible, .group-shell a:focus-visible, .group-shell input:focus-visible, .group-shell select:focus-visible, .group-shell textarea:focus-visible { outline:3px solid #eadbff; outline-offset:3px; }
 @media(prefers-reduced-motion:reduce) { .group-shell *, .group-shell *::before, .group-shell *::after { animation:none!important; transition:none!important; } }
+
+/* Shared visual system: indigo glass with violet and teal ambient light. */
+:root {
+  color-scheme:dark;
+  --app-background:radial-gradient(ellipse at 88% 8%,#885cc073,transparent 54%),radial-gradient(ellipse at 4% 72%,#397f9859,transparent 52%),radial-gradient(ellipse at 55% 100%,#67439066,transparent 60%),linear-gradient(135deg,#151b36,#30264f 54%,#192d42);
+  --text-primary:#faf8ff;
+  --text-secondary:#d9d6e9;
+  --glass-fill:linear-gradient(135deg,#ffffff1f,#ffffff0a);
+  --glass-border:#ffffff30;
+  --glass-shadow:0 16px 48px #090f2926,inset 0 1px 0 #ffffff1c;
+  --control-fill:#101a343d;
+  --control-border:#ffffff45;
+  --accent-fill:linear-gradient(115deg,#d1c0ff,#b8d9f7);
+  --accent-ink:#24233f;
+  --nav-fill:#25243fbb;
+}
+body { background-attachment:fixed; line-height:1.5; -webkit-font-smoothing:antialiased; }
+*,*::before,*::after { box-sizing:border-box; }
+button,input,select,textarea { font:inherit; }
+button,a,input,select,textarea,summary { -webkit-tap-highlight-color:transparent; }
+button { cursor:pointer; }
+button:disabled { cursor:not-allowed; }
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible { outline:3px solid #c8e8ff; outline-offset:4px; }
+h1,h2,h3 { letter-spacing:-.025em; text-wrap:balance; }
+input,select,textarea { scroll-margin-top:100px; }
+input::placeholder,textarea::placeholder { opacity:1; }
+.home-shell,.group-shell { background:var(--app-background)!important; background-attachment:fixed!important; }
+.home-navigation,.group-navigation { background:var(--nav-fill)!important; border-color:var(--glass-border)!important; padding-bottom:max(8px,env(safe-area-inset-bottom))!important; }
+.home-navigation button.active,.group-navigation a.active { background:var(--accent-fill)!important; color:var(--accent-ink)!important; box-shadow:0 3px 12px #0b102b22; }
+.home-primary,.entry-save,.invite-primary { background:var(--accent-fill)!important; color:var(--accent-ink)!important; border:1px solid #ffffff45; box-shadow:0 4px 16px #10162b26!important; }
+.home-primary:hover,.entry-save:hover:not(:disabled),.invite-primary:hover:not(:disabled) { filter:brightness(1.07); }
+.home-glass,.entry-glass,.expense-panel,.member-panel { background:var(--glass-fill)!important; border-color:var(--glass-border)!important; box-shadow:var(--glass-shadow)!important; }
+.group-shell input,.group-shell select,.group-shell textarea,app-create-group input { background:var(--control-fill)!important; border-color:var(--control-border)!important; }
+.group-shell input:focus,.group-shell select:focus,.group-shell textarea:focus { border-color:#c9ceff!important; }
+.group-shell [class~="text-white/60"],.group-shell [class~="text-white/70"],.group-shell [class~="text-white/80"] { color:var(--text-secondary); }
+/* Account forms share the same backdrop and surfaces as the signed-in app. */
+:is(app-login,app-register,app-reset-password) :is(.login-wrapper,.register-wrapper,.reset-wrapper) { background:var(--app-background); }
+:is(app-login,app-register,app-reset-password) :is(.bg-layer,.blob,.grid-pattern,.bg-overlay,.card-glow) { display:none; }
+:is(app-login,app-register,app-reset-password) :is(.login-container,.register-container,.reset-container) { position:relative; min-height:100dvh; padding:96px 20px 40px; align-items:center; }
+:is(app-login,app-register,app-reset-password) :is(.login-card,.register-card,.reset-card) { background:var(--glass-fill); border:1px solid var(--glass-border); box-shadow:var(--glass-shadow); backdrop-filter:blur(24px); border-radius:24px; }
+:is(app-login,app-register,app-reset-password) .form-input { min-height:50px; background:var(--control-fill); border-color:var(--control-border); font-size:16px; }
+:is(app-login,app-register,app-reset-password) .form-input::placeholder { color:#c8c4da; }
+:is(app-login,app-register,app-reset-password) :is(.submit-button,.header-icon) { background:var(--accent-fill); color:var(--accent-ink); box-shadow:none; }
+:is(app-login,app-register,app-reset-password) .header-icon .icon { color:var(--accent-ink); }
+:is(app-login,app-register,app-reset-password) .submit-button:hover:not(:disabled) { background:var(--accent-fill); filter:brightness(1.07); box-shadow:0 6px 18px #0b102b33; }
+:is(app-login,app-register,app-reset-password) :is(.header-subtitle,.register-text,.login-text) { color:var(--text-secondary); }
+:is(app-login,app-register,app-reset-password) .forgot-password-link { color:#dbceff; min-height:44px; }
+:is(app-login,app-register,app-reset-password) :is(.chain-overlay,.breaking-overlay,.sparkle-container) { display:none; }
+:is(app-login,app-register,app-reset-password) .button-content-hidden { opacity:1; }
+:is(app-login,app-register,app-reset-password) .submit-button:disabled { background:#ffffff12; color:#c4bfd4; border:1px solid #ffffff26; filter:none; }
+.pulse-border,.pulse-icon,.pulse-placeholder::placeholder { animation:none; }
+@media(max-width:599px) {
+ .home-shell,.group-shell { padding-bottom:calc(128px + env(safe-area-inset-bottom))!important; }
+ :is(app-login,app-register,app-reset-password) :is(.login-card,.register-card,.reset-card) { padding:24px; }
+}
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; } }

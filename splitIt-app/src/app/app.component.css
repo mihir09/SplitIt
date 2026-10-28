@@ -318,3 +318,4 @@
     height: 40px;
   }
 }
+.fab-container { bottom:calc(108px + env(safe-area-inset-bottom)); z-index:40; }.scroll-to-top-fab { width:44px; height:44px; background:var(--nav-fill); }

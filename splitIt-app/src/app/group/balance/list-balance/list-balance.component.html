@@ -1,4 +1,4 @@
-<div class="min-h-0 relative overflow-hidden">
+<div class="balance-view min-h-0 relative">
 
     <!-- Subtle Grid Pattern -->
     <div class="absolute inset-0 opacity-10"
@@ -10,12 +10,12 @@
       <button class="underline ml-4" (click)="fetchGroupDetails()">Refresh balances</button>
     </div>
     <!-- Content -->
-    <div class="relative z-10 min-h-0 px-4 md:px-8 lg:px-12" *ngIf="!loading && groupDetails && currentUser">
-        <div class="max-w-7xl mx-auto mt-4 flex flex-col lg:flex-row justify-center gap-4 md:gap-6 lg:gap-8">
+    <div class="balance-content relative z-10 min-h-0" *ngIf="!loading && groupDetails && currentUser">
+        <div class="balance-layout max-w-7xl mx-auto flex flex-col lg:flex-row justify-center gap-4 md:gap-6 lg:gap-8">
 
             <!-- Group Balance Card -->
             <div
-                class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 text-center flex-1 hover:bg-white/15 transition-all duration-300">
+                class="balance-panel bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 text-center flex-1 hover:bg-white/15 transition-all duration-300">
                 <h2 class="text-2xl md:text-3xl text-white mb-6">Group Balance</h2>
 
                 <ng-container *ngIf="!settle; else settleContent">
@@ -46,7 +46,7 @@
                         <p class="text-white/70 mb-4 text-sm md:text-base">Choose a payment to record</p>
                         <ul class="mt-4 space-y-3">
                             <li *ngFor="let balance of balanceWithNames; let i = index"
-                                (click)="confirmSettleBalance(i); settle = false"
+                                (click)="confirmSettleBalance(i); settle = false" role="button" tabindex="0" (keydown.enter)="confirmSettleBalance(i); settle = false" (keydown.space)="$event.preventDefault(); confirmSettleBalance(i); settle = false"
                                 class="text-base md:text-lg text-white/90 p-3 md:p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl hover:bg-green-500/20 hover:border-green-400/40 cursor-pointer transition-all duration-300 hover:scale-105">
                                 <strong class="underline text-white">
                                     {{ balance.from }} owes {{ balance.to }}
@@ -79,7 +79,7 @@
 
             <!-- Members Balance Card -->
             <div
-                class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 text-center flex-1 hover:bg-white/15 transition-all duration-300">
+                class="balance-panel bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 text-center flex-1 hover:bg-white/15 transition-all duration-300">
                 <h2 class="text-2xl md:text-3xl text-white mb-6">Members Balance</h2>
 
                 <ul class="space-y-3">

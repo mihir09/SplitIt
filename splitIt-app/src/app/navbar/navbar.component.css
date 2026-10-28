@@ -1,0 +1,11 @@
+:host { display:block; }
+.app-navbar { position:fixed; inset:0 0 auto; z-index:50; background:#171d36a6; border-bottom:1px solid #ffffff1f; backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); color:#faf8ff; }
+.navbar-inner { max-width:1184px; height:72px; margin:auto; padding:0 32px; display:flex; justify-content:space-between; align-items:center; gap:20px; }
+.brand { display:inline-flex; align-items:center; gap:10px; color:inherit; font-size:24px; font-weight:700; letter-spacing:-.04em; text-decoration:none; }
+.brand-mark { display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:11px; background:var(--accent-fill); color:var(--accent-ink); font-size:23px; letter-spacing:-.1em; }.brand-mark span { font-size:16px; margin-left:1px; }.brand-dot { color:#cab8ff; }
+.desktop-links { display:flex; align-items:center; gap:12px; }.nav-link { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 16px; border-radius:11px; color:#ebe8f5; text-decoration:none; font-size:14px; }.nav-link:hover { background:#ffffff10; }.nav-cta { background:#ffffff15; border:1px solid #ffffff38; }.user-name { max-width:220px; overflow-wrap:anywhere; color:#cac8dc; font-size:14px; padding:0 12px; }.sign-out { border-left:1px solid #ffffff24; border-radius:0; }
+.menu-toggle { display:none; width:44px; height:44px; border-radius:12px; border:1px solid #ffffff30; background:#ffffff0d; }
+.mobile-links { padding:12px 20px 20px; display:grid; gap:4px; border-top:1px solid #ffffff18; background:#25243fe6; }.mobile-links a,.mobile-links button { min-height:48px; display:flex; align-items:center; padding:12px; border-radius:10px; color:#f5f1ff; text-decoration:none; text-align:left; }.mobile-links a:hover,.mobile-links button:hover { background:#ffffff10; }.mobile-links .user-name { padding:8px 12px; }
+@media(max-width:767px) { .navbar-inner { height:64px; padding:0 20px; }.desktop-links { display:none; }.menu-toggle { display:grid; place-items:center; } }
+
+@media(min-width:768px) { .mobile-links { display:none; } }

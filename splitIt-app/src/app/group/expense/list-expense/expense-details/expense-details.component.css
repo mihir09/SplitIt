@@ -1,0 +1,2 @@
+
+.expense-dialog-panel { background:linear-gradient(135deg,#3c365ad9,#202d48e6); border-color:var(--glass-border); box-shadow:0 24px 80px #070d3866; backdrop-filter:blur(28px); }.expense-dialog-panel h2 { padding:0 30px; font-size:24px; }.expense-dialog-panel p { overflow-wrap:anywhere; }.expense-dialog-panel button[aria-label] { min-width:44px; min-height:44px; background:#ffffff15; border-color:#ffffff30; display:grid; place-items:center; }

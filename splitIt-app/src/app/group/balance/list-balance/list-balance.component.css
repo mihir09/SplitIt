@@ -1,0 +1,9 @@
+:host { display:block; min-width:0; }
+.balance-layout { align-items:start; }
+.balance-panel { min-width:0; background:var(--glass-fill); border-color:var(--glass-border); box-shadow:var(--glass-shadow); backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px); text-align:left; border-radius:22px; padding:28px; }
+.balance-panel h2 { font-size:22px; font-weight:600; margin-bottom:24px; }
+.balance-panel li { background:#ffffff06; border-color:#ffffff1c; font-size:15px; line-height:1.6; overflow-wrap:anywhere; transform:none; backdrop-filter:none; }
+.balance-panel li strong { font-weight:500; }.balance-panel button { min-height:48px; font-size:14px; font-weight:600; transform:none; }
+.balance-panel button:not([class*=bg-red]) { background:var(--accent-fill); color:var(--accent-ink); border-color:#ffffff40; }
+.balance-panel .text-red-300 { color:#ffc9da; }.balance-panel .text-green-300 { color:#acf0d9; }
+@media(max-width:767px) { .balance-panel { padding:20px; }.balance-panel h2 { font-size:21px; }.balance-panel li { padding:14px; } }

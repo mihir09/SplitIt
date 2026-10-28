@@ -10,3 +10,10 @@ h1 { font-size:clamp(22px,3vw,30px); font-weight:600; margin:4px 0 0; overflow-w
 .group-navigation a:hover { background:#403254; }
 .group-navigation a.active { background:#e2d4ff; color:#27163e; font-weight:700; }
 @media (min-width:768px) { .group-shell { padding:88px 32px 120px; } }
+
+.group-shell { padding-top:100px; }
+.group-header { padding-bottom:20px; margin-bottom:24px; border-bottom:1px solid #ffffff1c; }
+.groups-link { min-height:36px; color:#ccc9df; font-size:13px; text-decoration:none; }.groups-link:hover { color:#fff; }
+h1 { margin-top:6px; font-size:clamp(26px,3vw,34px); letter-spacing:-.035em; }
+.group-navigation a { transition:background .16s; }
+@media(max-width:767px) { .group-shell { padding-top:82px; }.group-header { padding-bottom:16px; margin-bottom:20px; }.group-navigation a { font-size:12px; } }

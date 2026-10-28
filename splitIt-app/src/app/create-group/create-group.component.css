@@ -1,0 +1,5 @@
+:host { display:block; }
+label { font-size:14px!important; font-weight:500; }
+input { min-height:50px; font-size:16px; border-color:var(--control-border)!important; }
+input::placeholder { color:#c8c4da; }
+button[type=submit] { min-height:48px; background:var(--accent-fill); color:var(--accent-ink); font-weight:600; border:1px solid #ffffff45; transform:none; }

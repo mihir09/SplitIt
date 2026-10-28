@@ -1,13 +1,13 @@
 <!-- Full Screen Modal Overlay -->
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4" *ngIf="expense">
+<div class="expense-dialog fixed inset-0 z-50 flex items-center justify-center p-4" *ngIf="expense">
   <!-- Dark Backdrop with Blur -->
   <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="onCloseClick()"></div>
   
   <!-- Modal Content -->
-  <div class="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto z-10">
+  <div class="expense-dialog-panel relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto z-10">
     <!-- Close Button -->
     <button 
-      mat-button 
+      mat-button aria-label="Close expense details"
       (click)="onCloseClick()" 
       class="absolute top-4 right-4 bg-red-500/80 hover:bg-red-600 backdrop-blur-sm border border-white/20 text-white p-2 rounded-xl transition-all duration-300 hover:scale-110 shadow-lg z-10">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

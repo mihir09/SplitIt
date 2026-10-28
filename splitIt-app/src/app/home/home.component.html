@@ -1,7 +1,7 @@
 <div class="home-shell">
   <main class="home-content">
     <header class="home-header">
-      <div><p class="home-eyebrow">SPLITIT</p><h1>{{ activeSection === 'create' ? 'Create a group' : activeSection === 'invitations' ? 'Your invitations' : 'Your groups' }}</h1><p class="home-sub">{{ activeSection === 'create' ? 'Start a shared space for your next split.' : activeSection === 'invitations' ? 'Join the people you share expenses with.' : 'Shared expenses. Clear balances. All in one place.' }}</p></div>
+      <div><h1>{{ activeSection === 'create' ? 'Create a group' : activeSection === 'invitations' ? 'Your invitations' : 'Your groups' }}</h1><p class="home-sub">{{ activeSection === 'create' ? 'Start a shared space for your next split.' : activeSection === 'invitations' ? 'Join the people you share expenses with.' : 'Keep track of what you share, and who owes what.' }}</p></div>
       <button class="home-primary" *ngIf="activeSection !== 'create'" (click)="activeSection = 'create'">+ Create group</button>
     </header>
     <section *ngIf="activeSection === 'unsettled' || activeSection === 'settled'" aria-labelledby="group-list-heading">
