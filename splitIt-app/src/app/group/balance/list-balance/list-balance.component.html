@@ -1,109 +1,33 @@
-<div class="balance-view min-h-0 relative">
-
-    <!-- Subtle Grid Pattern -->
-    <div class="absolute inset-0 opacity-10"
-        style="background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.15) 1px, transparent 0); background-size: 40px 40px;">
-    </div>
-
-    <div *ngIf="errorMessage && !loading" role="alert" class="relative z-10 m-4 p-4 bg-red-950 text-white rounded-xl">
-      {{ errorMessage }}
-      <button class="underline ml-4" (click)="fetchGroupDetails()">Refresh balances</button>
-    </div>
-    <!-- Content -->
-    <div class="balance-content relative z-10 min-h-0" *ngIf="!loading && groupDetails && currentUser">
-        <div class="balance-layout max-w-7xl mx-auto flex flex-col lg:flex-row justify-center gap-4 md:gap-6 lg:gap-8">
-
-            <!-- Group Balance Card -->
-            <div
-                class="balance-panel bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 text-center flex-1 hover:bg-white/15 transition-all duration-300">
-                <h2 class="text-2xl md:text-3xl text-white mb-6">Group Balance</h2>
-
-                <ng-container *ngIf="!settle; else settleContent">
-                    <div *ngIf="balanceWithNames && balanceWithNames.length>0; else settledUp">
-                        <ul class="mt-4 space-y-3">
-                            <li *ngFor="let balance of balanceWithNames"
-                                class="text-base md:text-lg text-white/90 p-3 md:p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-102">
-                                <strong class="text-white">
-                                    {{ balance.fromId == currentUser.id ? 'You owe' : balance.from+' owes' }}
-                                    {{ balance.toId == currentUser.id ? 'You' : balance.to }}
-                                </strong>
-                                <span class="block md:inline md:ml-2 text-red-300 mt-1 md:mt-0">
-                                    ${{ balance.balance | abs | number: '1.2-2' }}
-                                </span>
-                            </li>
-                        </ul>
-
-                        <button
-                            class="mt-6 w-full md:w-auto px-6 md:px-8 py-3 bg-yellow-500/30 backdrop-blur-md border border-yellow-400/40 rounded-xl text-white hover:bg-yellow-500/40 hover:border-yellow-400/60 transition-all duration-300 hover:scale-105"
-                            (click)="settle = true">
-                            Record a payment
-                        </button>
-                    </div>
-                </ng-container>
-
-                <ng-template #settleContent>
-                    <div>
-                        <p class="text-white/70 mb-4 text-sm md:text-base">Choose a payment to record</p>
-                        <ul class="mt-4 space-y-3">
-                            <li *ngFor="let balance of balanceWithNames; let i = index"
-                                (click)="confirmSettleBalance(i); settle = false" role="button" tabindex="0" (keydown.enter)="confirmSettleBalance(i); settle = false" (keydown.space)="$event.preventDefault(); confirmSettleBalance(i); settle = false"
-                                class="text-base md:text-lg text-white/90 p-3 md:p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl hover:bg-green-500/20 hover:border-green-400/40 cursor-pointer transition-all duration-300 hover:scale-105">
-                                <strong class="underline text-white">
-                                    {{ balance.from }} owes {{ balance.to }}
-                                </strong>
-                                <span class="block md:inline md:ml-2 text-red-300 mt-1 md:mt-0">
-                                    ${{ balance.balance | abs | number: '1.2-2' }}
-                                </span>
-                            </li>
-                        </ul>
-
-                        <button
-                            class="mt-6 w-full md:w-auto px-6 md:px-8 py-3 bg-red-500/30 backdrop-blur-md border border-red-400/40 rounded-xl text-white hover:bg-red-500/40 hover:border-red-400/60 transition-all duration-300 hover:scale-105"
-                            (click)="settle = false">
-                            Cancel
-                        </button>
-                    </div>
-                </ng-template>
-
-                <ng-template #settledUp>
-                    <div class="py-8">
-                        <svg class="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 text-green-300" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span class="text-white/80 text-lg md:text-xl">This group is settled up.</span>
-                    </div>
-                </ng-template>
-            </div>
-
-            <!-- Members Balance Card -->
-            <div
-                class="balance-panel bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 text-center flex-1 hover:bg-white/15 transition-all duration-300">
-                <h2 class="text-2xl md:text-3xl text-white mb-6">Members Balance</h2>
-
-                <ul class="space-y-3">
-                    <li *ngFor="let member of members$"
-                        class="text-base md:text-lg p-3 md:p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-102">
-                        <span class="text-white">{{ member.name }}</span>
-                        <span class="block md:inline md:ml-2 mt-1 md:mt-0" [ngClass]="{
-                      'text-red-300': member.balance < 0,
-                      'text-green-300': member.balance > 0,
-                      'text-white/70': member.balance === 0
-                  }">
-                            {{ member.balance === 0 ? 'is settled up' : member.balance >= 0 ? 'lent ' : 'owes ' }}
-                            {{ member.balance === 0 ? '' : (member.balance | abs | currency) }}
-                        </span>
-                    </li>
-                </ul>
-            </div>
-
-        </div>
-    </div>
-    <app-confirm-dialog [open]="confirmState.open" [title]="confirmState.title" [message]="confirmState.message"
-        [confirmLabel]="confirmState.confirmLabel" [tone]="confirmState.tone" (confirmed)="onConfirmYes()"
-        (cancelled)="onConfirmNo()">
-    </app-confirm-dialog>
-
-    <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+<div class="balance-view">
+  <div *ngIf="errorMessage && !loading" role="alert" class="balance-error">
+    {{ errorMessage }} <button (click)="fetchGroupDetails()">Refresh balances</button>
+  </div>
+  <div class="balance-layout" *ngIf="!loading && groupDetails && currentUser">
+    <section class="balance-panel" aria-labelledby="group-balance-heading">
+      <header class="balance-heading"><h2 id="group-balance-heading">Who owes whom</h2><p>{{ settle ? 'Choose a payment to record.' : 'Payments needed to settle this group.' }}</p></header>
+      <ng-container *ngIf="balanceWithNames && balanceWithNames.length; else settledUp">
+        <ul class="balance-list" *ngIf="!settle; else paymentChoices">
+          <li class="balance-row" *ngFor="let balance of balanceWithNames">
+            <span class="balance-person">{{ balance.fromId == currentUser.id ? 'You' : balance.from }}<span class="balance-direction">owes {{ balance.toId == currentUser.id ? 'you' : balance.to }}</span></span>
+            <strong class="balance-amount" [class.positive]="balance.toId == currentUser.id" [class.negative]="balance.fromId == currentUser.id">{{ balance.balance | abs | currency }}</strong>
+          </li>
+        </ul>
+        <button *ngIf="!settle" class="payment-primary" (click)="settle = true">Record a payment <span aria-hidden="true">→</span></button>
+      </ng-container>
+      <ng-template #paymentChoices>
+        <ul class="balance-list"><li *ngFor="let balance of balanceWithNames; let i = index"><button class="payment-choice balance-row" (click)="confirmSettleBalance(i); settle = false"><span class="balance-person">{{ balance.from }}<span class="balance-direction">owes {{ balance.to }}</span></span><strong class="balance-amount">{{ balance.balance | abs | currency }} <span aria-hidden="true">→</span></strong></button></li></ul>
+        <button class="payment-cancel" (click)="settle = false">Cancel</button>
+      </ng-template>
+      <ng-template #settledUp><div class="balance-empty"><span class="settled-check" aria-hidden="true">✓</span><h3>All settled up</h3><p>No payments needed in this group.</p></div></ng-template>
+    </section>
+    <section class="balance-panel" aria-labelledby="member-balance-heading">
+      <header class="balance-heading"><h2 id="member-balance-heading">Member balances</h2><p>Each person’s total across the group.</p></header>
+      <ul class="balance-list"><li class="balance-row member-row" *ngFor="let member of members$">
+        <span class="member-identity"><span class="balance-avatar" aria-hidden="true">{{ (member.name || '?').charAt(0).toUpperCase() }}</span><span class="balance-person">{{ member.name }}</span></span>
+        <span class="member-total" [class.positive]="member.balance > 0" [class.negative]="member.balance < 0"><strong>{{ member.balance === 0 ? 'Settled' : (member.balance | abs | currency) }}</strong><small *ngIf="member.balance !== 0">{{ member.balance > 0 ? 'gets back' : 'owes' }}</small></span>
+      </li></ul>
+    </section>
+  </div>
+  <app-confirm-dialog [open]="confirmState.open" [title]="confirmState.title" [message]="confirmState.message" [confirmLabel]="confirmState.confirmLabel" [tone]="confirmState.tone" (confirmed)="onConfirmYes()" (cancelled)="onConfirmNo()"></app-confirm-dialog>
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
 </div>
