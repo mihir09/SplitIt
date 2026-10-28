@@ -3,14 +3,15 @@
     <a routerLink="/" class="groups-link">← All groups</a>
     <h1>{{ groupName }}</h1>
   </header>
-  <main class="group-content">
-    <router-outlet></router-outlet>
-    <p *ngIf="!routerOutletHasContent()" class="group-intro">Choose Balances or Expenses to view this group, or add a new expense.</p>
-  </main>
   <nav class="group-navigation" aria-label="Group navigation">
     <a [routerLink]="['list-balance']" [queryParams]="{ groupId: groupId }" routerLinkActive="active" ariaCurrentWhenActive="page">Balances</a>
     <a [routerLink]="['list-expense']" [queryParams]="{ groupId: groupId }" routerLinkActive="active" ariaCurrentWhenActive="page">Expenses</a>
     <a [routerLink]="['add-expense']" [queryParams]="{ groupId: groupId }" routerLinkActive="active" ariaCurrentWhenActive="page">Add expense</a>
     <a [routerLink]="['add-member']" [queryParams]="{ groupId: groupId }" routerLinkActive="active" ariaCurrentWhenActive="page">Invite member</a>
   </nav>
+  <main class="group-content">
+    <router-outlet></router-outlet>
+    <p *ngIf="!routerOutletHasContent()" class="group-intro">Choose Balances or Expenses to view this group, or add a new expense.</p>
+  </main>
+
 </div>

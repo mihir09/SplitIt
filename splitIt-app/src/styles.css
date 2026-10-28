@@ -185,12 +185,12 @@ input:-webkit-autofill:active {
   --app-background:radial-gradient(ellipse at 88% 8%,#885cc073,transparent 54%),radial-gradient(ellipse at 4% 72%,#397f9859,transparent 52%),radial-gradient(ellipse at 55% 100%,#67439066,transparent 60%),linear-gradient(135deg,#151b36,#30264f 54%,#192d42);
   --text-primary:#faf8ff;
   --text-secondary:#d9d6e9;
-  --glass-fill:linear-gradient(135deg,#ffffff1f,#ffffff0a);
-  --glass-border:#ffffff30;
-  --glass-shadow:0 16px 48px #090f2926,inset 0 1px 0 #ffffff1c;
+  --glass-fill:linear-gradient(145deg,#ffffff15,#ffffff08);
+  --glass-border:#ffffff26;
+  --glass-shadow:0 8px 28px #090f291a,inset 0 1px 0 #ffffff12;
   --control-fill:#101a343d;
   --control-border:#ffffff45;
-  --accent-fill:linear-gradient(115deg,#d1c0ff,#b8d9f7);
+  --accent-fill:#d5ceef;
   --accent-ink:#24233f;
   --nav-fill:#25243fbb;
 }
@@ -234,3 +234,7 @@ input::placeholder,textarea::placeholder { opacity:1; }
  :is(app-login,app-register,app-reset-password) :is(.login-card,.register-card,.reset-card) { padding:24px; }
 }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; } }
+
+/* Consistent compact controls and restrained financial typography. */
+.cdk-overlay-container .mat-mdc-menu-panel { background:#302e47; border:1px solid #ffffff26; border-radius:12px; min-width:180px; }.cdk-overlay-container .mat-mdc-menu-item { color:#f5f1ff; font-size:14px; }.cdk-overlay-container .mat-mdc-menu-item:hover { background:#ffffff0c; }.cdk-overlay-container .expense-delete { color:#ffc9da; }
+.balance-panel { border-radius:16px!important; }.balance-amount { font-size:20px!important; font-weight:500!important; }.member-total strong { font-weight:500!important; }

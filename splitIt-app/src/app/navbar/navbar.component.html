@@ -1,6 +1,6 @@
 <header class="app-navbar">
   <nav class="navbar-inner" aria-label="Main navigation">
-    <a routerLink="/" class="brand" aria-label="SplitIt home"><span class="brand-mark" aria-hidden="true">S<span>↗</span></span><span>SplitIt<span class="brand-dot">.</span></span></a>
+    <a routerLink="/" class="brand" aria-label="SplitIt home"><span>SplitIt<span class="brand-dot">.</span></span></a>
     <div class="desktop-links">
       <a *ngIf="authService.isAuthenticated()" routerLink="/" class="nav-link">Your groups</a>
       <span *ngIf="authService.isAuthenticated() && _userDetails" class="user-name">{{ _userDetails.name }}</span>

@@ -37,6 +37,11 @@ export class HomeComponent {
   settledGroups: any[] = [];
   unsettledGroups: any[] = [];
   activeSection = 'unsettled';
+  loadingGroups = true;
+  groupLoadError = '';
+  loadingInvitations = true;
+  invitationError = '';
+  invitationActionError = '';
   isSidebarExpanded = true;
 
   constructor(
@@ -52,13 +57,17 @@ export class HomeComponent {
   }
 
   ngOnInit(): void {
+    this.loadingInvitations = true;
+    this.invitationError = '';
     this.currentUser = this.authService.getCurrentUser()!;
     this.usersService.getUserInvitations(this.currentUser).subscribe({
       next: (invitations) => {
         this.invitations = invitations;
+        this.loadingInvitations = false;
       },
       error: (error) => {
-        console.error('Error fetching invitations:', error);
+        this.loadingInvitations = false;
+        this.invitationError = 'Could not load invitations. Please try again.';
       }
     });
   }
@@ -66,13 +75,16 @@ export class HomeComponent {
   loadUserGroups() {
     this.currentUser = this.authService.getCurrentUser()!;
     const userId = this.authService.getCurrentUserId();
-    if (!userId) return;
+    if (!userId) { this.loadingGroups = false; return; }
+    this.loadingGroups = true;
+    this.groupLoadError = '';
 
     this.settledGroups = [];
     this.unsettledGroups = [];
 
     this.usersService.getUserGroups(this.currentUser).subscribe({
       next: (groups) => {
+        this.loadingGroups = false;
         this.groups = groups;
         groups.forEach((group: any) => {
           const user = group.members.find((m: any) => m.memberId === userId || m.memberId?._id === userId);
@@ -87,7 +99,8 @@ export class HomeComponent {
         });
       },
       error: (error) => {
-        console.error('Error loading user groups:', error.error.message);
+        this.loadingGroups = false;
+        this.groupLoadError = 'Could not load your groups. Please try again.';
       }
     });
   }
@@ -121,17 +134,19 @@ export class HomeComponent {
   }
 
   acceptInvitation(invitationId: string) {
+    this.invitationActionError = '';
     this.invitationsService.acceptInvitation(invitationId, this.currentUser).subscribe({
       next: (response) => {
         this.router.navigate(['group', response.groupId]);
       },
       error: (error) => {
-        console.error('Error ', error.error.message);
+        this.invitationActionError = 'Could not update this invitation. Please try again.';
       }
     });
   }
 
   declineInvitation(invitationId: string) {
+    this.invitationActionError = '';
     this.invitationsService.declineInvitation(invitationId, this.currentUser).subscribe({
       next: () => {
         this.invitations = this.invitations.filter(invitation => invitation._id !== invitationId);
@@ -145,7 +160,7 @@ export class HomeComponent {
         });
       },
       error: (error) => {
-        console.error('Error ', error.error.message);
+        this.invitationActionError = 'Could not update this invitation. Please try again.';
       }
     });
   }

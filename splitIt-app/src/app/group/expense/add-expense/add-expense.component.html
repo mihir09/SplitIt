@@ -2,7 +2,7 @@
   <div *ngIf="loadError && !loading" class="entry-alert" role="alert">{{ loadError }} <button type="button" (click)="ngOnInit()">Try again</button></div>
   <div class="entry-layout" *ngIf="!loading && !loadError">
     <form class="entry-glass entry-form" [formGroup]="expenseForm" (ngSubmit)="onAddOrUpdateExpense()">
-      <header><p class="entry-eyebrow">{{ mode === 'edit' ? 'UPDATE EXPENSE' : 'QUICK ENTRY' }}</p><h2>{{ mode === 'edit' ? 'Edit expense' : 'Add expense' }}</h2><p class="entry-sub">The essentials together. Split the rest your way.</p></header>
+      <header><h2>{{ mode === 'edit' ? 'Edit expense' : 'Add expense' }}</h2><p class="entry-sub">Enter the purchase details and choose how to split it.</p></header>
       <label class="entry-field">Expense name<input formControlName="expenseName" placeholder="Dinner, groceries, rent…" autocomplete="off"></label>
       <p class="entry-error" *ngIf="expenseForm.get('expenseName')?.touched && expenseForm.get('expenseName')?.invalid">Enter an expense name.</p>
       <div class="entry-pair">
@@ -38,7 +38,7 @@
       <p class="entry-error" *ngIf="submitted && (!canAddExpense() || !isTotalAmountValid())">Review the split options before saving.</p>
     </form>
     <aside id="expense-split-preview" class="entry-glass split-preview" [class.preview-open]="previewOpen" aria-label="Split preview">
-      <p class="entry-eyebrow">SPLIT PREVIEW</p><h2>{{ expenseForm.get('expenseName')?.value || 'Your expense' }}</h2><div class="preview-total">{{ amount | currency }}</div><p class="entry-sub">Paid by {{ payerName || '—' }} · {{ selectedSplitType | titlecase }} split</p>
+      <p class="entry-eyebrow">Split preview</p><h2>{{ expenseForm.get('expenseName')?.value || 'Your expense' }}</h2><div class="preview-total">{{ amount | currency }}</div><p class="entry-sub">Paid by {{ payerName || '—' }} · {{ selectedSplitType | titlecase }} split</p>
       <div class="preview-members" aria-live="polite"><div class="preview-member" *ngFor="let row of reviewBreakdown()"><div class="preview-person"><span class="preview-avatar" [style.background]="discStyle(row.member.email)" aria-hidden="true">{{ initials(row.member.email) }}</span><span>{{ row.member.name || row.member.email }}<small *ngIf="row.isPayer">Paid the total</small></span></div><strong>{{ row.owes | currency }}</strong></div></div>
       <p class="entry-sub preview-footnote">Each amount is that person’s share of this expense.</p>
     </aside>

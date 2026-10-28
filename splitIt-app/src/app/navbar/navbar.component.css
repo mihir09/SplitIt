@@ -9,3 +9,5 @@
 @media(max-width:767px) { .navbar-inner { height:64px; padding:0 20px; }.desktop-links { display:none; }.menu-toggle { display:grid; place-items:center; } }
 
 @media(min-width:768px) { .mobile-links { display:none; } }
+
+.brand { font-size:23px; letter-spacing:-.04em; }.brand-dot { color:#c4b5e9; }.navbar-inner { height:68px; }.nav-link { font-size:13px; }.app-navbar { background:#171d368c; }@media(max-width:767px) { .navbar-inner { height:64px; } }

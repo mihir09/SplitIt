@@ -1,5 +1,5 @@
 <section class="expense-panel" *ngIf="!loading">
-  <header class="expense-heading"><h2>Expenses</h2><label>Search expenses<input type="search" [(ngModel)]="searchTerm" (input)="applyFilterExpense()" placeholder="Name, payer or amount"></label></header>
+  <header class="expense-heading"><div><h2>Expenses</h2><p class="expense-caption">All shared purchases in this group.</p></div><label>Search expenses<input type="search" [(ngModel)]="searchTerm" (input)="applyFilterExpense()" placeholder="Name, payer or amount"></label></header>
   <div *ngIf="errorMessage" class="expense-error" role="alert">{{ errorMessage }} <button (click)="fetchExpenses()">Retry</button></div>
   <div class="desktop-table">
     <table mat-table [dataSource]="expenseList" matSort class="glass-table">
@@ -24,9 +24,12 @@
 <ng-template #actions let-expense>
   <div class="expense-actions">
     <button (click)="showExpenseDetails(expense)" [attr.aria-label]="'View details for ' + expense.expenseName">Details</button>
-    <button (click)="editExpense(expense)" [attr.aria-label]="'Edit ' + expense.expenseName">Edit</button>
-    <button (click)="undoExpense(expense)" [attr.aria-label]="'Undo ' + expense.expenseName">Undo</button>
-    <button class="danger" (click)="deleteExpense(expense)" [attr.aria-label]="'Delete ' + expense.expenseName">Delete</button>
+    <button class="more-actions" [matMenuTriggerFor]="expenseMenu" [attr.aria-label]="'More actions for ' + expense.expenseName">•••</button>
+    <mat-menu #expenseMenu="matMenu">
+      <button mat-menu-item (click)="editExpense(expense)">Edit expense</button>
+      <button mat-menu-item (click)="undoExpense(expense)">Undo expense</button>
+      <button mat-menu-item class="expense-delete" (click)="deleteExpense(expense)">Delete expense</button>
+    </mat-menu>
   </div>
 </ng-template>
 <app-confirm-dialog [open]="confirmState.open" [title]="confirmState.title" [message]="confirmState.message" [confirmLabel]="confirmState.confirmLabel" [tone]="confirmState.tone" (confirmed)="onConfirmYes()" (cancelled)="onConfirmNo()"></app-confirm-dialog>

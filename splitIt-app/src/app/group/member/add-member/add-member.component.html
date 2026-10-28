@@ -1,3 +1,4 @@
+<div class="members-layout">
 <section class="member-panel">
   <h2>Invite a member</h2>
   <p class="member-help" id="invite-help">Send a group invitation. They’ll join after accepting it in SplitIt.</p>
@@ -17,3 +18,5 @@
   <ul class="member-list"><li *ngFor="let member of members"><span class="member-avatar" aria-hidden="true">{{ (member.name || member.email || '?').charAt(0).toUpperCase() }}</span><div><strong>{{ member.name }}</strong><p>{{ member.email }}</p></div></li></ul>
   <p *ngIf="!loadingMembers && !members.length && !errorMessage">No members to display.</p>
 </section>
+
+</div>

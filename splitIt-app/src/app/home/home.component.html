@@ -4,9 +4,17 @@
       <div><h1>{{ activeSection === 'create' ? 'Create a group' : activeSection === 'invitations' ? 'Your invitations' : 'Your groups' }}</h1><p class="home-sub">{{ activeSection === 'create' ? 'Start a shared space for your next split.' : activeSection === 'invitations' ? 'Join the people you share expenses with.' : 'Keep track of what you share, and who owes what.' }}</p></div>
       <button class="home-primary" *ngIf="activeSection !== 'create'" (click)="activeSection = 'create'">+ Create group</button>
     </header>
+  <nav class="home-navigation" aria-label="Home sections">
+    <button (click)="activeSection = 'unsettled'" [class.active]="activeSection === 'unsettled'" [attr.aria-pressed]="activeSection === 'unsettled'">Unsettled</button>
+    <button (click)="activeSection = 'settled'" [class.active]="activeSection === 'settled'" [attr.aria-pressed]="activeSection === 'settled'">Settled</button>
+    <button (click)="activeSection = 'invitations'" [class.active]="activeSection === 'invitations'" [attr.aria-pressed]="activeSection === 'invitations'">Invites<span *ngIf="invitations.length" class="invite-count">{{ invitations.length }}</span></button>
+    <button (click)="activeSection = 'create'" [class.active]="activeSection === 'create'" [attr.aria-pressed]="activeSection === 'create'">Create</button>
+  </nav>
     <section *ngIf="activeSection === 'unsettled' || activeSection === 'settled'" aria-labelledby="group-list-heading">
       <div class="section-heading"><h2 id="group-list-heading">{{ activeSection === 'unsettled' ? 'Unsettled' : 'Settled' }}</h2><span>{{ activeSection === 'unsettled' ? unsettledGroups.length : settledGroups.length }} groups</span></div>
-      <div class="home-grid">
+      <p class="home-status" role="status" *ngIf="loadingGroups">Loading your groups…</p>
+      <div class="home-status home-error" role="alert" *ngIf="groupLoadError">{{ groupLoadError }} <button (click)="loadUserGroups()">Retry</button></div>
+      <div class="home-grid" *ngIf="!loadingGroups && !groupLoadError">
         <a class="group-card home-glass" *ngFor="let group of (activeSection === 'unsettled' ? unsettledGroups : settledGroups)" [routerLink]="['/group', group._id]">
           <div class="group-card-top"><span class="group-symbol" aria-hidden="true">{{ (group.name || 'G').charAt(0).toUpperCase() }}</span><span class="group-arrow" aria-hidden="true">↗</span></div>
           <h3>{{ group.name }}</h3>
@@ -15,18 +23,16 @@
           <span class="group-open">Open group <span aria-hidden="true">→</span></span>
         </a>
       </div>
-      <div class="home-empty home-glass" *ngIf="(activeSection === 'unsettled' ? unsettledGroups.length : settledGroups.length) === 0"><h3>{{ activeSection === 'unsettled' ? 'Nothing to settle here' : 'No settled groups yet' }}</h3><p>{{ activeSection === 'unsettled' ? 'Your unsettled groups will appear here.' : 'Groups appear here once your balance is settled.' }}</p><button class="home-secondary" (click)="activeSection = 'create'">Create a group</button></div>
+      <div class="home-empty home-glass" *ngIf="!loadingGroups && !groupLoadError && (activeSection === 'unsettled' ? unsettledGroups.length : settledGroups.length) === 0"><h3>{{ activeSection === 'unsettled' ? 'Nothing to settle here' : 'No settled groups yet' }}</h3><p>{{ activeSection === 'unsettled' ? 'Your unsettled groups will appear here.' : 'Groups appear here once your balance is settled.' }}</p><button class="home-secondary" (click)="activeSection = 'create'">Create a group</button></div>
     </section>
     <section *ngIf="activeSection === 'invitations'" aria-label="Group invitations">
-      <div class="home-grid"><article class="home-glass invitation-card" *ngFor="let invitation of invitations"><p class="home-eyebrow">GROUP INVITATION</p><h3>{{ invitation.groupName }}</h3><p>Invited by {{ invitation.senderName }}</p><div class="invite-actions"><button class="home-primary" (click)="acceptInvitation(invitation.id)" [attr.aria-label]="'Accept invitation to ' + invitation.groupName">Accept</button><button class="home-secondary" (click)="declineInvitation(invitation.id)" [attr.aria-label]="'Decline invitation to ' + invitation.groupName">Decline</button></div></article></div>
-      <div class="home-empty home-glass" *ngIf="!invitations.length"><h3>You’re all caught up</h3><p>New group invitations will appear here.</p></div>
+      <p class="home-status" role="status" *ngIf="loadingInvitations">Loading invitations…</p>
+      <div class="home-status home-error" role="alert" *ngIf="invitationError">{{ invitationError }} <button (click)="ngOnInit()">Retry</button></div>
+      <p class="home-status home-error" role="alert" *ngIf="invitationActionError">{{ invitationActionError }}</p>
+      <div class="home-grid"><article class="home-glass invitation-card" *ngFor="let invitation of invitations"><p class="home-eyebrow">Invitation</p><h3>{{ invitation.groupName }}</h3><p>Invited by {{ invitation.senderName }}</p><div class="invite-actions"><button class="home-primary" (click)="acceptInvitation(invitation.id)" [attr.aria-label]="'Accept invitation to ' + invitation.groupName">Accept</button><button class="home-secondary" (click)="declineInvitation(invitation.id)" [attr.aria-label]="'Decline invitation to ' + invitation.groupName">Decline</button></div></article></div>
+      <div class="home-empty home-glass" *ngIf="!loadingInvitations && !invitationError && !invitations.length"><h3>You’re all caught up</h3><p>New group invitations will appear here.</p></div>
     </section>
     <section class="create-group-panel home-glass" *ngIf="activeSection === 'create'" aria-label="New group details"><app-create-group></app-create-group></section>
   </main>
-  <nav class="home-navigation" aria-label="Home sections">
-    <button (click)="activeSection = 'unsettled'" [class.active]="activeSection === 'unsettled'" [attr.aria-pressed]="activeSection === 'unsettled'">Unsettled</button>
-    <button (click)="activeSection = 'settled'" [class.active]="activeSection === 'settled'" [attr.aria-pressed]="activeSection === 'settled'">Settled</button>
-    <button (click)="activeSection = 'invitations'" [class.active]="activeSection === 'invitations'" [attr.aria-pressed]="activeSection === 'invitations'">Invites<span *ngIf="invitations.length" class="invite-count">{{ invitations.length }}</span></button>
-    <button (click)="activeSection = 'create'" [class.active]="activeSection === 'create'" [attr.aria-pressed]="activeSection === 'create'">Create</button>
-  </nav>
+
 </div>

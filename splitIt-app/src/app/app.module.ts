@@ -1,3 +1,4 @@
+import { MatMenuModule } from '@angular/material/menu';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -76,6 +77,7 @@ export function playerFactory() {
     BubbleDragDirective
   ],
   imports: [
+    MatMenuModule,
     MatCardModule,
     BrowserModule,
     AppRoutingModule,
