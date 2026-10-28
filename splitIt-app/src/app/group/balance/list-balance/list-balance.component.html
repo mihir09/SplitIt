@@ -29,5 +29,5 @@
     </section>
   </div>
   <app-confirm-dialog [open]="confirmState.open" [title]="confirmState.title" [message]="confirmState.message" [confirmLabel]="confirmState.confirmLabel" [tone]="confirmState.tone" (confirmed)="onConfirmYes()" (cancelled)="onConfirmNo()"></app-confirm-dialog>
-  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+  <app-loading-spinner *ngIf="loading" spinnerMessage="Loading balances…"></app-loading-spinner>
 </div>

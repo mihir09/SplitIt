@@ -214,24 +214,24 @@ input::placeholder,textarea::placeholder { opacity:1; }
 .group-shell input:focus,.group-shell select:focus,.group-shell textarea:focus { border-color:#c9ceff!important; }
 .group-shell [class~="text-white/60"],.group-shell [class~="text-white/70"],.group-shell [class~="text-white/80"] { color:var(--text-secondary); }
 /* Account forms share the same backdrop and surfaces as the signed-in app. */
-:is(app-login,app-register,app-reset-password) :is(.login-wrapper,.register-wrapper,.reset-wrapper) { background:var(--app-background); }
-:is(app-login,app-register,app-reset-password) :is(.bg-layer,.blob,.grid-pattern,.bg-overlay,.card-glow) { display:none; }
-:is(app-login,app-register,app-reset-password) :is(.login-container,.register-container,.reset-container) { position:relative; min-height:100dvh; padding:96px 20px 40px; align-items:center; }
-:is(app-login,app-register,app-reset-password) :is(.login-card,.register-card,.reset-card) { background:var(--glass-fill); border:1px solid var(--glass-border); box-shadow:var(--glass-shadow); backdrop-filter:blur(24px); border-radius:24px; }
-:is(app-login,app-register,app-reset-password) .form-input { min-height:50px; background:var(--control-fill); border-color:var(--control-border); font-size:16px; }
-:is(app-login,app-register,app-reset-password) .form-input::placeholder { color:#c8c4da; }
-:is(app-login,app-register,app-reset-password) :is(.submit-button,.header-icon) { background:var(--accent-fill); color:var(--accent-ink); box-shadow:none; }
-:is(app-login,app-register,app-reset-password) .header-icon .icon { color:var(--accent-ink); }
-:is(app-login,app-register,app-reset-password) .submit-button:hover:not(:disabled) { background:var(--accent-fill); filter:brightness(1.07); box-shadow:0 6px 18px #0b102b33; }
-:is(app-login,app-register,app-reset-password) :is(.header-subtitle,.register-text,.login-text) { color:var(--text-secondary); }
-:is(app-login,app-register,app-reset-password) .forgot-password-link { color:#dbceff; min-height:44px; }
-:is(app-login,app-register,app-reset-password) :is(.chain-overlay,.breaking-overlay,.sparkle-container) { display:none; }
-:is(app-login,app-register,app-reset-password) .button-content-hidden { opacity:1; }
-:is(app-login,app-register,app-reset-password) .submit-button:disabled { background:#ffffff12; color:#c4bfd4; border:1px solid #ffffff26; filter:none; }
+app-reset-password :is(.login-wrapper,.register-wrapper,.reset-wrapper) { background:var(--app-background); }
+app-reset-password :is(.bg-layer,.blob,.grid-pattern,.bg-overlay,.card-glow) { display:none; }
+app-reset-password :is(.login-container,.register-container,.reset-container) { position:relative; min-height:100dvh; padding:96px 20px 40px; align-items:center; }
+app-reset-password :is(.login-card,.register-card,.reset-card) { background:var(--glass-fill); border:1px solid var(--glass-border); box-shadow:var(--glass-shadow); backdrop-filter:blur(24px); border-radius:24px; }
+app-reset-password .form-input { min-height:50px; background:var(--control-fill); border-color:var(--control-border); font-size:16px; }
+app-reset-password .form-input::placeholder { color:#c8c4da; }
+app-reset-password :is(.submit-button,.header-icon) { background:var(--accent-fill); color:var(--accent-ink); box-shadow:none; }
+app-reset-password .header-icon .icon { color:var(--accent-ink); }
+app-reset-password .submit-button:hover:not(:disabled) { background:var(--accent-fill); filter:brightness(1.07); box-shadow:0 6px 18px #0b102b33; }
+app-reset-password :is(.header-subtitle,.register-text,.login-text) { color:var(--text-secondary); }
+app-reset-password .forgot-password-link { color:#dbceff; min-height:44px; }
+app-reset-password :is(.chain-overlay,.breaking-overlay,.sparkle-container) { display:none; }
+app-reset-password .button-content-hidden { opacity:1; }
+app-reset-password .submit-button:disabled { background:#ffffff12; color:#c4bfd4; border:1px solid #ffffff26; filter:none; }
 .pulse-border,.pulse-icon,.pulse-placeholder::placeholder { animation:none; }
 @media(max-width:599px) {
  .home-shell,.group-shell { padding-bottom:calc(128px + env(safe-area-inset-bottom))!important; }
- :is(app-login,app-register,app-reset-password) :is(.login-card,.register-card,.reset-card) { padding:24px; }
+ app-reset-password :is(.login-card,.register-card,.reset-card) { padding:24px; }
 }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; } }
 
